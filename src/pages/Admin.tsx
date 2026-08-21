@@ -142,15 +142,18 @@ export default function Admin() {
       {/* Admin Header */}
       <header className="sticky top-0 z-40 border-b border-white/5 bg-[#0a0a0a]/90 backdrop-blur-xl">
         <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#00ff66]">
-              <Dumbbell className="h-4 w-4 text-black" />
-            </div>
-            <span className="text-base font-bold tracking-tight">TheDietStore</span>
-            <Badge className="bg-[#00ff66]/10 text-[#00ff66] border-[#00ff66]/20 text-[10px] ml-1">
-              Admin
-            </Badge>
-          </div>
+          <button
+  onClick={() => navigate("/")}
+  className="flex items-center gap-2.5 cursor-pointer"
+>
+  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#00ff66]">
+    <Dumbbell className="h-4 w-4 text-black" />
+  </div>
+  <span className="text-base font-bold tracking-tight">TheDietStore</span>
+  <Badge className="bg-[#00ff66]/10 text-[#00ff66] border-[#00ff66]/20 text-[10px] ml-1">
+    Admin
+  </Badge>
+</button>
           <div className="flex items-center gap-3">
             <Button
               variant="ghost"
