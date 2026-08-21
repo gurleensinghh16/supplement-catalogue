@@ -9,7 +9,6 @@ import {
   Eye,
   Award,
   TrendingUp,
-  Headphones,
 } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useRef } from "react";
@@ -110,16 +109,10 @@ const features = [
       "Every product sourced from authorized distributors with full traceability.",
   },
   {
-    icon: Headphones,
-    title: "24/7 Support",
-    description:
-      "Dedicated account managers and round-the-clock customer support.",
-  },
-  {
     icon: Award,
     title: "Best Prices",
     description:
-      "Competitive wholesale pricing with volume discounts on bulk orders.",
+      "Competitive pricing with volume discounts on bulk orders.",
   },
   {
     icon: TrendingUp,
@@ -422,7 +415,7 @@ export default function Landing() {
             </p>
           </motion.div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
             {features.map((feature, i) => (
               <motion.div
                 key={feature.title}
