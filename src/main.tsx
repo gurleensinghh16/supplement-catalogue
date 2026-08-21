@@ -1,3 +1,21 @@
+// Redirect handling for GitHub Pages SPA (must run before router mounts)
+(function (l) {
+  if (l.search[1] === "/") {
+    var decoded = l.search
+      .slice(1)
+      .split("&")
+      .map(function (s) {
+        return s.replace(/~and~/g, "&");
+      })
+      .join("?");
+    window.history.replaceState(
+      null,
+      "",
+      l.pathname.slice(0, -1) + decoded + l.hash
+    );
+  }
+})(window.location);
+
 import '@vly-ai/integrations';
 import { Toaster } from "@/components/ui/sonner";
 import { SeedProducts } from "@/components/SeedProducts";
@@ -114,7 +132,7 @@ createRoot(document.getElementById("root")!).render(
         <VlyToolbar />
       </ToolbarErrorBoundary>
       <ConvexAuthProvider client={convex}>
-        <BrowserRouter>
+        <BrowserRouter basename="/supplement-catalogue">
           <RouteSyncer />
           <Suspense fallback={<RouteLoading />}>
             <Routes>
