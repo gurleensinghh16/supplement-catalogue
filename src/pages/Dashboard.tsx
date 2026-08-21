@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { useQuery } from "convex/react";
-import { api } from "convex/_generated/api";
+import { api } from "@/convex/_generated/api";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
