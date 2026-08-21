@@ -86,8 +86,11 @@ export const reseed = mutation({
 export const seed = mutation({
   args: {},
   handler: async (ctx) => {
-    const existing = await ctx.db.query("products").first();
-    if (existing) return "already_seeded";
+    // Clear old products and re-seed fresh data
+    const existing = await ctx.db.query("products").collect();
+    for (const p of existing) {
+      await ctx.db.delete(p._id);
+    }
 
     const products = [
       // ═══════════════════════════════════════════
