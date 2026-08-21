@@ -172,7 +172,7 @@ export default function Landing() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white overflow-x-hidden w-full max-w-full">
+    <div className="min-h-screen bg-black text-white w-full" style={{ overflowX: 'hidden', maxWidth: '100vw' }}>
       {/* ── Navigation ── */}
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-[#2b2a27] bg-black/95 backdrop-blur-xl">
         <div className="mx-auto max-w-[1440px] px-6 lg:px-10">
@@ -264,7 +264,7 @@ export default function Landing() {
       </nav>
 
       {/* ── Hero Carousel — Full clickable images, no text overlay ── */}
-      <section ref={heroRef} className="relative w-full h-[60vh] min-h-[400px] max-h-[650px] overflow-hidden mt-28">
+      <section ref={heroRef} className="relative w-full h-[60vh] min-h-[400px] max-h-[650px] mt-28" style={{ overflow: 'hidden', clipPath: 'inset(0)' }}>
         <AnimatePresence mode="wait">
           <motion.div
             key={currentSlide}
@@ -272,16 +272,16 @@ export default function Landing() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
-            className="absolute inset-0"
+            className="absolute inset-0 overflow-hidden"
           >
             <button
               onClick={() => navigate("/catalogue")}
-              className="w-full h-full cursor-pointer block"
+              className="w-full h-full cursor-pointer block overflow-hidden"
             >
               <img
                 src={heroSlides[currentSlide].image}
                 alt="Hero banner"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover object-center block"
               />
             </button>
           </motion.div>
