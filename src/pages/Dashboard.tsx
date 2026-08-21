@@ -129,8 +129,7 @@ function CategorySection({
         className="flex gap-4 overflow-x-auto scrollbar-hide pb-2"
         style={{ scrollSnapType: "x mandatory" }}
       >
-        {products.map((product) => {
-          const msg = encodeURIComponent(`Hi, I'm interested in enquiring about:\n\n*${product.name}*\nBrand: ${product.brand}\nPrice: ${formatINR(product.price)}\nSKU: ${product.sku}\n\nPlease share more details.`);
+        {products.map((product) => {              const msg = encodeURIComponent(`Hi TheDietStore 👋\n\nI'm interested in:\n\n📦 *${product.name}*\n🏷️ Brand: ${product.brand}\n💰 Price: ${formatINR(product.price)}\n📋 SKU: ${product.sku}\n\nPlease share details about:\n• Availability & stock\n• Bulk/wholesale pricing\n• Delivery options\n\nThank you!`);
           return (
           <div
             key={product._id}
@@ -185,7 +184,7 @@ function CategorySection({
 
             {/* WhatsApp Enquiry Button */}
             <a
-              href={`https://wa.me/?text=${msg}`}
+              href={`https://wa.me/918295158184?text=${msg}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 w-full py-2 border border-[#25D366]/30 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-white transition-all duration-300 text-xs font-medium tracking-wider"
@@ -374,7 +373,7 @@ export default function Dashboard() {
           // Search results — flat grid
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
             {allProducts.map((product) => {
-              const msg = encodeURIComponent(`Hi, I'm interested in enquiring about:\n\n*${product.name}*\nBrand: ${product.brand}\nPrice: ${formatINR(product.price)}\nSKU: ${product.sku}\n\nPlease share more details.`);
+              const msg = encodeURIComponent(`Hi TheDietStore 👋\n\nI'm interested in:\n\n📦 *${product.name}*\n🏷️ Brand: ${product.brand}\n💰 Price: ${formatINR(product.price)}\n📋 SKU: ${product.sku}\n\nPlease share details about:\n• Availability & stock\n• Bulk/wholesale pricing\n• Delivery options\n\nThank you!`);
               return (
               <div
                 key={product._id}
@@ -418,7 +417,7 @@ export default function Dashboard() {
                   {formatINR(product.price)}
                 </p>
                 <a
-                  href={`https://wa.me/?text=${msg}`}
+                  href={`https://wa.me/918295158184?text=${msg}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 w-full py-2 border border-[#25D366]/30 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-white transition-all duration-300 text-xs font-medium tracking-wider"

@@ -38,8 +38,8 @@ function buildBulletPoints(product: Product): string[] {
 }
 
 function buildWhatsAppMessage(product: Product): string {
-  const msg = `Hi, I'm interested in enquiring about:\n\n*${product.name}*\nBrand: ${product.brand}\nPrice: ${formatINR(product.price)}\nSKU: ${product.sku}\n\nPlease share more details about availability, pricing, and delivery options.`;
-  return `https://wa.me/?text=${encodeURIComponent(msg)}`;
+  const msg = `Hi TheDietStore 👋\n\nI'm interested in:\n\n📦 *${product.name}*\n🏷️ Brand: ${product.brand}\n💰 Price: ${formatINR(product.price)}\n📋 SKU: ${product.sku}\n\nPlease share details about:\n• Availability & stock\n• Bulk/wholesale pricing\n• Delivery options\n\nThank you!`;
+  return `https://wa.me/918295158184?text=${encodeURIComponent(msg)}`;
 }
 
 interface ProductDetailProps {

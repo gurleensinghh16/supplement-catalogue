@@ -348,7 +348,7 @@ export default function Landing() {
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             {featuredProducts.map((product, i) => {
-              const msg = encodeURIComponent(`Hi, I'm interested in enquiring about:\n\n*${product.name}*\nPrice: ${product.price}\n\nPlease share more details.`);
+              const msg = encodeURIComponent(`Hi TheDietStore 👋\n\nI'm interested in:\n\n📦 *${product.name}*\n💰 Price: ${product.price}\n\nPlease share details about availability, pricing & delivery.\n\nThank you!`);
               return (
               <motion.div key={product.name} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
                 variants={scaleIn} custom={i} className="group">
@@ -375,7 +375,7 @@ export default function Landing() {
                 <p className="text-base font-semibold text-white mb-3">{product.price}</p>
                 {/* WhatsApp Enquiry Button */}
                 <a
-                  href={`https://wa.me/?text=${msg}`}
+                  href={`https://wa.me/918295158184?text=${msg}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 w-full py-2.5 border border-[#25D366]/30 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-white transition-all duration-300 text-xs font-medium tracking-wider font-['Orbitron'] uppercase"
