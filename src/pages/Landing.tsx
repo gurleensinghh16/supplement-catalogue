@@ -9,6 +9,7 @@ import {
   Shield,
   Award,
   Zap,
+  Star,
 } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useRef, useState, useEffect, useCallback } from "react";
@@ -47,37 +48,43 @@ const navCategories = [
   "Muscle Building",
   "Hydration",
   "Post-Workout",
-  "Amino Acids",
-  "Recovery",
+  "Immunity & Wellness",
   "Weight Management",
-  "Vitamins & Health",
-  "Fat Burners",
+  "Digestion & Gut Health",
+  "Longevity",
+  "Recovery",
+  "Amino Acids",
+  "Samples",
 ];
 
 const featuredProducts = [
   {
-    name: "Transparent Labs Whey Isolate",
+    name: "Whey Protein Isolate",
     price: "₹7,499",
     image: "https://cdn.shopify.com/s/files/1/0021/4302/7249/files/01_chocolate.png?v=1776397394",
-    soldOut: true,
+    rating: 4.8,
+    reviews: 13,
   },
   {
-    name: "DY Blood & Guts Pre-Workout",
+    name: "Blood & Guts Pre-Workout",
     price: "₹3,299",
     image: "https://cdn.shopify.com/s/files/1/0021/4302/7249/files/71oGlDLF5dL._AC_SL1500.jpg?v=1721899129",
-    soldOut: false,
+    rating: 4.6,
+    reviews: 8,
   },
   {
-    name: "Killer Labz Stim Reaper Black",
+    name: "Stim Reaper Black",
     price: "₹2,599",
     image: "https://cdn.shopify.com/s/files/1/0021/4302/7249/files/81dVpMvgXLL._AC_SL1500.jpg?v=1721899130",
-    soldOut: false,
+    rating: 4.9,
+    reviews: 21,
   },
   {
-    name: "Merica Labz Napalm",
+    name: "Napalm Pre-Workout",
     price: "₹4,999",
     image: "https://cdn.shopify.com/s/files/1/0021/4302/7249/files/tango-foxtrot.webp?v=1741765326",
-    soldOut: true,
+    rating: 4.7,
+    reviews: 15,
   },
 ];
 
@@ -98,6 +105,24 @@ const features = [
     icon: Zap,
   },
 ];
+
+function StarRating({ rating, reviews }: { rating: number; reviews: number }) {
+  return (
+    <div className="flex items-center gap-1.5 mb-2">
+      <div className="flex gap-0.5">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Star
+            key={i}
+            className={`h-3.5 w-3.5 ${
+              i < Math.floor(rating) ? "fill-[#c2202f] text-[#c2202f]" : "text-[#333]"
+            }`}
+          />
+        ))}
+      </div>
+      <span className="text-xs text-[#999999]">{reviews} reviews</span>
+    </div>
+  );
+}
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -305,7 +330,7 @@ export default function Landing() {
       </section>
 
       {/* ── Featured Products ── */}
-      <section id="featured" className="py-24 px-6 border-t border-[#2b2a27]">
+      <section id="featured" className="py-24 px-6">
         <div className="mx-auto max-w-[1440px]">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeUp} custom={0}
             className="flex items-end justify-between mb-12">
@@ -320,22 +345,27 @@ export default function Landing() {
             </Button>
           </motion.div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             {featuredProducts.map((product, i) => (
               <motion.div key={product.name} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
                 variants={scaleIn} custom={i} onClick={() => navigate("/catalogue")} className="group cursor-pointer">
-                <div className="relative aspect-square bg-[#f0f0f0] rounded-lg overflow-hidden mb-3">
-                  <img src={product.image} alt={product.name} className="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-500" />
-                  {product.soldOut && (
-                    <div className="absolute top-3 left-3">
-                      <span className="bg-[#c2202f] text-white text-[11px] font-bold px-3 py-1 rounded">Sold out</span>
-                    </div>
-                  )}
+                {/* Product card — Unmatched Supps style: black bg, no border */}
+                <div className="relative aspect-square bg-black overflow-hidden mb-4">
+                  <img src={product.image} alt={product.name} className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500" />
+                  {/* Quick View overlay */}
                   <div className="absolute inset-x-0 bottom-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <div className="w-full bg-[#c2202f] text-white py-3 font-['Orbitron'] text-xs tracking-wider uppercase text-center">Quick View</div>
+                    <div className="w-full bg-[#c2202f] text-white py-3 font-['Orbitron'] text-sm tracking-wider uppercase text-center cursor-pointer">
+                      Quick view
+                    </div>
                   </div>
                 </div>
-                <h3 className="text-sm text-[#999999] mb-1.5 group-hover:text-[#c2202f] transition-colors line-clamp-2">{product.name}</h3>
+                {/* Star rating */}
+                <StarRating rating={product.rating} reviews={product.reviews} />
+                {/* Product name — uppercase Orbitron */}
+                <h3 className="font-['Orbitron'] text-sm font-normal tracking-[0.15em] uppercase text-white mb-1">
+                  {product.name}
+                </h3>
+                {/* Price */}
                 <p className="text-base font-semibold text-white">{product.price}</p>
               </motion.div>
             ))}

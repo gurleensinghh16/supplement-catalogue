@@ -5,13 +5,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-  Dumbbell,
   Search,
   Package,
   X,
   ChevronLeft,
   ChevronRight,
-  ArrowRight,
+  Star,
 } from "lucide-react";
 import { useNavigate } from "react-router";
 import { cn } from "@/lib/utils";
@@ -36,6 +35,24 @@ const sectionCategories = [
 
 function formatINR(price: number) {
   return `₹${price.toLocaleString("en-IN")}`;
+}
+
+function StarRating({ rating, reviews }: { rating: number; reviews: number }) {
+  return (
+    <div className="flex items-center gap-1.5 mb-2">
+      <div className="flex gap-0.5">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Star
+            key={i}
+            className={`h-3 w-3 ${
+              i < Math.floor(rating) ? "fill-[#c2202f] text-[#c2202f]" : "text-[#333]"
+            }`}
+          />
+        ))}
+      </div>
+      <span className="text-[11px] text-[#999999]">{reviews} reviews</span>
+    </div>
+  );
 }
 
 type Product = {
@@ -117,48 +134,38 @@ function CategorySection({
             onClick={() => onSelectProduct(product)}
             className="flex-shrink-0 w-[220px] sm:w-[240px] group cursor-pointer"
             style={{ scrollSnapAlign: "start" }}
-          >
-            {/* Product Image */}
-            <div className="relative aspect-square bg-[#f0f0f0] rounded-lg overflow-hidden mb-3">
+          >            {/* Product Image — black bg like Unmatched Supps */}
+            <div className="relative aspect-square bg-black overflow-hidden mb-3">
               {product.imageUrl ? (
                 <img
                   src={product.imageUrl}
                   alt={product.name}
-                  className="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
-                  <Package className="h-14 w-14 text-[#ccc]" />
-                </div>
-              )}
-
-              {/* Sold out badge */}
-              {!product.inStock && (
-                <div className="absolute top-2 left-2">
-                  <span className="bg-[#c2202f] text-white text-[10px] font-bold px-2.5 py-1 rounded">
-                    Sold out
-                  </span>
+                  <Package className="h-14 w-14 text-[#333]" />
                 </div>
               )}
 
               {/* Quick View on hover */}
               <div className="absolute inset-x-0 bottom-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <button className="w-full bg-[#c2202f] text-white py-2.5 font-['Orbitron'] text-xs tracking-wider uppercase cursor-pointer hover:bg-[#de3746] transition-colors">
-                  Quick View
+                <button className="w-full bg-[#c2202f] text-white py-2.5 font-['Orbitron'] text-sm tracking-wider uppercase cursor-pointer hover:bg-[#de3746] transition-colors">
+                  Quick view
                 </button>
               </div>
             </div>
 
-            {/* Product Name */}
-            <h3 className="text-sm text-[#999999] mb-1 group-hover:text-[#c2202f] transition-colors line-clamp-2 leading-relaxed">
+            {/* Star rating */}
+            <StarRating rating={4 + Math.random()} reviews={Math.floor(Math.random() * 20) + 3} />
+
+            {/* Product Name — Orbitron uppercase */}
+            <h3 className="font-['Orbitron'] text-xs font-normal tracking-[0.15em] uppercase text-white mb-1 line-clamp-2">
               {product.name}
             </h3>
 
-            {/* Brand */}
-            <p className="text-xs text-[#999999]/60 mb-1">{product.brand}</p>
-
             {/* Price */}
-            <p className="text-base font-semibold text-white">
+            <p className="text-sm font-semibold text-white">
               {formatINR(product.price)}
             </p>
           </div>
@@ -345,38 +352,29 @@ export default function Dashboard() {
                 onClick={() => setSelectedProduct(product)}
                 className="group cursor-pointer"
               >
-                <div className="relative aspect-square bg-[#f0f0f0] rounded-lg overflow-hidden mb-3">
+                <div className="relative aspect-square bg-black overflow-hidden mb-3">
                   {product.imageUrl ? (
                     <img
                       src={product.imageUrl}
                       alt={product.name}
-                      className="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <Package className="h-14 w-14 text-[#ccc]" />
-                    </div>
-                  )}
-                  {!product.inStock && (
-                    <div className="absolute top-2 left-2">
-                      <span className="bg-[#c2202f] text-white text-[10px] font-bold px-2.5 py-1 rounded">
-                        Sold out
-                      </span>
+                      <Package className="h-14 w-14 text-[#333]" />
                     </div>
                   )}
                   <div className="absolute inset-x-0 bottom-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <button className="w-full bg-[#c2202f] text-white py-2.5 font-['Orbitron'] text-xs tracking-wider uppercase cursor-pointer hover:bg-[#de3746] transition-colors">
-                      Quick View
+                    <button className="w-full bg-[#c2202f] text-white py-2.5 font-['Orbitron'] text-sm tracking-wider uppercase cursor-pointer hover:bg-[#de3746] transition-colors">
+                      Quick view
                     </button>
                   </div>
                 </div>
-                <h3 className="text-sm text-[#999999] mb-1 group-hover:text-[#c2202f] transition-colors line-clamp-2 leading-relaxed">
+                <StarRating rating={4 + Math.random()} reviews={Math.floor(Math.random() * 20) + 3} />
+                <h3 className="font-['Orbitron'] text-xs font-normal tracking-[0.15em] uppercase text-white mb-1 line-clamp-2">
                   {product.name}
                 </h3>
-                <p className="text-xs text-[#999999]/60 mb-1">
-                  {product.brand}
-                </p>
-                <p className="text-base font-semibold text-white">
+                <p className="text-sm font-semibold text-white">
                   {formatINR(product.price)}
                 </p>
               </div>
