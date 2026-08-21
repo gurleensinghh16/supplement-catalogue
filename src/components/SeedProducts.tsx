@@ -4,15 +4,17 @@ import { api } from "@/convex/_generated/api";
 
 export function SeedProducts({ children }: { children: React.ReactNode }) {
   const seed = useMutation(api.products.seed);
-  const fixImages = useMutation(api.products.fixImages);
+  const reseed = useMutation(api.products.reseed);
   const [seeded, setSeeded] = useState(false);
 
   useEffect(() => {
     seed()
-      .then(() => fixImages())
       .then(() => setSeeded(true))
       .catch(() => setSeeded(true));
-  }, [seed, fixImages]);
+  }, [seed]);
+
+  // Expose reseed globally for admin use
+  (window as any).__reseed = reseed;
 
   if (!seeded) {
     return (
