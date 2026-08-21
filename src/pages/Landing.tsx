@@ -31,13 +31,15 @@ const scaleIn = {
   }),
 };
 
+const BASE = import.meta.env.BASE_URL || "/";
+
 const heroSlides = [
   {
     title: "POWER YOUR\nPERFORMANCE",
     subtitle: "STACKS AVAILABLE",
     description: "Maximize muscle growth, explosive energy, enhanced endurance & cellular recovery.",
     cta: "Shop Performance Stacks",
-    image: "/hero-1.jpg",
+    image: `${BASE}hero-1.jpg`,
     bgGradient: "from-[#c2202f]/20 via-black/80 to-black",
   },
   {
@@ -45,7 +47,7 @@ const heroSlides = [
     subtitle: "PREMIUM SUPPLEMENTS",
     description: "Powerful nutrition for every goal. Build muscle, boost energy and become your best.",
     cta: "View Catalogue",
-    image: "/hero-2.jpg",
+    image: `${BASE}hero-2.jpg`,
     bgGradient: "from-black/90 via-black/70 to-black",
   },
   {
@@ -53,7 +55,7 @@ const heroSlides = [
     subtitle: "PREMIUM SUPPLEMENTS",
     description: "Premium supplements for stronger, leaner, better you. Trusted by athletes worldwide.",
     cta: "View Catalogue",
-    image: "/hero-3.jpg",
+    image: `${BASE}hero-3.jpg`,
     bgGradient: "from-[#c2202f]/15 via-black/85 to-black",
   },
 ];
