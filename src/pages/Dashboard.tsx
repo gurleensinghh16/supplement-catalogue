@@ -11,6 +11,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Star,
+  MessageCircle,
 } from "lucide-react";
 import { useNavigate } from "react-router";
 import { cn } from "@/lib/utils";
@@ -128,14 +129,18 @@ function CategorySection({
         className="flex gap-4 overflow-x-auto scrollbar-hide pb-2"
         style={{ scrollSnapType: "x mandatory" }}
       >
-        {products.map((product) => (
+        {products.map((product) => {
+          const msg = encodeURIComponent(`Hi, I'm interested in enquiring about:\n\n*${product.name}*\nBrand: ${product.brand}\nPrice: ${formatINR(product.price)}\nSKU: ${product.sku}\n\nPlease share more details.`);
+          return (
           <div
             key={product._id}
-            onClick={() => onSelectProduct(product)}
-            className="flex-shrink-0 w-[220px] sm:w-[240px] group cursor-pointer"
+            className="flex-shrink-0 w-[220px] sm:w-[240px] group"
             style={{ scrollSnapAlign: "start" }}
           >            {/* Product Image — black bg like Unmatched Supps */}
-            <div className="relative aspect-square bg-black overflow-hidden mb-3">
+            <div
+              onClick={() => onSelectProduct(product)}
+              className="relative aspect-square bg-black overflow-hidden mb-3 cursor-pointer"
+            >
               {product.imageUrl ? (
                 <img
                   src={product.imageUrl}
@@ -148,28 +153,50 @@ function CategorySection({
                 </div>
               )}
 
+              {/* Sold out badge */}
+              {!product.inStock && (
+                <div className="absolute top-3 left-3">
+                  <span className="bg-[#c2202f] text-white text-[10px] font-bold px-2 py-1 uppercase tracking-wider font-['Orbitron']">
+                    Sold out
+                  </span>
+                </div>
+              )}
+
               {/* Quick View on hover */}
               <div className="absolute inset-x-0 bottom-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <button className="w-full bg-[#c2202f] text-white py-2.5 font-['Orbitron'] text-sm tracking-wider uppercase cursor-pointer hover:bg-[#de3746] transition-colors">
+                <button onClick={() => onSelectProduct(product)} className="w-full bg-[#c2202f] text-white py-2.5 font-['Orbitron'] text-sm tracking-wider uppercase cursor-pointer hover:bg-[#de3746] transition-colors">
                   Quick view
                 </button>
               </div>
             </div>
 
-            {/* Star rating */}
-            <StarRating rating={4 + Math.random()} reviews={Math.floor(Math.random() * 20) + 3} />
-
             {/* Product Name — Orbitron uppercase */}
-            <h3 className="font-['Orbitron'] text-xs font-normal tracking-[0.15em] uppercase text-white mb-1 line-clamp-2">
+            <h3
+              onClick={() => onSelectProduct(product)}
+              className="font-['Orbitron'] text-xs font-normal tracking-[0.15em] uppercase text-white mb-1 line-clamp-2 cursor-pointer hover:text-[#c2202f] transition-colors"
+            >
               {product.name}
             </h3>
 
             {/* Price */}
-            <p className="text-sm font-semibold text-white">
+            <p className="text-sm font-semibold text-white mb-2">
               {formatINR(product.price)}
             </p>
+
+            {/* WhatsApp Enquiry Button */}
+            <a
+              href={`https://wa.me/?text=${msg}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 w-full py-2 border border-[#25D366]/30 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-white transition-all duration-300 text-xs font-medium tracking-wider"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <MessageCircle className="h-3.5 w-3.5" />
+              Enquire on WhatsApp
+            </a>
           </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );
@@ -346,13 +373,17 @@ export default function Dashboard() {
         ) : search ? (
           // Search results — flat grid
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
-            {allProducts.map((product) => (
+            {allProducts.map((product) => {
+              const msg = encodeURIComponent(`Hi, I'm interested in enquiring about:\n\n*${product.name}*\nBrand: ${product.brand}\nPrice: ${formatINR(product.price)}\nSKU: ${product.sku}\n\nPlease share more details.`);
+              return (
               <div
                 key={product._id}
-                onClick={() => setSelectedProduct(product)}
-                className="group cursor-pointer"
+                className="group"
               >
-                <div className="relative aspect-square bg-black overflow-hidden mb-3">
+                <div
+                  onClick={() => setSelectedProduct(product)}
+                  className="relative aspect-square bg-black overflow-hidden mb-3 cursor-pointer"
+                >
                   {product.imageUrl ? (
                     <img
                       src={product.imageUrl}
@@ -364,21 +395,41 @@ export default function Dashboard() {
                       <Package className="h-14 w-14 text-[#333]" />
                     </div>
                   )}
+                  {!product.inStock && (
+                    <div className="absolute top-3 left-3">
+                      <span className="bg-[#c2202f] text-white text-[10px] font-bold px-2 py-1 uppercase tracking-wider font-['Orbitron']">
+                        Sold out
+                      </span>
+                    </div>
+                  )}
                   <div className="absolute inset-x-0 bottom-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <button className="w-full bg-[#c2202f] text-white py-2.5 font-['Orbitron'] text-sm tracking-wider uppercase cursor-pointer hover:bg-[#de3746] transition-colors">
+                    <button onClick={() => setSelectedProduct(product)} className="w-full bg-[#c2202f] text-white py-2.5 font-['Orbitron'] text-sm tracking-wider uppercase cursor-pointer hover:bg-[#de3746] transition-colors">
                       Quick view
                     </button>
                   </div>
                 </div>
-                <StarRating rating={4 + Math.random()} reviews={Math.floor(Math.random() * 20) + 3} />
-                <h3 className="font-['Orbitron'] text-xs font-normal tracking-[0.15em] uppercase text-white mb-1 line-clamp-2">
+                <h3
+                  onClick={() => setSelectedProduct(product)}
+                  className="font-['Orbitron'] text-xs font-normal tracking-[0.15em] uppercase text-white mb-1 line-clamp-2 cursor-pointer hover:text-[#c2202f] transition-colors"
+                >
                   {product.name}
                 </h3>
-                <p className="text-sm font-semibold text-white">
+                <p className="text-sm font-semibold text-white mb-2">
                   {formatINR(product.price)}
                 </p>
+                <a
+                  href={`https://wa.me/?text=${msg}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 w-full py-2 border border-[#25D366]/30 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-white transition-all duration-300 text-xs font-medium tracking-wider"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <MessageCircle className="h-3.5 w-3.5" />
+                  Enquire on WhatsApp
+                </a>
               </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           // Browse mode — horizontal scroll sections

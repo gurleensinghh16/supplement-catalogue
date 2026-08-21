@@ -38,7 +38,7 @@ function buildBulletPoints(product: Product): string[] {
 }
 
 function buildWhatsAppMessage(product: Product): string {
-  const msg = `Hi, I'm interested in enquiring about:\n\n*${product.name}*\nBrand: ${product.brand}\nPrice: ${formatINR(product.price)}\nSKU: ${product.sku}\n\nPlease share more details.`;
+  const msg = `Hi, I'm interested in enquiring about:\n\n*${product.name}*\nBrand: ${product.brand}\nPrice: ${formatINR(product.price)}\nSKU: ${product.sku}\n\nPlease share more details about availability, pricing, and delivery options.`;
   return `https://wa.me/?text=${encodeURIComponent(msg)}`;
 }
 

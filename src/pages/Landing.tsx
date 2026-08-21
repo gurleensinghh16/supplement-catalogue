@@ -10,6 +10,7 @@ import {
   Award,
   Zap,
   Star,
+  MessageCircle,
 } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useRef, useState, useEffect, useCallback } from "react";
@@ -346,11 +347,16 @@ export default function Landing() {
           </motion.div>
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-            {featuredProducts.map((product, i) => (
+            {featuredProducts.map((product, i) => {
+              const msg = encodeURIComponent(`Hi, I'm interested in enquiring about:\n\n*${product.name}*\nPrice: ${product.price}\n\nPlease share more details.`);
+              return (
               <motion.div key={product.name} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
-                variants={scaleIn} custom={i} onClick={() => navigate("/catalogue")} className="group cursor-pointer">
+                variants={scaleIn} custom={i} className="group">
                 {/* Product card — Unmatched Supps style: black bg, no border */}
-                <div className="relative aspect-square bg-black overflow-hidden mb-4">
+                <div
+                  onClick={() => navigate("/catalogue")}
+                  className="relative aspect-square bg-black overflow-hidden mb-4 cursor-pointer"
+                >
                   <img src={product.image} alt={product.name} className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500" />
                   {/* Quick View overlay */}
                   <div className="absolute inset-x-0 bottom-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -366,9 +372,20 @@ export default function Landing() {
                   {product.name}
                 </h3>
                 {/* Price */}
-                <p className="text-base font-semibold text-white">{product.price}</p>
+                <p className="text-base font-semibold text-white mb-3">{product.price}</p>
+                {/* WhatsApp Enquiry Button */}
+                <a
+                  href={`https://wa.me/?text=${msg}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 w-full py-2.5 border border-[#25D366]/30 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-white transition-all duration-300 text-xs font-medium tracking-wider font-['Orbitron'] uppercase"
+                >
+                  <MessageCircle className="h-3.5 w-3.5" />
+                  Enquire on WhatsApp
+                </a>
               </motion.div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
