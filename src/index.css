@@ -221,53 +221,65 @@
 }
 
 @keyframes glitch-skew {
-  0% {
-    transform: skew(0deg);
-  }
-  10% {
-    transform: skew(-2deg);
-  }
-  20% {
-    transform: skew(0.5deg);
-  }
-  30% {
-    transform: skew(-0.5deg);
-  }
-  40% {
-    transform: skew(2deg);
-  }
-  50% {
-    transform: skew(-1deg);
-  }
-  60% {
-    transform: skew(0.5deg);
-  }
-  70% {
-    transform: skew(-0.3deg);
-  }
-  80% {
-    transform: skew(1.5deg);
-  }
-  90% {
-    transform: skew(-2deg);
-  }
-  100% {
-    transform: skew(0deg);
-  }
+  0% { transform: skew(0deg); }
+  10% { transform: skew(-2deg); }
+  20% { transform: skew(0.5deg); }
+  30% { transform: skew(-0.5deg); }
+  40% { transform: skew(2deg); }
+  50% { transform: skew(-1deg); }
+  60% { transform: skew(0.5deg); }
+  70% { transform: skew(-0.3deg); }
+  80% { transform: skew(1.5deg); }
+  90% { transform: skew(-2deg); }
+  100% { transform: skew(0deg); }
+}
+
+@keyframes glitch-skew-delayed {
+  0% { transform: skew(0deg); }
+  15% { transform: skew(1.5deg); }
+  25% { transform: skew(-1deg); }
+  35% { transform: skew(2deg); }
+  50% { transform: skew(-1.5deg); }
+  65% { transform: skew(0.8deg); }
+  80% { transform: skew(-2deg); }
+  100% { transform: skew(0deg); }
+}
+
+@keyframes glitch-flicker {
+  0%, 100% { opacity: 1; }
+  7% { opacity: 0.6; }
+  10% { opacity: 1; }
+  27% { opacity: 0.8; }
+  30% { opacity: 1; }
+  57% { opacity: 0.7; }
+  60% { opacity: 1; }
+  87% { opacity: 0.5; }
+  90% { opacity: 1; }
+}
+
+.glitch-line {
+  position: relative;
+  display: inline-block;
 }
 
 .animate-glitch {
-  animation: glitch-skew 0.4s infinite linear alternate-reverse;
+  animation: glitch-skew 0.4s infinite linear alternate-reverse, glitch-flicker 0.5s infinite linear;
+}
+
+.animate-glitch-delayed {
+  animation: glitch-skew-delayed 0.45s infinite linear alternate-reverse, glitch-flicker 0.6s infinite linear;
 }
 
 .glitch-copy-1 {
-  animation: glitch-anim 0.3s infinite linear alternate-reverse;
-  opacity: 0.8;
+  animation: glitch-anim 0.35s infinite linear alternate-reverse;
+  opacity: 0.85;
+  mix-blend-mode: screen;
 }
 
 .glitch-copy-2 {
   animation: glitch-anim-2 0.3s infinite linear alternate-reverse;
-  opacity: 0.8;
+  opacity: 0.75;
+  mix-blend-mode: screen;
 }
 
 .scanlines {
