@@ -81,15 +81,18 @@ export default function Dashboard() {
       {/* Top Bar */}
       <header className="sticky top-0 z-40 border-b border-white/5 bg-[#0a0a0a]/90 backdrop-blur-xl">
         <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#00ff66]">
-              <Dumbbell className="h-4 w-4 text-black" />
-            </div>
-            <span className="text-base font-bold tracking-tight">TheDietStore</span>
-            <span className="hidden sm:inline text-xs text-white/30 ml-2 border-l border-white/10 pl-3">
-              Product Catalogue
-            </span>
-          </div>
+          <button
+  onClick={() => navigate("/")}
+  className="flex items-center gap-2.5 cursor-pointer"
+>
+  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#00ff66]">
+    <Dumbbell className="h-4 w-4 text-black" />
+  </div>
+  <span className="text-base font-bold tracking-tight">TheDietStore</span>
+  <span className="hidden sm:inline text-xs text-white/30 ml-2 border-l border-white/10 pl-3">
+    Product Catalogue
+  </span>
+</button>
           <div className="flex items-center gap-3">
             <Button
               variant="ghost"
