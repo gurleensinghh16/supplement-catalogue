@@ -179,10 +179,9 @@ export default function Dashboard() {
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-xs text-white/30 font-medium mr-1">Category:</span>
               <button
-                onClick={() => setSelectedCategory(null)}
-                className={cn(
-                  "px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer border",
-                  !selectedCategory
+                onClick={() => setSelectedCategory(null)}                    className={cn(
+                      "px-3 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer border",
+                      !selectedCategory
                     ? "bg-[#00ff66] text-black border-[#00ff66]"
                     : "bg-white/[0.04] text-white/60 border-white/5 hover:border-white/15 hover:text-white/80",
                 )}
@@ -196,10 +195,9 @@ export default function Dashboard() {
                     setSelectedCategory(
                       selectedCategory === cat ? null : cat,
                     )
-                  }
-                  className={cn(
-                    "px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer border",
-                    selectedCategory === cat
+                  }                      className={cn(
+                        "px-3 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer border",
+                        selectedCategory === cat
                       ? "bg-[#00ff66] text-black border-[#00ff66]"
                       : "bg-white/[0.04] text-white/60 border-white/5 hover:border-white/15 hover:text-white/80",
                   )}
@@ -226,7 +224,7 @@ export default function Dashboard() {
                       )
                     }
                     className={cn(
-                      "px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer border",
+                      "px-3 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer border",
                       selectedBrand === brand
                         ? "bg-[#00ff66] text-black border-[#00ff66]"
                         : "bg-white/[0.04] text-white/60 border-white/5 hover:border-white/15 hover:text-white/80",
@@ -284,7 +282,7 @@ export default function Dashboard() {
 
         {/* Results header */}
         <div className="flex items-center justify-between mb-6">
-          <p className="text-sm text-white/40">
+          <p className="text-base text-white/40">
             {products === undefined ? (
               "Loading products..."
             ) : (
@@ -359,12 +357,12 @@ export default function Dashboard() {
                   <div className="absolute top-3 left-3 flex gap-2">
                     <Badge
                       variant="outline"
-                      className="border-white/10 bg-black/60 backdrop-blur-sm text-white/70 text-[10px] font-medium"
+                      className="border-white/10 bg-black/60 backdrop-blur-sm text-white/70 text-xs font-medium"
                     >
                       {product.category}
                     </Badge>
                     {product.featured && (
-                      <Badge className="bg-[#00ff66]/90 text-black border-0 text-[10px] font-bold">
+                      <Badge className="bg-[#00ff66]/90 text-black border-0 text-xs font-bold">
                         ★ Featured
                       </Badge>
                     )}
@@ -373,17 +371,17 @@ export default function Dashboard() {
                 </div>
 
                 <div className="p-5">
-                  <p className="text-[10px] text-[#00ff66]/70 font-semibold uppercase tracking-wider mb-1">
+                  <p className="text-xs text-[#00ff66]/70 font-semibold uppercase tracking-wider mb-1">
                     {product.brand}
                   </p>
-                  <h3 className="font-semibold text-sm text-white/90 mb-2 leading-snug group-hover:text-[#00ff66] transition-colors duration-300 line-clamp-2">
+                  <h3 className="font-semibold text-base text-white/90 mb-2 leading-snug group-hover:text-[#00ff66] transition-colors duration-300 line-clamp-2">
                     {product.name}
                   </h3>
-                  <p className="text-xs text-white/30 leading-relaxed mb-4 line-clamp-2">
+                  <p className="text-sm text-white/30 leading-relaxed mb-4 line-clamp-2">
                     {product.description}
                   </p>
 
-                  <div className="flex items-center gap-1.5 text-[10px] text-white/25 mb-4 flex-wrap">
+                  <div className="flex items-center gap-1.5 text-xs text-white/25 mb-4 flex-wrap">
                     {product.weight && (
                       <span className="px-2 py-0.5 rounded-md bg-white/[0.04]">
                         {product.weight}
@@ -398,14 +396,14 @@ export default function Dashboard() {
 
                   <div className="flex items-end justify-between pt-4 border-t border-white/5">
                     <div>
-                      <p className="text-lg font-bold text-white">
+                      <p className="text-xl font-bold text-white">
                         {formatINR(product.price)}
                       </p>
                     </div>
                     <div className="flex items-center gap-3">
                       {product.stockQuantity !== undefined &&
                         product.stockQuantity !== null && (
-                          <span className="text-[10px] text-white/25">
+                          <span className="text-xs text-white/25">
                             {product.stockQuantity} units
                           </span>
                         )}
@@ -418,7 +416,7 @@ export default function Dashboard() {
                               : "bg-red-400",
                           )}
                         />
-                        <span className="text-xs text-white/40">
+                        <span className="text-sm text-white/40">
                           {product.inStock ? "In Stock" : "Out of Stock"}
                         </span>
                       </div>
@@ -431,7 +429,7 @@ export default function Dashboard() {
         ) : (
           /* List View */
           <div className="rounded-xl border border-white/5 overflow-hidden">
-            <div className="grid grid-cols-[auto_1fr_120px_100px_100px_80px] gap-4 px-6 py-3 bg-white/[0.03] text-[10px] text-white/30 uppercase tracking-wider font-medium">
+            <div className="grid grid-cols-[auto_1fr_120px_100px_100px_80px] gap-4 px-6 py-3 bg-white/[0.03] text-xs text-white/30 uppercase tracking-wider font-medium">
               <span></span>
               <span>Product</span>
               <span>Category</span>
@@ -462,15 +460,15 @@ export default function Dashboard() {
                   <p className="text-sm font-medium text-white/80">
                     {product.name}
                   </p>
-                  <p className="text-xs text-white/35">{product.brand}</p>
+                  <p className="text-sm text-white/35">{product.brand}</p>
                 </div>
-                <span className="text-xs text-white/50">
+                <span className="text-sm text-white/50">
                   {product.category}
                 </span>
-                <span className="text-xs text-white/35 font-mono">
+                <span className="text-sm text-white/35 font-mono">
                   {product.sku}
                 </span>
-                <span className="text-sm font-semibold text-white/80 text-right">
+                <span className="text-base font-semibold text-white/80 text-right">
                   {formatINR(product.price)}
                 </span>
                 <div className="flex items-center justify-end gap-1.5">
@@ -480,7 +478,7 @@ export default function Dashboard() {
                       product.inStock ? "bg-emerald-400" : "bg-red-400",
                     )}
                   />
-                  <span className="text-xs text-white/40">
+                  <span className="text-sm text-white/40">
                     {product.inStock ? "Yes" : "No"}
                   </span>
                 </div>

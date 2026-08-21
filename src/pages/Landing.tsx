@@ -325,10 +325,10 @@ export default function Landing() {
                     />
                   </div>
                   <div className="p-4">
-                    <p className="text-xs text-[#00ff66]/70 font-medium mb-1">
+                    <p className="text-sm text-[#00ff66]/70 font-medium mb-1">
                       {product.brand}
                     </p>
-                    <h3 className="font-semibold text-sm text-white/90 mb-2 group-hover:text-[#00ff66] transition-colors">
+                    <h3 className="font-semibold text-base text-white/90 mb-2 group-hover:text-[#00ff66] transition-colors">
                       {product.name}
                     </h3>
                     <p className="text-lg font-bold text-white">
@@ -382,8 +382,8 @@ export default function Landing() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 p-5">
-                  <h3 className="font-bold text-lg">{cat.name}</h3>
-                  <p className="text-sm text-white/40">
+                  <h3 className="font-bold text-xl">{cat.name}</h3>
+                  <p className="text-base text-white/40">
                     {cat.count} products
                   </p>
                 </div>
@@ -429,8 +429,8 @@ export default function Landing() {
                 <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-[#00ff66]/10 text-[#00ff66] group-hover:bg-[#00ff66]/15 transition-colors">
                   <feature.icon className="h-5 w-5" />
                 </div>
-                <h3 className="font-semibold mb-1.5">{feature.title}</h3>
-                <p className="text-sm text-white/35 leading-relaxed">
+                <h3 className="font-semibold text-base mb-1.5">{feature.title}</h3>
+                <p className="text-base text-white/35 leading-relaxed">
                   {feature.description}
                 </p>
               </motion.div>

@@ -91,12 +91,12 @@ export default function ProductDetail({ product, onClose }: ProductDetailProps) 
             <div className="absolute top-4 left-4 flex gap-2">
               <Badge
                 variant="outline"
-                className="border-white/10 bg-black/60 backdrop-blur-sm text-white/70 text-[10px] font-medium"
+                className="border-white/10 bg-black/60 backdrop-blur-sm text-white/70 text-xs font-medium"
               >
                 {product.category}
               </Badge>
               {product.featured && (
-                <Badge className="bg-[#00ff66]/90 text-black border-0 text-[10px] font-bold">
+                <Badge className="bg-[#00ff66]/90 text-black border-0 text-xs font-bold">
                   ★ Featured
                 </Badge>
               )}
@@ -105,10 +105,10 @@ export default function ProductDetail({ product, onClose }: ProductDetailProps) 
 
           {/* Details */}
           <div className="p-6 sm:p-8 flex flex-col">
-            <p className="text-xs text-[#00ff66]/70 font-semibold uppercase tracking-wider mb-2">
+            <p className="text-sm text-[#00ff66]/70 font-semibold uppercase tracking-wider mb-2">
               {product.brand}
             </p>
-            <h2 className="text-xl sm:text-2xl font-bold text-white leading-tight mb-3">
+            <h2 className="text-2xl sm:text-3xl font-bold text-white leading-tight mb-3">
               {product.name}
             </h2>
 
@@ -120,18 +120,18 @@ export default function ProductDetail({ product, onClose }: ProductDetailProps) 
             </div>
 
             {/* Description */}
-            <p className="text-sm text-white/50 leading-relaxed mb-6">
+            <p className="text-base text-white/50 leading-relaxed mb-6">
               {product.description}
             </p>
 
             {/* Bullet Points */}
             <div className="mb-6">
-              <h4 className="text-xs font-semibold text-white/30 uppercase tracking-wider mb-3">
+              <h4 className="text-sm font-semibold text-white/30 uppercase tracking-wider mb-3">
                 Product Details
               </h4>
               <ul className="space-y-2">
                 {bulletPoints.map((point, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-white/60">
+                  <li key={i} className="flex items-start gap-2 text-base text-white/60">
                     <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[#00ff66]/60 flex-shrink-0" />
                     {point}
                   </li>
@@ -144,12 +144,12 @@ export default function ProductDetail({ product, onClose }: ProductDetailProps) 
               {product.inStock ? (
                 <>
                   <CheckCircle className="h-4 w-4 text-emerald-400" />
-                  <span className="text-sm text-emerald-400">In Stock</span>
+                  <span className="text-base text-emerald-400">In Stock</span>
                 </>
               ) : (
                 <>
                   <XCircle className="h-4 w-4 text-red-400" />
-                  <span className="text-sm text-red-400">Out of Stock</span>
+                  <span className="text-base text-red-400">Out of Stock</span>
                 </>
               )}
             </div>
