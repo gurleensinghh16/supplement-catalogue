@@ -6,7 +6,7 @@ import {
   Shield,
   Star,
   ChevronRight,
-  ShoppingBag,
+  Eye,
   Award,
   TrendingUp,
   Headphones,
@@ -160,7 +160,7 @@ export default function Landing() {
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#00ff66]">
               <Dumbbell className="h-5 w-5 text-black" />
             </div>
-            <span className="text-lg font-bold tracking-tight">SUPPLYCO</span>
+            <span className="text-lg font-bold tracking-tight">TheDietStore</span>
           </a>
           <div className="hidden md:flex items-center gap-8 text-sm text-white/50">
             <a
@@ -181,8 +181,8 @@ export default function Landing() {
               className="bg-[#00ff66] text-black hover:bg-[#00e65c] font-semibold cursor-pointer"
               onClick={() => navigate("/catalogue")}
             >
-              <ShoppingBag className="h-4 w-4 mr-1.5" />
-              Browse Catalogue
+              <Eye className="h-4 w-4 mr-1.5" />
+              View Catalogue
             </Button>
           </div>
         </div>
@@ -202,7 +202,7 @@ export default function Landing() {
             className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#00ff66]/20 bg-[#00ff66]/5 px-4 py-1.5 text-sm text-[#00ff66]"
           >
             <Star className="h-3.5 w-3.5 fill-current" />
-            #1 Wholesale Supplement Supplier
+            #1 Supplement Catalogue
           </motion.div>
 
           <motion.h1
@@ -225,7 +225,7 @@ export default function Landing() {
             className="mt-6 text-lg sm:text-xl text-white/40 max-w-xl leading-relaxed"
           >
             Premium gym supplements from the world's top brands. Browse our
-            full catalogue with real-time pricing and stock.
+            full catalogue with pricing and availability details.
           </motion.p>
 
           <motion.div
@@ -240,7 +240,7 @@ export default function Landing() {
               className="bg-[#00ff66] text-black hover:bg-[#00e65c] font-semibold px-8 h-13 text-base cursor-pointer"
               onClick={() => navigate("/catalogue")}
             >
-              Shop Now
+              View Catalogue
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
             <Button
@@ -415,10 +415,10 @@ export default function Landing() {
             className="text-center mb-16"
           >
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
-              Why <span className="text-[#00ff66]">SupplyCo</span>
+              Why <span className="text-[#00ff66]">TheDietStore</span>
             </h2>
             <p className="mt-4 text-white/40 max-w-lg mx-auto">
-              We make supplement sourcing simple, fast, and reliable.
+              We make supplement browsing simple, fast, and reliable.
             </p>
           </motion.div>
 
@@ -514,10 +514,10 @@ export default function Landing() {
             <div className="flex h-7 w-7 items-center justify-center rounded-md bg-[#00ff66]">
               <Dumbbell className="h-4 w-4 text-black" />
             </div>
-            <span className="text-sm font-bold">SUPPLYCO</span>
+            <span className="text-sm font-bold">TheDietStore</span>
           </div>
           <p className="text-xs text-white/25">
-            © 2026 SupplyCo. All rights reserved.
+            © 2026 TheDietStore. All rights reserved.
           </p>
         </div>
       </footer>
