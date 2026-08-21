@@ -115,13 +115,13 @@ function CategorySection({
         <div className="flex items-center gap-2">
           <button
             onClick={() => scroll("left")}
-            className="w-9 h-9 border border-[#2b2a27] bg-[#111111] flex items-center justify-center hover:border-[#c2202f] hover:text-[#c2202f] transition-all cursor-pointer"
+            className="w-9 h-9 border border-[#2b2a27] flex items-center justify-center hover:border-[#c2202f] hover:text-[#c2202f] transition-all cursor-pointer"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
           <button
             onClick={() => scroll("right")}
-            className="w-9 h-9 border border-[#2b2a27] bg-[#111111] flex items-center justify-center hover:border-[#c2202f] hover:text-[#c2202f] transition-all cursor-pointer"
+            className="w-9 h-9 border border-[#2b2a27] flex items-center justify-center hover:border-[#c2202f] hover:text-[#c2202f] transition-all cursor-pointer"
           >
             <ChevronRight className="h-4 w-4" />
           </button>
@@ -140,10 +140,10 @@ function CategorySection({
             key={product._id}
             className="flex-shrink-0 w-[220px] sm:w-[240px] group"
             style={{ scrollSnapAlign: "start" }}
-          >            {/* Product Image — black bg like Unmatched Supps */}
+          >            {/* Product Image */}
             <div
               onClick={() => onSelectProduct(product)}
-              className="relative aspect-square bg-black overflow-hidden mb-3 cursor-pointer"
+              className="relative aspect-square overflow-hidden mb-3 cursor-pointer border border-[#2b2a27]"
             >
               {product.imageUrl ? (
                 <img
@@ -285,7 +285,7 @@ export default function Dashboard() {
             <Button
               variant="ghost"
               size="sm"
-              className="text-[#999999] hover:text-white hover:bg-[#111111] cursor-pointer font-['Orbitron'] tracking-wider uppercase text-xs"
+              className="text-[#999999] hover:text-white cursor-pointer font-['Orbitron'] tracking-wider uppercase text-xs"
               onClick={() => navigate("/")}
             >
               Home
@@ -295,7 +295,7 @@ export default function Dashboard() {
       </header>
 
       {/* Search Bar */}
-      <div className="border-b border-[#2b2a27] bg-[#0a0a0a]">
+      <div className="border-b border-[#2b2a27]">
         <div className="mx-auto max-w-[1440px] px-6 py-5">
           <div className="relative max-w-2xl">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#999999]" />
@@ -303,7 +303,7 @@ export default function Dashboard() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search products, brands, or keywords..."
-              className="pl-12 h-12 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999] focus-visible:border-[#c2202f]/40 focus-visible:ring-[#c2202f]/20 text-base"
+              className="pl-12 h-12 border border-[#2b2a27] text-white placeholder:text-[#999999] focus-visible:border-[#c2202f]/40 focus-visible:ring-[#c2202f]/20 text-base"
             />
             {search && (
               <button
@@ -349,11 +349,11 @@ export default function Dashboard() {
           <div className="space-y-12">
             {Array.from({ length: 3 }).map((_, i) => (
               <div key={i}>
-                <div className="h-8 bg-[#111111] w-48 mb-5 animate-pulse" />
+                <div className="h-8 border border-[#2b2a27]/50 w-48 mb-5 animate-pulse" />
                 <div className="flex gap-4 overflow-hidden">
                   {Array.from({ length: 5 }).map((_, j) => (
                     <div key={j} className="flex-shrink-0 w-[240px] animate-pulse">
-                      <div className="aspect-square bg-[#111111] rounded-lg mb-3" />
+                      <div className="aspect-square border border-[#2b2a27] rounded-lg mb-3" />
                       <div className="h-4 bg-[#2b2a27] w-3/4 mb-2" />
                       <div className="h-3 bg-[#2b2a27] w-1/2" />
                     </div>
@@ -364,7 +364,7 @@ export default function Dashboard() {
           </div>
         ) : totalResults === 0 ? (
           <div className="flex flex-col items-center justify-center py-32 text-center">
-            <div className="h-20 w-20 bg-[#111111] border border-[#2b2a27] flex items-center justify-center mb-6">
+            <div className="h-20 w-20 border border-[#2b2a27] flex items-center justify-center mb-6">
               <Package className="h-10 w-10 text-[#999999]" />
             </div>
             <h3 className="font-['Orbitron'] text-xl font-normal tracking-wider uppercase text-[#999999] mb-2">
@@ -393,7 +393,7 @@ export default function Dashboard() {
               >
                 <div
                   onClick={() => setSelectedProduct(product)}
-                  className="relative aspect-square bg-black overflow-hidden mb-3 cursor-pointer"
+                  className="relative aspect-square overflow-hidden mb-3 cursor-pointer border border-[#2b2a27]"
                 >
                   {product.imageUrl ? (
                     <img

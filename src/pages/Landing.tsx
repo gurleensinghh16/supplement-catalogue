@@ -356,10 +356,10 @@ export default function Landing() {
               return (
               <motion.div key={product.name} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
                 variants={scaleIn} custom={i} className="group">
-                {/* Product card — Unmatched Supps style: black bg, no border */}
+                {/* Product card */}
                 <div
                   onClick={() => navigate("/catalogue")}
-                  className="relative aspect-square bg-black overflow-hidden mb-4 cursor-pointer"
+                  className="relative aspect-square overflow-hidden mb-4 cursor-pointer border border-[#2b2a27]"
                 >
                   <img src={product.image} alt={product.name} className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500" />
                   {/* Quick View overlay */}
