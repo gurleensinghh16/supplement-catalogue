@@ -292,21 +292,14 @@ export default function Dashboard() {
           </p>
         </div>
 
-        {/* Product Grid */}
+        {/* Product Grid — Clean Unmatched Supps Style */}
         {products === undefined ? (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div
-                key={i}
-                className="border border-[#2b2a27] bg-[#111111] overflow-hidden animate-pulse"
-              >
-                <div className="aspect-square bg-[#0a0a0a]" />
-                <div className="p-5">
-                  <div className="h-4 bg-[#2b2a27] w-20 mb-3" />
-                  <div className="h-5 bg-[#2b2a27] w-3/4 mb-2" />
-                  <div className="h-3 bg-[#2b2a27] w-1/2 mb-4" />
-                  <div className="h-4 bg-[#2b2a27] w-16" />
-                </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="animate-pulse">
+                <div className="aspect-square bg-[#111111] mb-4" />
+                <div className="h-4 bg-[#2b2a27] w-3/4 mx-auto mb-2" />
+                <div className="h-3 bg-[#2b2a27] w-1/2 mx-auto" />
               </div>
             ))}
           </div>
@@ -330,91 +323,42 @@ export default function Dashboard() {
             </Button>
           </div>
         ) : viewMode === "grid" ? (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             {filteredProducts.map((product) => (
               <div
                 key={product._id}
                 onClick={() => setSelectedProduct(product)}
-                className="group cursor-pointer border border-[#2b2a27] bg-[#111111] overflow-hidden hover:border-[#c2202f]/40 hover:shadow-[0_15px_45px_rgba(194,32,47,0.08)] transition-all duration-500"
+                className="group cursor-pointer text-center"
               >
-                <div className="relative aspect-square overflow-hidden bg-[#0a0a0a]">
+                {/* Product Image — Pure black background */}
+                <div className="relative aspect-square bg-black flex items-center justify-center mb-4 overflow-hidden">
                   {product.imageUrl ? (
                     <img
                       src={product.imageUrl}
                       alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                      className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <Package className="h-12 w-12 text-[#999999]/30" />
-                    </div>
+                    <Package className="h-16 w-16 text-[#999999]/20" />
                   )}
-                  <div className="absolute top-3 left-3 flex gap-2">
-                    <Badge
-                      variant="outline"
-                      className="border-[#2b2a27] bg-black/80 text-[#999999] text-xs font-medium"
-                    >
-                      {product.category}
-                    </Badge>
-                    {product.featured && (
-                      <Badge className="bg-[#c2202f] text-white border-0 text-xs font-bold">
-                        ★ Featured
-                      </Badge>
-                    )}
+
+                  {/* Quick View button on hover */}
+                  <div className="absolute inset-x-0 bottom-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <button className="w-full bg-[#c2202f] text-white py-3 font-['Orbitron'] text-sm tracking-wider uppercase cursor-pointer hover:bg-[#de3746] transition-colors">
+                      Quick View
+                    </button>
                   </div>
                 </div>
 
-                <div className="p-5">
-                  <p className="text-xs text-[#999999] font-semibold uppercase tracking-wider mb-1">
-                    {product.brand}
-                  </p>
-                  <h3 className="font-['Orbitron'] text-sm font-normal tracking-wider uppercase text-white mb-2 leading-snug group-hover:text-[#c2202f] transition-colors duration-300 line-clamp-2">
-                    {product.name}
-                  </h3>
-                  <p className="text-sm text-[#999999]/60 leading-relaxed mb-4 line-clamp-2">
-                    {product.description}
-                  </p>
+                {/* Product Name */}
+                <h3 className="font-['Orbitron'] text-sm font-normal tracking-[0.15em] uppercase text-white mb-2 group-hover:text-[#c2202f] transition-colors">
+                  {product.name}
+                </h3>
 
-                  <div className="flex items-center gap-1.5 text-xs text-[#999999]/40 mb-4 flex-wrap">
-                    {product.weight && (
-                      <span className="px-2 py-0.5 bg-[#0a0a0a] border border-[#2b2a27]">
-                        {product.weight}
-                      </span>
-                    )}
-                    {product.servings && (
-                      <span className="px-2 py-0.5 bg-[#0a0a0a] border border-[#2b2a27]">
-                        {product.servings}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="flex items-end justify-between pt-4 border-t border-[#2b2a27]">
-                    <div>
-                      <p className="text-xl font-medium text-white">
-                        {formatINR(product.price)}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      {product.stockQuantity !== undefined &&
-                        product.stockQuantity !== null && (
-                          <span className="text-xs text-[#999999]/40">
-                            {product.stockQuantity} units
-                          </span>
-                        )}
-                      <div className="flex items-center gap-1.5">
-                        <span
-                          className={cn(
-                            "h-2 w-2 rounded-full",
-                            product.inStock ? "bg-[#57a256]" : "bg-[#c2202f]",
-                          )}
-                        />
-                        <span className="text-sm text-[#999999]">
-                          {product.inStock ? "In Stock" : "Out of Stock"}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                {/* Price */}
+                <p className="text-base font-medium text-[#999999]">
+                  {formatINR(product.price)}
+                </p>
               </div>
             ))}
           </div>
@@ -435,12 +379,12 @@ export default function Dashboard() {
                 onClick={() => setSelectedProduct(product)}
                 className="grid grid-cols-[auto_1fr_120px_100px_100px_80px] gap-4 px-6 py-3 border-t border-[#2b2a27] hover:bg-[#111111] transition-colors items-center cursor-pointer"
               >
-                <div className="h-10 w-10 overflow-hidden bg-[#0a0a0a] flex-shrink-0">
+                <div className="h-10 w-10 overflow-hidden bg-black flex-shrink-0">
                   {product.imageUrl ? (
                     <img
                       src={product.imageUrl}
                       alt={product.name}
-                      className="h-full w-full object-cover"
+                      className="h-full w-full object-contain"
                     />
                   ) : (
                     <div className="h-full w-full flex items-center justify-center">
@@ -449,7 +393,7 @@ export default function Dashboard() {
                   )}
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-white">
+                  <p className="font-['Orbitron'] text-sm font-normal tracking-wider uppercase text-white">
                     {product.name}
                   </p>
                   <p className="text-sm text-[#999999]/60">{product.brand}</p>

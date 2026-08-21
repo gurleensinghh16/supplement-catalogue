@@ -28,70 +28,53 @@ const scaleIn = {
 
 const featuredProducts = [
   {
-    name: "Gold Standard Whey",
-    brand: "Optimum Nutrition",
-    price: "₹2,999",
-    image:
-      "https://images.unsplash.com/photo-1593095948071-474c5cc2c129?w=400&h=400&fit=crop&auto=format&q=80",
+    name: "CreGAAtine",
+    price: "₹2,904",
+    image: "https://www.unmatchedsupps.com/cdn/shop/files/CGA_MAIN.png?v=1742515493&width=600",
   },
   {
-    name: "Pre-Workout Ignite",
-    brand: "C4 Original",
-    price: "₹2,499",
-    image:
-      "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=400&fit=crop&auto=format&q=80",
+    name: "Isolate",
+    price: "₹4,979",
+    image: "https://www.unmatchedsupps.com/cdn/shop/files/ISO_MAIN.png?v=1742515555&width=600",
   },
   {
-    name: "Nitro-Tech Whey Gold",
-    brand: "MuscleTech",
-    price: "₹3,149",
-    image:
-      "https://images.unsplash.com/photo-1579722821273-0f6c7d44362f?w=400&h=400&fit=crop&auto=format&q=80",
+    name: "ElectraShred",
+    price: "₹3,734",
+    image: "https://www.unmatchedsupps.com/cdn/shop/files/ES_PL_FRONT.png?v=1777929793&width=600",
   },
   {
-    name: "Electrolyte Hydration",
-    brand: "LMNT",
-    price: "₹2,999",
-    image:
-      "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=400&fit=crop&auto=format&q=80",
+    name: "Stem Cell",
+    price: "₹9,959",
+    image: "https://www.unmatchedsupps.com/cdn/shop/files/SC_MAIN.png?v=1742515710&width=600",
   },
 ];
 
 const categories = [
-  { name: "Protein", count: "50+", image: "https://images.unsplash.com/photo-1593095948071-474c5cc2c129?w=500&h=350&fit=crop&auto=format&q=80" },
-  { name: "Pre-Workout", count: "30+", image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=500&h=350&fit=crop&auto=format&q=80" },
-  { name: "Creatine", count: "20+", image: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=500&h=350&fit=crop&auto=format&q=80" },
-  { name: "Aminos", count: "25+", image: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=500&h=350&fit=crop&auto=format&q=80" },
-  { name: "Mass Gainers", count: "15+", image: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=500&h=350&fit=crop&auto=format&q=80" },
-  { name: "Recovery", count: "20+", image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&h=350&fit=crop&auto=format&q=80" },
+  { name: "Protein", count: "8+" },
+  { name: "Pre-Workout", count: "6+" },
+  { name: "Creatine", count: "4+" },
+  { name: "Aminos", count: "5+" },
+  { name: "Longevity", count: "10+" },
+  { name: "Hydration", count: "5+" },
 ];
 
 const features = [
   {
-    title: "Verified Brands",
-    description: "Every product sourced from authorized distributors with full traceability.",
+    title: "All Natural",
+    description: "Naturally sweetened, flavored, and colored — no artificial additives.",
   },
   {
-    title: "Best Prices",
-    description: "Competitive pricing with volume discounts on bulk orders.",
+    title: "3rd Party Tested",
+    description: "Manufactured in NSF Certified cGMP facility and 3rd-party tested.",
   },
   {
-    title: "Trending Products",
-    description: "Stay ahead with the latest supplements and top-selling products.",
+    title: "Optimized Formulas",
+    description: "Clinical servings of ingredients in every serving for maximal results.",
   },
 ];
 
 const brands = [
-  "Optimum Nutrition",
-  "MuscleTech",
-  "C4 Original",
-  "Kaged Muscle",
-  "Garden of Life",
-  "Xtend",
-  "Myprotein",
-  "BSN",
-  "LMNT",
-  "MusclePharm",
+  "Unmatched Supps",
 ];
 
 export default function Landing() {
@@ -120,7 +103,6 @@ export default function Landing() {
           <div className="hidden md:flex items-center gap-8 text-sm text-[#999999]">
             <a href="#categories" className="hover:text-white transition-colors">Categories</a>
             <a href="#features" className="hover:text-white transition-colors">Why Us</a>
-            <a href="#brands" className="hover:text-white transition-colors">Brands</a>
           </div>
           <div className="flex items-center gap-3">
             <Button
@@ -208,10 +190,10 @@ export default function Landing() {
             className="mt-20 grid grid-cols-2 sm:grid-cols-4 gap-8 border-t border-[#2b2a27] pt-10"
           >
             {[
-              { label: "Products", value: "500+" },
-              { label: "Brands", value: "20+" },
+              { label: "Products", value: "20+" },
+              { label: "Categories", value: "12+" },
               { label: "Happy Clients", value: "1,200+" },
-              { label: "Categories", value: "15+" },
+              { label: "Brands", value: "1" },
             ].map((stat) => (
               <div key={stat.label}>
                 <div className="font-['Orbitron'] text-2xl sm:text-3xl font-normal tracking-wider text-[#c2202f]">
@@ -224,7 +206,7 @@ export default function Landing() {
         </motion.div>
       </section>
 
-      {/* Featured Products */}
+      {/* Featured Products — Clean Unmatched Supps Style */}
       <section className="py-24 px-6 border-t border-[#2b2a27]">
         <div className="mx-auto max-w-7xl">
           <motion.div
@@ -237,7 +219,7 @@ export default function Landing() {
           >
             <div>
               <h2 className="font-['Orbitron'] text-3xl sm:text-4xl font-normal tracking-[0.15em] uppercase">
-                Trending <span className="text-[#c2202f]">Products</span>
+                Top <span className="text-[#c2202f]">Products</span>
               </h2>
               <p className="mt-3 text-[#999999]">
                 Our most popular supplements this month.
@@ -253,7 +235,7 @@ export default function Landing() {
             </Button>
           </motion.div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             {featuredProducts.map((product, i) => (
               <motion.div
                 key={product.name}
@@ -263,28 +245,29 @@ export default function Landing() {
                 variants={scaleIn}
                 custom={i}
                 onClick={() => navigate("/catalogue")}
-                className="group cursor-pointer"
+                className="group cursor-pointer text-center"
               >
-                <div className="relative overflow-hidden bg-[#111111] border border-[#2b2a27] hover:border-[#c2202f]/40 transition-all duration-500 hover:shadow-[0_15px_45px_rgba(194,32,47,0.1)]">
-                  <div className="aspect-square overflow-hidden bg-[#0a0a0a]">
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    />
-                  </div>
-                  <div className="p-5">
-                    <p className="text-xs text-[#999999] font-medium uppercase tracking-wider mb-1">
-                      {product.brand}
-                    </p>
-                    <h3 className="font-['Orbitron'] text-sm font-normal tracking-wider uppercase text-white mb-3 group-hover:text-[#c2202f] transition-colors">
-                      {product.name}
-                    </h3>
-                    <p className="text-lg font-medium text-white">
-                      {product.price}
-                    </p>
+                {/* Product Image — Pure black bg */}
+                <div className="relative aspect-square bg-black flex items-center justify-center mb-4 overflow-hidden">
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
+                  />
+                  {/* Quick View on hover */}
+                  <div className="absolute inset-x-0 bottom-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="w-full bg-[#c2202f] text-white py-3 font-['Orbitron'] text-sm tracking-wider uppercase">
+                      Quick View
+                    </div>
                   </div>
                 </div>
+
+                <h3 className="font-['Orbitron'] text-sm font-normal tracking-[0.15em] uppercase text-white mb-2 group-hover:text-[#c2202f] transition-colors">
+                  {product.name}
+                </h3>
+                <p className="text-base font-medium text-[#999999]">
+                  {product.price}
+                </p>
               </motion.div>
             ))}
           </div>
@@ -306,11 +289,11 @@ export default function Landing() {
               Shop by <span className="text-[#c2202f]">Category</span>
             </h2>
             <p className="mt-4 text-[#999999] max-w-lg mx-auto">
-              Find exactly what your customers need across our full range.
+              Find exactly what you need across our full range.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             {categories.map((cat, i) => (
               <motion.button
                 key={cat.name}
@@ -320,24 +303,14 @@ export default function Landing() {
                 variants={scaleIn}
                 custom={i}
                 onClick={() => navigate("/catalogue")}
-                className="group relative overflow-hidden border border-[#2b2a27] hover:border-[#c2202f]/40 transition-all duration-500 cursor-pointer"
+                className="group border border-[#2b2a27] bg-[#111111] p-8 hover:border-[#c2202f]/30 transition-all duration-300 cursor-pointer text-center"
               >
-                <div className="aspect-[4/3] overflow-hidden">
-                  <img
-                    src={cat.image}
-                    alt={cat.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 p-5">
-                  <h3 className="font-['Orbitron'] text-lg font-normal tracking-[0.15em] uppercase">
-                    {cat.name}
-                  </h3>
-                  <p className="text-sm text-[#999999]">
-                    {cat.count} products
-                  </p>
-                </div>
+                <h3 className="font-['Orbitron'] text-base font-normal tracking-[0.15em] uppercase text-white group-hover:text-[#c2202f] transition-colors mb-2">
+                  {cat.name}
+                </h3>
+                <p className="text-sm text-[#999999]">
+                  {cat.count} products
+                </p>
               </motion.button>
             ))}
           </div>
@@ -381,34 +354,6 @@ export default function Landing() {
                   {feature.description}
                 </p>
               </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Brands */}
-      <section id="brands" className="py-20 px-6 border-t border-[#2b2a27]">
-        <div className="mx-auto max-w-7xl">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={fadeUp}
-            custom={0}
-            className="text-center mb-10"
-          >
-            <h2 className="font-['Orbitron'] text-2xl sm:text-3xl font-normal tracking-[0.15em] uppercase">
-              Trusted <span className="text-[#c2202f]">Brands</span>
-            </h2>
-          </motion.div>
-          <div className="flex flex-wrap justify-center gap-x-10 gap-y-4">
-            {brands.map((brand) => (
-              <span
-                key={brand}
-                className="text-sm font-medium text-[#999999] hover:text-[#c2202f] transition-colors cursor-pointer tracking-wider uppercase"
-              >
-                {brand}
-              </span>
             ))}
           </div>
         </div>
