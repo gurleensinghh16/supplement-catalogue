@@ -62,6 +62,7 @@ const featuredProducts = [
   {
     name: "Whey Protein Isolate",
     price: "₹7,499",
+    compareAtPrice: "₹10,999",
     image: "https://cdn.shopify.com/s/files/1/0021/4302/7249/files/01_chocolate.png?v=1776397394",
     rating: 4.8,
     reviews: 13,
@@ -69,6 +70,7 @@ const featuredProducts = [
   {
     name: "Blood & Guts Pre-Workout",
     price: "₹3,299",
+    compareAtPrice: "₹3,999",
     image: "https://cdn.shopify.com/s/files/1/0021/4302/7249/files/71oGlDLF5dL._AC_SL1500.jpg?v=1721899129",
     rating: 4.6,
     reviews: 8,
@@ -76,6 +78,7 @@ const featuredProducts = [
   {
     name: "Stim Reaper Black",
     price: "₹2,599",
+    compareAtPrice: "₹3,499",
     image: "https://cdn.shopify.com/s/files/1/0021/4302/7249/files/81dVpMvgXLL._AC_SL1500.jpg?v=1721899130",
     rating: 4.9,
     reviews: 21,
@@ -83,6 +86,7 @@ const featuredProducts = [
   {
     name: "Napalm Pre-Workout",
     price: "₹4,999",
+    compareAtPrice: "₹6,999",
     image: "https://cdn.shopify.com/s/files/1/0021/4302/7249/files/tango-foxtrot.webp?v=1741765326",
     rating: 4.7,
     reviews: 15,
@@ -372,7 +376,12 @@ export default function Landing() {
                   {product.name}
                 </h3>
                 {/* Price */}
-                <p className="text-base font-semibold text-white mb-3">{product.price}</p>
+                <div className="flex items-center gap-2 mb-3">
+                  <p className="text-base font-semibold text-white">{product.price}</p>
+                  {product.compareAtPrice && (
+                    <p className="text-sm text-[#999999] line-through">{product.compareAtPrice}</p>
+                  )}
+                </div>
                 {/* WhatsApp Enquiry Button */}
                 <a
                   href={`https://wa.me/918295158184?text=${msg}`}

@@ -38,6 +38,7 @@ const schema = defineSchema(
       category: v.string(),
       description: v.string(),
       price: v.number(),
+      compareAtPrice: v.optional(v.number()),
       sku: v.string(),
       inStock: v.boolean(),
       imageUrl: v.optional(v.string()),

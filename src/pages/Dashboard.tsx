@@ -20,18 +20,22 @@ import ProductDetail from "@/components/ProductDetail";
 const BASE = import.meta.env.BASE_URL || "/";
 
 const sectionCategories = [
-  "Protein",
+  "Whey Protein",
+  "Isolate Protein",
+  "Hydrolysed Protein",
   "Pre-Workout",
+  "BCAA / EAA",
+  "Post-Workout",
+  "Gainer",
+  "Fat Burner",
+  "Greens",
+  "Collagen",
+  "Growth Hormone",
+  "Test Booster",
+  "Multivitamin",
   "Creatine",
-  "Aminos",
-  "Mass Gainers",
-  "Recovery",
-  "Vitamins",
-  "Weight Management",
-  "Hydration",
-  "Fat Burners",
-  "Performance",
-  "Longevity",
+  "Omega & Health",
+  "Nitric Oxide",
 ];
 
 function formatINR(price: number) {
@@ -63,6 +67,7 @@ type Product = {
   category: string;
   description: string;
   price: number;
+  compareAtPrice?: number;
   sku: string;
   inStock: boolean;
   imageUrl?: string;
@@ -178,9 +183,16 @@ function CategorySection({
             </h3>
 
             {/* Price */}
-            <p className="text-sm font-semibold text-white mb-2">
-              {formatINR(product.price)}
-            </p>
+            <div className="flex items-center gap-2 mb-2">
+              <p className="text-sm font-semibold text-white">
+                {formatINR(product.price)}
+              </p>
+              {product.compareAtPrice && (
+                <p className="text-xs text-[#999999] line-through">
+                  {formatINR(product.compareAtPrice)}
+                </p>
+              )}
+            </div>
 
             {/* WhatsApp Enquiry Button */}
             <a
@@ -413,9 +425,16 @@ export default function Dashboard() {
                 >
                   {product.name}
                 </h3>
-                <p className="text-sm font-semibold text-white mb-2">
-                  {formatINR(product.price)}
-                </p>
+                <div className="flex items-center gap-2 mb-2">
+                  <p className="text-sm font-semibold text-white">
+                    {formatINR(product.price)}
+                  </p>
+                  {product.compareAtPrice && (
+                    <p className="text-xs text-[#999999] line-through">
+                      {formatINR(product.compareAtPrice)}
+                    </p>
+                  )}
+                </div>
                 <a
                   href={`https://wa.me/918295158184?text=${msg}`}
                   target="_blank"

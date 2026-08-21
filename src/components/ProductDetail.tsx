@@ -9,6 +9,7 @@ type Product = {
   category: string;
   description: string;
   price: number;
+  compareAtPrice?: number;
   sku: string;
   inStock: boolean;
   imageUrl?: string;
@@ -108,9 +109,21 @@ export default function ProductDetail({ product, onClose }: ProductDetailProps) 
             </h2>
 
             <div className="mb-5">
-              <p className="text-2xl font-medium text-white">
-                {formatINR(product.price)}
-              </p>
+              <div className="flex items-center gap-3">
+                <p className="text-2xl font-medium text-white">
+                  {formatINR(product.price)}
+                </p>
+                {product.compareAtPrice && (
+                  <p className="text-base text-[#999999] line-through">
+                    {formatINR(product.compareAtPrice)}
+                  </p>
+                )}
+              </div>
+              {product.compareAtPrice && (
+                <p className="text-sm text-[#57a256] mt-1">
+                  You save {formatINR(product.compareAtPrice - product.price)}
+                </p>
+              )}
             </div>
 
             <p className="text-sm text-[#999999] leading-relaxed mb-6">
