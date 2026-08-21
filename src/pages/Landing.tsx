@@ -149,12 +149,15 @@ export default function Landing() {
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-[#0a0a0a]/80 backdrop-blur-xl">
         <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
-          <a href="/" className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#00ff66]">
-              <Dumbbell className="h-5 w-5 text-black" />
-            </div>
-            <span className="text-lg font-bold tracking-tight">TheDietStore</span>
-          </a>
+          <button
+  onClick={() => navigate("/")}
+  className="flex items-center gap-2.5 cursor-pointer"
+>
+  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#00ff66]">
+    <Dumbbell className="h-5 w-5 text-black" />
+  </div>
+  <span className="text-lg font-bold tracking-tight">TheDietStore</span>
+</button>
           <div className="hidden md:flex items-center gap-8 text-sm text-white/50">
             <a
               href="#categories"
