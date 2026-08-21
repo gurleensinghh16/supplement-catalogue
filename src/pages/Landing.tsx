@@ -3,12 +3,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import {
   ArrowRight,
   Dumbbell,
-  Shield,
-  Star,
-  ChevronRight,
   Eye,
-  Award,
-  TrendingUp,
 } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useRef } from "react";
@@ -37,88 +32,52 @@ const featuredProducts = [
     brand: "Optimum Nutrition",
     price: "₹2,999",
     image:
-      "https://images.unsplash.com/photo-1622485831930-6961e42a6e9d?w=400&h=400&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1593095948071-474c5cc2c129?w=400&h=400&fit=crop&auto=format&q=80",
   },
   {
     name: "Pre-Workout Ignite",
     brand: "C4 Original",
     price: "₹2,499",
     image:
-      "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=400&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=400&fit=crop&auto=format&q=80",
   },
   {
     name: "Nitro-Tech Whey Gold",
     brand: "MuscleTech",
     price: "₹3,149",
     image:
-      "https://images.unsplash.com/photo-1622485831930-6961e42a6e9d?w=400&h=400&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1579722821273-0f6c7d44362f?w=400&h=400&fit=crop&auto=format&q=80",
   },
   {
     name: "Electrolyte Hydration",
     brand: "LMNT",
     price: "₹2,999",
     image:
-      "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=400&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=400&fit=crop&auto=format&q=80",
   },
 ];
 
 const categories = [
-  {
-    name: "Protein",
-    count: "50+",
-    image:
-      "https://images.unsplash.com/photo-1622485831930-6961e42a6e9d?w=500&h=350&fit=crop&auto=format",
-  },
-  {
-    name: "Pre-Workout",
-    count: "30+",
-    image:
-      "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=500&h=350&fit=crop&auto=format",
-  },
-  {
-    name: "Creatine",
-    count: "20+",
-    image:
-      "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=500&h=350&fit=crop&auto=format",
-  },
-  {
-    name: "Aminos",
-    count: "25+",
-    image:
-      "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=500&h=350&fit=crop&auto=format",
-  },
-  {
-    name: "Mass Gainers",
-    count: "15+",
-    image:
-      "https://images.unsplash.com/photo-1546782899-dfd58be99da0?w=500&h=350&fit=crop&auto=format",
-  },
-  {
-    name: "Recovery",
-    count: "20+",
-    image:
-      "https://images.unsplash.com/photo-1579722821273-0f6c7d44362f?w=500&h=350&fit=crop&auto=format",
-  },
+  { name: "Protein", count: "50+", image: "https://images.unsplash.com/photo-1593095948071-474c5cc2c129?w=500&h=350&fit=crop&auto=format&q=80" },
+  { name: "Pre-Workout", count: "30+", image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=500&h=350&fit=crop&auto=format&q=80" },
+  { name: "Creatine", count: "20+", image: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=500&h=350&fit=crop&auto=format&q=80" },
+  { name: "Aminos", count: "25+", image: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=500&h=350&fit=crop&auto=format&q=80" },
+  { name: "Mass Gainers", count: "15+", image: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=500&h=350&fit=crop&auto=format&q=80" },
+  { name: "Recovery", count: "20+", image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&h=350&fit=crop&auto=format&q=80" },
 ];
 
 const features = [
   {
-    icon: Shield,
     title: "Verified Brands",
-    description:
-      "Every product sourced from authorized distributors with full traceability.",
+    description: "Every product sourced from authorized distributors with full traceability.",
   },
   {
-    icon: Award,
     title: "Best Prices",
-    description:
-      "Competitive pricing with volume discounts on bulk orders.",
+    description: "Competitive pricing with volume discounts on bulk orders.",
   },
   {
-    icon: TrendingUp,
     title: "Trending Products",
-    description:
-      "Stay ahead with the latest supplements and top-selling products.",
+    description: "Stay ahead with the latest supplements and top-selling products.",
   },
 ];
 
@@ -145,36 +104,27 @@ export default function Landing() {
   const heroY = useTransform(scrollYProgress, [0, 1], [0, 100]);
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white overflow-hidden">
+    <div className="min-h-screen bg-black text-white overflow-hidden">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-[#0a0a0a]/80 backdrop-blur-xl">
+      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-[#2b2a27] bg-black/90 backdrop-blur-xl">
         <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
           <button
-  onClick={() => navigate("/")}
-  className="flex items-center gap-2.5 cursor-pointer"
->
-  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#00ff66]">
-    <Dumbbell className="h-5 w-5 text-black" />
-  </div>
-  <span className="text-lg font-bold tracking-tight">TheDietStore</span>
-</button>
-          <div className="hidden md:flex items-center gap-8 text-sm text-white/50">
-            <a
-              href="#categories"
-              className="hover:text-white transition-colors"
-            >
-              Categories
-            </a>
-            <a href="#features" className="hover:text-white transition-colors">
-              Why Us
-            </a>
-            <a href="#brands" className="hover:text-white transition-colors">
-              Brands
-            </a>
+            onClick={() => navigate("/")}
+            className="flex items-center gap-3 cursor-pointer"
+          >
+            <Dumbbell className="h-5 w-5 text-[#c2202f]" />
+            <span className="font-['Orbitron'] text-lg font-normal tracking-[0.15em] uppercase">
+              TheDietStore
+            </span>
+          </button>
+          <div className="hidden md:flex items-center gap-8 text-sm text-[#999999]">
+            <a href="#categories" className="hover:text-white transition-colors">Categories</a>
+            <a href="#features" className="hover:text-white transition-colors">Why Us</a>
+            <a href="#brands" className="hover:text-white transition-colors">Brands</a>
           </div>
           <div className="flex items-center gap-3">
             <Button
-              className="bg-[#00ff66] text-black hover:bg-[#00e65c] font-semibold cursor-pointer"
+              className="bg-[#c2202f] text-white hover:bg-[#de3746] font-medium cursor-pointer"
               onClick={() => navigate("/catalogue")}
             >
               <Eye className="h-4 w-4 mr-1.5" />
@@ -186,8 +136,7 @@ export default function Landing() {
 
       {/* Hero */}
       <section ref={heroRef} className="relative pt-32 pb-24 px-6 overflow-hidden">
-        <div className="absolute top-20 left-1/4 w-[500px] h-[500px] bg-[#00ff66]/6 rounded-full blur-[150px] pointer-events-none" />
-        <div className="absolute top-40 right-1/4 w-[300px] h-[300px] bg-[#00ff66]/4 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute top-20 left-1/4 w-[500px] h-[500px] bg-[#c2202f]/5 rounded-full blur-[150px] pointer-events-none" />
 
         <motion.div style={{ y: heroY }} className="mx-auto max-w-7xl relative">
           <motion.div
@@ -195,9 +144,8 @@ export default function Landing() {
             animate="visible"
             variants={fadeUp}
             custom={0}
-            className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#00ff66]/20 bg-[#00ff66]/5 px-4 py-1.5 text-sm text-[#00ff66]"
+            className="mb-6 inline-flex items-center gap-2 border border-[#2b2a27] bg-[#111111] px-4 py-2 text-xs font-medium uppercase tracking-wider text-[#999999]"
           >
-            <Star className="h-3.5 w-3.5 fill-current" />
             #1 Supplement Catalogue
           </motion.div>
 
@@ -206,11 +154,11 @@ export default function Landing() {
             animate="visible"
             variants={fadeUp}
             custom={1}
-            className="text-5xl sm:text-6xl lg:text-8xl font-extrabold tracking-tight leading-[1.02] max-w-5xl"
+            className="text-5xl sm:text-6xl lg:text-[5.5rem] font-normal tracking-[0.15em] uppercase leading-[1.1] max-w-5xl"
           >
             Fuel Your
             <br />
-            <span className="text-[#00ff66]">Performance</span>
+            <span className="text-[#c2202f]">Performance</span>
           </motion.h1>
 
           <motion.p
@@ -218,7 +166,7 @@ export default function Landing() {
             animate="visible"
             variants={fadeUp}
             custom={2}
-            className="mt-6 text-lg sm:text-xl text-white/40 max-w-xl leading-relaxed"
+            className="mt-6 text-lg text-[#999999] max-w-xl leading-relaxed font-normal tracking-wide"
           >
             Premium gym supplements from the world's top brands. Browse our
             full catalogue with pricing and availability details.
@@ -233,7 +181,7 @@ export default function Landing() {
           >
             <Button
               size="lg"
-              className="bg-[#00ff66] text-black hover:bg-[#00e65c] font-semibold px-8 h-13 text-base cursor-pointer"
+              className="bg-[#c2202f] text-white hover:bg-[#de3746] font-medium px-10 h-12 cursor-pointer"
               onClick={() => navigate("/catalogue")}
             >
               View Catalogue
@@ -242,11 +190,9 @@ export default function Landing() {
             <Button
               size="lg"
               variant="outline"
-              className="border-white/10 text-white hover:bg-white/5 hover:border-white/20 h-13 px-8 text-base cursor-pointer"
+              className="border-[#2b2a27] text-[#999999] hover:bg-[#111111] hover:text-white hover:border-[#3a3a37] h-12 px-10 cursor-pointer"
               onClick={() => {
-                document
-                  .getElementById("categories")
-                  ?.scrollIntoView({ behavior: "smooth" });
+                document.getElementById("categories")?.scrollIntoView({ behavior: "smooth" });
               }}
             >
               Explore Categories
@@ -259,7 +205,7 @@ export default function Landing() {
             animate="visible"
             variants={fadeUp}
             custom={4}
-            className="mt-20 grid grid-cols-2 sm:grid-cols-4 gap-8 border-t border-white/10 pt-10"
+            className="mt-20 grid grid-cols-2 sm:grid-cols-4 gap-8 border-t border-[#2b2a27] pt-10"
           >
             {[
               { label: "Products", value: "500+" },
@@ -268,10 +214,10 @@ export default function Landing() {
               { label: "Categories", value: "15+" },
             ].map((stat) => (
               <div key={stat.label}>
-                <div className="text-2xl sm:text-3xl font-bold text-[#00ff66]">
+                <div className="font-['Orbitron'] text-2xl sm:text-3xl font-normal tracking-wider text-[#c2202f]">
                   {stat.value}
                 </div>
-                <div className="text-sm text-white/35 mt-1">{stat.label}</div>
+                <div className="text-sm text-[#999999] mt-1 tracking-wide uppercase">{stat.label}</div>
               </div>
             ))}
           </motion.div>
@@ -279,7 +225,7 @@ export default function Landing() {
       </section>
 
       {/* Featured Products */}
-      <section className="py-24 px-6 border-t border-white/5">
+      <section className="py-24 px-6 border-t border-[#2b2a27]">
         <div className="mx-auto max-w-7xl">
           <motion.div
             initial="hidden"
@@ -290,16 +236,16 @@ export default function Landing() {
             className="flex items-end justify-between mb-12"
           >
             <div>
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
-                Trending <span className="text-[#00ff66]">Products</span>
+              <h2 className="font-['Orbitron'] text-3xl sm:text-4xl font-normal tracking-[0.15em] uppercase">
+                Trending <span className="text-[#c2202f]">Products</span>
               </h2>
-              <p className="mt-3 text-white/40">
+              <p className="mt-3 text-[#999999]">
                 Our most popular supplements this month.
               </p>
             </div>
             <Button
               variant="ghost"
-              className="text-[#00ff66] hover:text-[#00ff66] hover:bg-[#00ff66]/5 cursor-pointer hidden sm:flex"
+              className="text-[#c2202f] hover:text-[#de3746] hover:bg-[#c2202f]/5 cursor-pointer hidden sm:flex"
               onClick={() => navigate("/catalogue")}
             >
               View All
@@ -319,22 +265,22 @@ export default function Landing() {
                 onClick={() => navigate("/catalogue")}
                 className="group cursor-pointer"
               >
-                <div className="relative rounded-2xl overflow-hidden bg-white/[0.03] border border-white/5 hover:border-[#00ff66]/30 transition-all duration-500 hover:shadow-[0_0_40px_rgba(0,255,102,0.08)]">
-                  <div className="aspect-square overflow-hidden bg-gradient-to-br from-[#00ff66]/5 to-transparent">
+                <div className="relative overflow-hidden bg-[#111111] border border-[#2b2a27] hover:border-[#c2202f]/40 transition-all duration-500 hover:shadow-[0_15px_45px_rgba(194,32,47,0.1)]">
+                  <div className="aspect-square overflow-hidden bg-[#0a0a0a]">
                     <img
                       src={product.image}
                       alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     />
                   </div>
-                  <div className="p-4">
-                    <p className="text-sm text-[#00ff66]/70 font-medium mb-1">
+                  <div className="p-5">
+                    <p className="text-xs text-[#999999] font-medium uppercase tracking-wider mb-1">
                       {product.brand}
                     </p>
-                    <h3 className="font-semibold text-base text-white/90 mb-2 group-hover:text-[#00ff66] transition-colors">
+                    <h3 className="font-['Orbitron'] text-sm font-normal tracking-wider uppercase text-white mb-3 group-hover:text-[#c2202f] transition-colors">
                       {product.name}
                     </h3>
-                    <p className="text-lg font-bold text-white">
+                    <p className="text-lg font-medium text-white">
                       {product.price}
                     </p>
                   </div>
@@ -345,8 +291,8 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Categories with images */}
-      <section id="categories" className="py-24 px-6 border-t border-white/5">
+      {/* Categories */}
+      <section id="categories" className="py-24 px-6 border-t border-[#2b2a27]">
         <div className="mx-auto max-w-7xl">
           <motion.div
             initial="hidden"
@@ -356,10 +302,10 @@ export default function Landing() {
             custom={0}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
-              Shop by <span className="text-[#00ff66]">Category</span>
+            <h2 className="font-['Orbitron'] text-3xl sm:text-4xl font-normal tracking-[0.15em] uppercase">
+              Shop by <span className="text-[#c2202f]">Category</span>
             </h2>
-            <p className="mt-4 text-white/40 max-w-lg mx-auto">
+            <p className="mt-4 text-[#999999] max-w-lg mx-auto">
               Find exactly what your customers need across our full range.
             </p>
           </motion.div>
@@ -374,7 +320,7 @@ export default function Landing() {
                 variants={scaleIn}
                 custom={i}
                 onClick={() => navigate("/catalogue")}
-                className="group relative rounded-2xl overflow-hidden border border-white/5 hover:border-[#00ff66]/30 transition-all duration-500 cursor-pointer"
+                className="group relative overflow-hidden border border-[#2b2a27] hover:border-[#c2202f]/40 transition-all duration-500 cursor-pointer"
               >
                 <div className="aspect-[4/3] overflow-hidden">
                   <img
@@ -385,13 +331,12 @@ export default function Landing() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 p-5">
-                  <h3 className="font-bold text-xl">{cat.name}</h3>
-                  <p className="text-base text-white/40">
+                  <h3 className="font-['Orbitron'] text-lg font-normal tracking-[0.15em] uppercase">
+                    {cat.name}
+                  </h3>
+                  <p className="text-sm text-[#999999]">
                     {cat.count} products
                   </p>
-                </div>
-                <div className="absolute top-4 right-4 h-8 w-8 rounded-full bg-white/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <ChevronRight className="h-4 w-4" />
                 </div>
               </motion.button>
             ))}
@@ -400,7 +345,7 @@ export default function Landing() {
       </section>
 
       {/* Features */}
-      <section id="features" className="py-24 px-6 border-t border-white/5">
+      <section id="features" className="py-24 px-6 border-t border-[#2b2a27]">
         <div className="mx-auto max-w-7xl">
           <motion.div
             initial="hidden"
@@ -410,10 +355,10 @@ export default function Landing() {
             custom={0}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
-              Why <span className="text-[#00ff66]">TheDietStore</span>
+            <h2 className="font-['Orbitron'] text-3xl sm:text-4xl font-normal tracking-[0.15em] uppercase">
+              Why <span className="text-[#c2202f]">TheDietStore</span>
             </h2>
-            <p className="mt-4 text-white/40 max-w-lg mx-auto">
+            <p className="mt-4 text-[#999999] max-w-lg mx-auto">
               We make supplement browsing simple, fast, and reliable.
             </p>
           </motion.div>
@@ -427,13 +372,12 @@ export default function Landing() {
                 viewport={{ once: true, margin: "-50px" }}
                 variants={fadeUp}
                 custom={i}
-                className="group rounded-2xl border border-white/5 bg-white/[0.02] p-6 hover:border-[#00ff66]/20 hover:bg-[#00ff66]/[0.03] transition-all duration-300"
+                className="group border border-[#2b2a27] bg-[#111111] p-8 hover:border-[#c2202f]/30 transition-all duration-300"
               >
-                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-[#00ff66]/10 text-[#00ff66] group-hover:bg-[#00ff66]/15 transition-colors">
-                  <feature.icon className="h-5 w-5" />
-                </div>
-                <h3 className="font-semibold text-base mb-1.5">{feature.title}</h3>
-                <p className="text-base text-white/35 leading-relaxed">
+                <h3 className="font-['Orbitron'] text-base font-normal tracking-[0.15em] uppercase mb-3 text-[#c2202f]">
+                  {feature.title}
+                </h3>
+                <p className="text-sm text-[#999999] leading-relaxed">
                   {feature.description}
                 </p>
               </motion.div>
@@ -443,7 +387,7 @@ export default function Landing() {
       </section>
 
       {/* Brands */}
-      <section id="brands" className="py-20 px-6 border-t border-white/5">
+      <section id="brands" className="py-20 px-6 border-t border-[#2b2a27]">
         <div className="mx-auto max-w-7xl">
           <motion.div
             initial="hidden"
@@ -453,15 +397,15 @@ export default function Landing() {
             custom={0}
             className="text-center mb-10"
           >
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
-              Trusted <span className="text-[#00ff66]">Brands</span>
+            <h2 className="font-['Orbitron'] text-2xl sm:text-3xl font-normal tracking-[0.15em] uppercase">
+              Trusted <span className="text-[#c2202f]">Brands</span>
             </h2>
           </motion.div>
           <div className="flex flex-wrap justify-center gap-x-10 gap-y-4">
             {brands.map((brand) => (
               <span
                 key={brand}
-                className="text-sm font-medium text-white/25 hover:text-[#00ff66]/60 transition-colors cursor-pointer"
+                className="text-sm font-medium text-[#999999] hover:text-[#c2202f] transition-colors cursor-pointer tracking-wider uppercase"
               >
                 {brand}
               </span>
@@ -471,7 +415,7 @@ export default function Landing() {
       </section>
 
       {/* CTA */}
-      <section className="py-24 px-6">
+      <section className="py-24 px-6 border-t border-[#2b2a27]">
         <div className="mx-auto max-w-7xl">
           <motion.div
             initial="hidden"
@@ -479,20 +423,20 @@ export default function Landing() {
             viewport={{ once: true, margin: "-100px" }}
             variants={fadeUp}
             custom={0}
-            className="relative rounded-3xl border border-[#00ff66]/20 bg-[#00ff66]/[0.03] p-12 sm:p-16 text-center overflow-hidden"
+            className="relative border border-[#2b2a27] bg-[#111111] p-12 sm:p-16 text-center overflow-hidden"
           >
-            <div className="absolute inset-0 bg-gradient-to-b from-[#00ff66]/5 to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#c2202f]/5 to-transparent pointer-events-none" />
             <div className="relative">
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
+              <h2 className="font-['Orbitron'] text-3xl sm:text-4xl font-normal tracking-[0.15em] uppercase">
                 Ready to stock up?
               </h2>
-              <p className="mt-4 text-white/40 max-w-md mx-auto">
+              <p className="mt-4 text-[#999999] max-w-md mx-auto">
                 Browse our full catalogue with wholesale pricing and real-time
                 inventory.
               </p>
               <Button
                 size="lg"
-                className="mt-8 bg-[#00ff66] text-black hover:bg-[#00e65c] font-semibold px-10 h-13 text-base cursor-pointer"
+                className="mt-8 bg-[#c2202f] text-white hover:bg-[#de3746] font-medium px-10 h-12 cursor-pointer"
                 onClick={() => navigate("/catalogue")}
               >
                 View Catalogue
@@ -504,15 +448,15 @@ export default function Landing() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-white/5 py-10 px-6">
+      <footer className="border-t border-[#2b2a27] py-10 px-6">
         <div className="mx-auto max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-md bg-[#00ff66]">
-              <Dumbbell className="h-4 w-4 text-black" />
-            </div>
-            <span className="text-sm font-bold">TheDietStore</span>
+          <div className="flex items-center gap-3">
+            <Dumbbell className="h-4 w-4 text-[#c2202f]" />
+            <span className="font-['Orbitron'] text-sm font-normal tracking-[0.15em] uppercase">
+              TheDietStore
+            </span>
           </div>
-          <p className="text-xs text-white/25">
+          <p className="text-xs text-[#999999] tracking-wide">
             © 2026 TheDietStore. All rights reserved.
           </p>
         </div>

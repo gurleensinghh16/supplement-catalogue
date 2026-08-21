@@ -10,9 +10,8 @@ import {
   LogOut,
   Package,
   Pencil,
-  Check,
-  X,
   Save,
+  X,
 } from "lucide-react";
 import { useNavigate } from "react-router";
 import { cn } from "@/lib/utils";
@@ -71,14 +70,16 @@ export default function Admin() {
 
   if (!isLoggedIn) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center px-6">
+      <div className="min-h-screen bg-black flex items-center justify-center px-6">
         <div className="w-full max-w-sm">
           <div className="text-center mb-8">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#00ff66] mx-auto mb-4">
-              <Dumbbell className="h-7 w-7 text-black" />
+            <div className="flex h-14 w-14 items-center justify-center bg-[#c2202f] mx-auto mb-4">
+              <Dumbbell className="h-7 w-7 text-white" />
             </div>
-            <h1 className="text-2xl font-bold">Admin Panel</h1>
-            <p className="text-sm text-white/40 mt-2">
+            <h1 className="font-['Orbitron'] text-2xl font-normal tracking-[0.15em] uppercase">
+              Admin Panel
+            </h1>
+            <p className="text-sm text-[#999999] mt-2">
               Sign in to manage products
             </p>
           </div>
@@ -90,7 +91,7 @@ export default function Admin() {
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="h-11 bg-white/[0.04] border-white/10 text-white placeholder:text-white/30 focus-visible:border-[#00ff66]/40"
+                className="h-11 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999] focus-visible:border-[#c2202f]/40"
                 required
               />
             </div>
@@ -100,35 +101,31 @@ export default function Admin() {
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="h-11 bg-white/[0.04] border-white/10 text-white placeholder:text-white/30 focus-visible:border-[#00ff66]/40"
+                className="h-11 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999] focus-visible:border-[#c2202f]/40"
                 required
               />
             </div>
             {loginError && (
-              <p className="text-sm text-red-400">{loginError}</p>
+              <p className="text-sm text-[#c2202f]">{loginError}</p>
             )}
             <Button
               type="submit"
-              className="w-full h-11 bg-[#00ff66] text-black hover:bg-[#00e65c] font-semibold cursor-pointer"
+              className="w-full h-11 bg-[#c2202f] text-white hover:bg-[#de3746] font-medium cursor-pointer"
             >
               <Lock className="h-4 w-4 mr-2" />
               Sign In
             </Button>
           </form>
 
-          <div className="mt-6 p-4 rounded-xl border border-white/5 bg-white/[0.02]">
-            <p className="text-xs text-white/30 mb-2 font-medium">Demo Credentials:</p>
-            <p className="text-xs text-white/50 font-mono">
-              {ADMIN_EMAIL}
-            </p>
-            <p className="text-xs text-white/50 font-mono">
-              {ADMIN_PASSWORD}
-            </p>
+          <div className="mt-6 p-4 border border-[#2b2a27] bg-[#111111]">
+            <p className="text-xs text-[#999999] mb-2 font-medium">Demo Credentials:</p>
+            <p className="text-xs text-[#999999] font-mono">{ADMIN_EMAIL}</p>
+            <p className="text-xs text-[#999999] font-mono">{ADMIN_PASSWORD}</p>
           </div>
 
           <button
             onClick={() => navigate("/")}
-            className="mt-6 text-xs text-white/30 hover:text-white/60 cursor-pointer w-full text-center"
+            className="mt-6 text-xs text-[#999999] hover:text-white cursor-pointer w-full text-center"
           >
             ← Back to home
           </button>
@@ -138,27 +135,26 @@ export default function Admin() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
-      {/* Admin Header */}
-      <header className="sticky top-0 z-40 border-b border-white/5 bg-[#0a0a0a]/90 backdrop-blur-xl">
+    <div className="min-h-screen bg-black text-white">
+      <header className="sticky top-0 z-40 border-b border-[#2b2a27] bg-black/90 backdrop-blur-xl">
         <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
           <button
-  onClick={() => navigate("/")}
-  className="flex items-center gap-2.5 cursor-pointer"
->
-  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#00ff66]">
-    <Dumbbell className="h-4 w-4 text-black" />
-  </div>
-  <span className="text-base font-bold tracking-tight">TheDietStore</span>
-  <Badge className="bg-[#00ff66]/10 text-[#00ff66] border-[#00ff66]/20 text-[10px] ml-1">
-    Admin
-  </Badge>
-</button>
+            onClick={() => navigate("/")}
+            className="flex items-center gap-3 cursor-pointer"
+          >
+            <Dumbbell className="h-5 w-5 text-[#c2202f]" />
+            <span className="font-['Orbitron'] text-base font-normal tracking-[0.15em] uppercase">
+              TheDietStore
+            </span>
+            <Badge className="bg-[#c2202f]/10 text-[#c2202f] border border-[#c2202f]/20 text-[10px] ml-1">
+              Admin
+            </Badge>
+          </button>
           <div className="flex items-center gap-3">
             <Button
               variant="ghost"
               size="sm"
-              className="text-white/50 hover:text-white hover:bg-white/5 cursor-pointer"
+              className="text-[#999999] hover:text-white hover:bg-[#111111] cursor-pointer"
               onClick={() => navigate("/catalogue")}
             >
               View Catalogue
@@ -166,7 +162,7 @@ export default function Admin() {
             <Button
               variant="ghost"
               size="sm"
-              className="text-white/50 hover:text-white hover:bg-white/5 cursor-pointer"
+              className="text-[#999999] hover:text-white hover:bg-[#111111] cursor-pointer"
               onClick={() => setIsLoggedIn(false)}
             >
               <LogOut className="h-4 w-4" />
@@ -177,18 +173,20 @@ export default function Admin() {
 
       <div className="mx-auto max-w-7xl px-6 py-8">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold">Product Management</h1>
-          <p className="text-sm text-white/40 mt-1">
+          <h1 className="font-['Orbitron'] text-2xl font-normal tracking-[0.15em] uppercase">
+            Product Management
+          </h1>
+          <p className="text-sm text-[#999999] mt-1">
             Edit prices, images, and stock quantities for all products.
           </p>
         </div>
 
         {products === undefined ? (
-          <div className="text-center py-20 text-white/40">Loading products...</div>
+          <div className="text-center py-20 text-[#999999]">Loading products...</div>
         ) : (
-          <div className="rounded-xl border border-white/5 overflow-hidden">
+          <div className="border border-[#2b2a27] overflow-hidden">
             {/* Table Header */}
-            <div className="hidden md:grid grid-cols-[auto_1fr_100px_100px_120px_80px_80px_80px] gap-3 px-4 py-3 bg-white/[0.03] text-[10px] text-white/30 uppercase tracking-wider font-medium">
+            <div className="hidden md:grid grid-cols-[auto_1fr_100px_100px_120px_80px_80px_80px] gap-3 px-4 py-3 bg-[#111111] text-xs text-[#999999] uppercase tracking-wider font-medium border-b border-[#2b2a27]">
               <span></span>
               <span>Product</span>
               <span>Category</span>
@@ -205,12 +203,11 @@ export default function Admin() {
                 <div
                   key={product._id}
                   className={cn(
-                    "grid grid-cols-1 md:grid-cols-[auto_1fr_100px_100px_120px_80px_80px_80px] gap-3 px-4 py-3 border-t border-white/5 items-center transition-colors",
-                    isEditing && "bg-[#00ff66]/[0.03]",
+                    "grid grid-cols-1 md:grid-cols-[auto_1fr_100px_100px_120px_80px_80px_80px] gap-3 px-4 py-3 border-t border-[#2b2a27] items-center transition-colors",
+                    isEditing && "bg-[#c2202f]/[0.03]",
                   )}
                 >
-                  {/* Image */}
-                  <div className="h-10 w-10 rounded-lg overflow-hidden bg-white/[0.04] flex-shrink-0">
+                  <div className="h-10 w-10 overflow-hidden bg-[#0a0a0a] flex-shrink-0">
                     {(isEditing ? editImage : product.imageUrl) ? (
                       <img
                         src={isEditing ? editImage : product.imageUrl}
@@ -219,85 +216,79 @@ export default function Admin() {
                       />
                     ) : (
                       <div className="h-full w-full flex items-center justify-center">
-                        <Package className="h-4 w-4 text-white/10" />
+                        <Package className="h-4 w-4 text-[#999999]/30" />
                       </div>
                     )}
                   </div>
 
-                  {/* Name & Brand */}
                   <div>
-                    <p className="text-sm font-medium text-white/80 line-clamp-1">
+                    <p className="text-sm font-medium text-white line-clamp-1">
                       {product.name}
                     </p>
-                    <p className="text-xs text-white/35">{product.brand}</p>
+                    <p className="text-xs text-[#999999]/60">{product.brand}</p>
                   </div>
 
-                  {/* Category */}
-                  <span className="text-xs text-white/50 hidden md:block">
+                  <span className="text-xs text-[#999999] hidden md:block">
                     {product.category}
                   </span>
 
-                  {/* Price */}
                   <div className="text-right">
                     {isEditing ? (
                       <Input
                         value={editPrice}
                         onChange={(e) => setEditPrice(e.target.value)}
                         type="number"
-                        className="h-8 text-xs bg-white/[0.04] border-white/10 text-white w-full text-right"
+                        className="h-8 text-xs bg-[#111111] border-[#2b2a27] text-white w-full text-right"
                       />
                     ) : (
-                      <span className="text-sm font-semibold text-white/80">
+                      <span className="text-sm font-medium text-white">
                         {formatINR(product.price)}
                       </span>
                     )}
                   </div>
 
-                  {/* Image URL */}
                   <div className="hidden md:block">
                     {isEditing ? (
                       <Input
                         value={editImage}
                         onChange={(e) => setEditImage(e.target.value)}
-                        className="h-8 text-xs bg-white/[0.04] border-white/10 text-white"
+                        className="h-8 text-xs bg-[#111111] border-[#2b2a27] text-white"
                         placeholder="Image URL"
                       />
                     ) : (
-                      <span className="text-[10px] text-white/25 truncate block max-w-[120px]">
+                      <span className="text-xs text-[#999999]/40 truncate block max-w-[120px]">
                         {product.imageUrl || "—"}
                       </span>
                     )}
                   </div>
 
-                  {/* Stock */}
                   <div className="text-right">
                     {isEditing ? (
                       <Input
                         value={editStock}
                         onChange={(e) => setEditStock(e.target.value)}
                         type="number"
-                        className="h-8 text-xs bg-white/[0.04] border-white/10 text-white w-full text-right"
+                        className="h-8 text-xs bg-[#111111] border-[#2b2a27] text-white w-full text-right"
                       />
                     ) : (
-                      <span className="text-xs text-white/50">
+                      <span className="text-xs text-[#999999]">
                         {product.stockQuantity ?? "—"}
                       </span>
                     )}
                   </div>
 
-                  {/* In Stock */}
                   <div className="flex justify-center">
                     {isEditing ? (
                       <button
                         onClick={() => setEditInStock(!editInStock)}
                         className={cn(
-                          "h-6 w-11 rounded-full transition-colors cursor-pointer relative",
-                          editInStock ? "bg-emerald-500" : "bg-white/10",
+                          "h-6 w-11 transition-colors cursor-pointer relative",
+                          editInStock ? "bg-[#57a256]" : "bg-[#2b2a27]",
                         )}
                       >
                         <span
                           className={cn(
-                            "absolute top-0.5 h-5 w-5 rounded-full bg-white transition-transform",
+                            "absolute top-0.5 h-5 w-5 bg-white transition-transform",
                             editInStock ? "translate-x-[22px]" : "translate-x-0.5",
                           )}
                         />
@@ -306,25 +297,24 @@ export default function Admin() {
                       <span
                         className={cn(
                           "h-2 w-2 rounded-full inline-block",
-                          product.inStock ? "bg-emerald-400" : "bg-red-400",
+                          product.inStock ? "bg-[#57a256]" : "bg-[#c2202f]",
                         )}
                       />
                     )}
                   </div>
 
-                  {/* Actions */}
                   <div className="flex justify-center gap-1">
                     {isEditing ? (
                       <>
                         <button
                           onClick={() => saveEdit(product._id)}
-                          className="h-7 w-7 rounded-md bg-[#00ff66]/10 text-[#00ff66] flex items-center justify-center hover:bg-[#00ff66]/20 cursor-pointer transition-colors"
+                          className="h-7 w-7 bg-[#c2202f]/10 text-[#c2202f] flex items-center justify-center hover:bg-[#c2202f]/20 cursor-pointer transition-colors"
                         >
                           <Save className="h-3.5 w-3.5" />
                         </button>
                         <button
                           onClick={() => setEditingId(null)}
-                          className="h-7 w-7 rounded-md bg-white/5 text-white/40 flex items-center justify-center hover:bg-white/10 cursor-pointer transition-colors"
+                          className="h-7 w-7 bg-[#111111] text-[#999999] flex items-center justify-center hover:bg-[#2b2a27] cursor-pointer transition-colors"
                         >
                           <X className="h-3.5 w-3.5" />
                         </button>
@@ -332,7 +322,7 @@ export default function Admin() {
                     ) : (
                       <button
                         onClick={() => startEditing(product)}
-                        className="h-7 w-7 rounded-md bg-white/5 text-white/40 flex items-center justify-center hover:bg-white/10 hover:text-white/70 cursor-pointer transition-colors"
+                        className="h-7 w-7 bg-[#111111] text-[#999999] flex items-center justify-center hover:bg-[#2b2a27] hover:text-white cursor-pointer transition-colors"
                       >
                         <Pencil className="h-3.5 w-3.5" />
                       </button>

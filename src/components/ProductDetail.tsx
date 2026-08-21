@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { X, MessageCircle, Package, CheckCircle, XCircle } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 type Product = {
   _id: string;
@@ -57,25 +56,22 @@ export default function ProductDetail({ product, onClose }: ProductDetailProps) 
       className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
       onClick={onClose}
     >
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
 
-      {/* Modal */}
       <div
-        className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-2xl border border-white/10 bg-[#111] shadow-2xl"
+        className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto border border-[#2b2a27] bg-[#0a0a0a] shadow-[0_15px_45px_rgba(0,0,0,0.3)]"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 h-8 w-8 rounded-full bg-black/60 backdrop-blur-sm text-white/60 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+          className="absolute top-4 right-4 z-10 h-8 w-8 bg-[#111111] border border-[#2b2a27] text-[#999999] hover:text-white flex items-center justify-center transition-colors cursor-pointer"
         >
           <X className="h-4 w-4" />
         </button>
 
         <div className="grid md:grid-cols-2 gap-0">
           {/* Image */}
-          <div className="relative aspect-square md:aspect-auto md:min-h-[400px] overflow-hidden bg-gradient-to-br from-white/[0.03] to-transparent">
+          <div className="relative aspect-square md:aspect-auto md:min-h-[400px] overflow-hidden bg-[#0a0a0a]">
             {product.imageUrl ? (
               <img
                 src={product.imageUrl}
@@ -84,19 +80,18 @@ export default function ProductDetail({ product, onClose }: ProductDetailProps) 
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
-                <Package className="h-16 w-16 text-white/10" />
+                <Package className="h-16 w-16 text-[#999999]/30" />
               </div>
             )}
-            {/* Badges on image */}
             <div className="absolute top-4 left-4 flex gap-2">
               <Badge
                 variant="outline"
-                className="border-white/10 bg-black/60 backdrop-blur-sm text-white/70 text-xs font-medium"
+                className="border-[#2b2a27] bg-black/80 text-[#999999] text-xs font-medium"
               >
                 {product.category}
               </Badge>
               {product.featured && (
-                <Badge className="bg-[#00ff66]/90 text-black border-0 text-xs font-bold">
+                <Badge className="bg-[#c2202f] text-white border-0 text-xs font-bold">
                   ★ Featured
                 </Badge>
               )}
@@ -105,59 +100,53 @@ export default function ProductDetail({ product, onClose }: ProductDetailProps) 
 
           {/* Details */}
           <div className="p-6 sm:p-8 flex flex-col">
-            <p className="text-sm text-[#00ff66]/70 font-semibold uppercase tracking-wider mb-2">
+            <p className="text-xs text-[#c2202f] font-medium uppercase tracking-wider mb-2">
               {product.brand}
             </p>
-            <h2 className="text-2xl sm:text-3xl font-bold text-white leading-tight mb-3">
+            <h2 className="font-['Orbitron'] text-xl sm:text-2xl font-normal tracking-[0.15em] uppercase text-white leading-tight mb-3">
               {product.name}
             </h2>
 
-            {/* Price */}
             <div className="mb-5">
-              <p className="text-2xl font-bold text-white">
+              <p className="text-2xl font-medium text-white">
                 {formatINR(product.price)}
               </p>
             </div>
 
-            {/* Description */}
-            <p className="text-base text-white/50 leading-relaxed mb-6">
+            <p className="text-sm text-[#999999] leading-relaxed mb-6">
               {product.description}
             </p>
 
-            {/* Bullet Points */}
             <div className="mb-6">
-              <h4 className="text-sm font-semibold text-white/30 uppercase tracking-wider mb-3">
+              <h4 className="text-xs font-medium text-[#999999] uppercase tracking-wider mb-3">
                 Product Details
               </h4>
               <ul className="space-y-2">
                 {bulletPoints.map((point, i) => (
-                  <li key={i} className="flex items-start gap-2 text-base text-white/60">
-                    <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[#00ff66]/60 flex-shrink-0" />
+                  <li key={i} className="flex items-start gap-2 text-sm text-[#999999]">
+                    <span className="mt-1 h-1.5 w-1.5 bg-[#c2202f] flex-shrink-0" />
                     {point}
                   </li>
                 ))}
               </ul>
             </div>
 
-            {/* Stock Status */}
             <div className="flex items-center gap-2 mb-6">
               {product.inStock ? (
                 <>
-                  <CheckCircle className="h-4 w-4 text-emerald-400" />
-                  <span className="text-base text-emerald-400">In Stock</span>
+                  <CheckCircle className="h-4 w-4 text-[#57a256]" />
+                  <span className="text-sm text-[#57a256]">In Stock</span>
                 </>
               ) : (
                 <>
-                  <XCircle className="h-4 w-4 text-red-400" />
-                  <span className="text-base text-red-400">Out of Stock</span>
+                  <XCircle className="h-4 w-4 text-[#c2202f]" />
+                  <span className="text-sm text-[#c2202f]">Out of Stock</span>
                 </>
               )}
             </div>
 
-            {/* Spacer */}
             <div className="flex-1" />
 
-            {/* Send Enquiry Button */}
             <a
               href={whatsappUrl}
               target="_blank"
@@ -165,7 +154,7 @@ export default function ProductDetail({ product, onClose }: ProductDetailProps) 
               className="block"
             >
               <Button
-                className="w-full h-12 bg-[#25D366] hover:bg-[#20bd5a] text-white font-semibold text-base cursor-pointer gap-2"
+                className="w-full h-12 bg-[#25D366] hover:bg-[#20bd5a] text-white font-medium text-sm cursor-pointer gap-2"
               >
                 <MessageCircle className="h-5 w-5" />
                 Send Enquiry on WhatsApp
