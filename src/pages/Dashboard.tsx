@@ -174,57 +174,67 @@ export default function Dashboard() {
             </div>
           </div>
 
+          {/* Category chips - always visible */}
+          <div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-xs text-white/30 font-medium mr-1">Category:</span>
+              <button
+                onClick={() => setSelectedCategory(null)}
+                className={cn(
+                  "px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer border",
+                  !selectedCategory
+                    ? "bg-[#00ff66] text-black border-[#00ff66]"
+                    : "bg-white/[0.04] text-white/60 border-white/5 hover:border-white/15 hover:text-white/80",
+                )}
+              >
+                All
+              </button>
+              {categories?.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() =>
+                    setSelectedCategory(
+                      selectedCategory === cat ? null : cat,
+                    )
+                  }
+                  className={cn(
+                    "px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer border",
+                    selectedCategory === cat
+                      ? "bg-[#00ff66] text-black border-[#00ff66]"
+                      : "bg-white/[0.04] text-white/60 border-white/5 hover:border-white/15 hover:text-white/80",
+                  )}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Brand filter - toggleable */}
           {showFilters && (
-            <div className="grid sm:grid-cols-2 gap-4 p-5 rounded-xl border border-white/5 bg-white/[0.02]">
-              <div>
-                <p className="text-xs font-medium text-white/40 uppercase tracking-wider mb-3">
-                  Category
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {categories?.map((cat) => (
-                    <button
-                      key={cat}
-                      onClick={() =>
-                        setSelectedCategory(
-                          selectedCategory === cat ? null : cat,
-                        )
-                      }
-                      className={cn(
-                        "px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer border",
-                        selectedCategory === cat
-                          ? "bg-[#00ff66] text-black border-[#00ff66]"
-                          : "bg-white/[0.04] text-white/60 border-white/5 hover:border-white/15 hover:text-white/80",
-                      )}
-                    >
-                      {cat}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <p className="text-xs font-medium text-white/40 uppercase tracking-wider mb-3">
-                  Brand
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {brands?.map((brand) => (
-                    <button
-                      key={brand}
-                      onClick={() =>
-                        setSelectedBrand(
-                          selectedBrand === brand ? null : brand,
-                        )
-                      }
-                      className={cn(
-                        "px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer border",
-                        selectedBrand === brand
-                          ? "bg-[#00ff66] text-black border-[#00ff66]"
-                          : "bg-white/[0.04] text-white/60 border-white/5 hover:border-white/15 hover:text-white/80",
-                      )}
-                    >
-                      {brand}
-                    </button>
-                  ))}
-                </div>
+            <div className="p-4 rounded-xl border border-white/5 bg-white/[0.02]">
+              <p className="text-xs font-medium text-white/40 uppercase tracking-wider mb-3">
+                Brand
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {brands?.map((brand) => (
+                  <button
+                    key={brand}
+                    onClick={() =>
+                      setSelectedBrand(
+                        selectedBrand === brand ? null : brand,
+                      )
+                    }
+                    className={cn(
+                      "px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer border",
+                      selectedBrand === brand
+                        ? "bg-[#00ff66] text-black border-[#00ff66]"
+                        : "bg-white/[0.04] text-white/60 border-white/5 hover:border-white/15 hover:text-white/80",
+                    )}
+                  >
+                    {brand}
+                  </button>
+                ))}
               </div>
             </div>
           )}

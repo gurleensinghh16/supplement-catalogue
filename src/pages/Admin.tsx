@@ -17,7 +17,7 @@ import {
 import { useNavigate } from "react-router";
 import { cn } from "@/lib/utils";
 
-const ADMIN_EMAIL = "admin@supplyco.com";
+const ADMIN_EMAIL = "admin@thedietstore.com";
 const ADMIN_PASSWORD = "admin123";
 
 function formatINR(price: number) {
@@ -146,7 +146,7 @@ export default function Admin() {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#00ff66]">
               <Dumbbell className="h-4 w-4 text-black" />
             </div>
-            <span className="text-base font-bold tracking-tight">SUPPLYCO</span>
+            <span className="text-base font-bold tracking-tight">TheDietStore</span>
             <Badge className="bg-[#00ff66]/10 text-[#00ff66] border-[#00ff66]/20 text-[10px] ml-1">
               Admin
             </Badge>
