@@ -44,6 +44,13 @@ export const brands = query({
   },
 });
 
+export const featured = query({
+  handler: async (ctx) => {
+    const products = await ctx.db.query("products").collect();
+    return products.filter((p) => p.featured);
+  },
+});
+
 export const seed = mutation({
   args: {},
   handler: async (ctx) => {
@@ -56,10 +63,12 @@ export const seed = mutation({
         brand: "Optimum Nutrition",
         category: "Protein",
         description:
-          "The world's best-selling whey protein powder. 24g of premium protein per serving with 5.5g of naturally occurring BCAAs and 11g of naturally occurring amino acids.",
+          "The world's best-selling whey protein powder. 24g of premium protein per serving with 5.5g of naturally occurring BCAAs.",
         price: 34.99,
         sku: "ON-GSW-2LB",
         inStock: true,
+        imageUrl:
+          "https://images.unsplash.com/photo-1622485831930-6961e42a6e9d?w=400&h=400&fit=crop&auto=format",
         tags: ["whey", "protein", "muscle recovery", "bestseller"],
         servings: "29 servings",
         weight: "2 lbs",
@@ -70,10 +79,12 @@ export const seed = mutation({
         brand: "Optimum Nutrition",
         category: "Creatine",
         description:
-          "Micronized creatine powder for enhanced absorption. Supports strength, power, and muscle volume during high-intensity exercise.",
+          "Micronized creatine powder for enhanced absorption. Supports strength, power, and muscle volume.",
         price: 17.99,
         sku: "ON-CM-1200G",
         inStock: true,
+        imageUrl:
+          "https://images.unsplash.com/photo-1593095948071-474c5cc2c129?w=400&h=400&fit=crop&auto=format",
         tags: ["creatine", "strength", "power", "muscle"],
         servings: "240 servings",
         weight: "1.2 kg",
@@ -84,10 +95,12 @@ export const seed = mutation({
         brand: "C4 Original",
         category: "Pre-Workout",
         description:
-          "Explosive energy formula with caffeine, beta-alanine, and arginine alpha-ketoglutarate to fuel your most intense workouts.",
+          "Explosive energy formula with caffeine, beta-alanine, and arginine to fuel your most intense workouts.",
         price: 29.99,
         sku: "C4-IGN-30S",
         inStock: true,
+        imageUrl:
+          "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=400&fit=crop&auto=format",
         tags: ["energy", "pre-workout", "focus", "endurance"],
         servings: "30 servings",
         weight: "195 g",
@@ -98,10 +111,12 @@ export const seed = mutation({
         brand: "MuscleTech",
         category: "Aminos",
         description:
-          "Instantized BCAA powder with a 2:1:1 ratio of leucine, isoleucine, and valine. Supports muscle recovery and reduces soreness.",
+          "Instantized BCAA powder with a 2:1:1 ratio of leucine, isoleucine, and valine for muscle recovery.",
         price: 22.49,
         sku: "MT-BCAA-400",
         inStock: true,
+        imageUrl:
+          "https://images.unsplash.com/photo-1579722821273-0f6c7d44362f?w=400&h=400&fit=crop&auto=format",
         tags: ["bcaa", "amino acids", "recovery", "muscle"],
         servings: "40 servings",
         weight: "400 g",
@@ -112,10 +127,12 @@ export const seed = mutation({
         brand: "MuscleTech",
         category: "Mass Gainers",
         description:
-          "High-calorie mass gainer with 2,000 calories, 80g protein, and 304g carbs per serving. Designed for hardgainers and serious size.",
+          "High-calorie mass gainer with 2,000 calories, 80g protein, and 304g carbs per serving.",
         price: 44.99,
         sku: "MT-MTE-12LB",
         inStock: true,
+        imageUrl:
+          "https://images.unsplash.com/photo-1546782899-dfd58be99da0?w=400&h=400&fit=crop&auto=format",
         tags: ["mass gainer", "calories", "bulking", "size"],
         servings: "8 servings",
         weight: "12 lbs",
@@ -126,10 +143,12 @@ export const seed = mutation({
         brand: "MuscleTech",
         category: "Omega & Health",
         description:
-          "Molecularly distilled fish oil providing 300mg EPA and 200mg DHA per softgel. Supports heart, brain, and joint health.",
+          "Molecularly distilled fish oil providing 300mg EPA and 200mg DHA per softgel.",
         price: 14.99,
         sku: "MT-FO-90S",
         inStock: true,
+        imageUrl:
+          "https://images.unsplash.com/photo-1550572017-edd951aa8f72?w=400&h=400&fit=crop&auto=format",
         tags: ["fish oil", "omega-3", "heart health", "joints"],
         servings: "90 softgels",
         weight: "180 g",
@@ -140,10 +159,12 @@ export const seed = mutation({
         brand: "MuscleTech",
         category: "Fat Burners",
         description:
-          "Thermogenic weight loss supplement with caffeine, green coffee extract, and L-carnitine. Supports metabolism and energy.",
+          "Thermogenic weight loss supplement with caffeine, green coffee extract, and L-carnitine.",
         price: 19.99,
         sku: "MT-HCE-100C",
         inStock: true,
+        imageUrl:
+          "https://images.unsplash.com/photo-1556816752-3e8c3e1e1e1e?w=400&h=400&fit=crop&auto=format",
         tags: ["fat burner", "thermogenic", "weight loss", "metabolism"],
         servings: "100 capsules",
         weight: "120 g",
@@ -154,10 +175,12 @@ export const seed = mutation({
         brand: "Optimum Nutrition",
         category: "Pre-Workout",
         description:
-          "Clean energy pre-workout with 175mg caffeine, beta-alanine, and AstraGIN. Enhances focus, energy, and performance.",
+          "Clean energy pre-workout with 175mg caffeine, beta-alanine, and AstraGIN for focus and performance.",
         price: 27.99,
         sku: "ON-GSPW-30S",
         inStock: true,
+        imageUrl:
+          "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=400&h=400&fit=crop&auto=format",
         tags: ["pre-workout", "energy", "focus", "performance"],
         servings: "30 servings",
         weight: "324 g",
@@ -168,10 +191,12 @@ export const seed = mutation({
         brand: "Kaged Muscle",
         category: "Creatine",
         description:
-          "Patented creatine hydrochloride for superior solubility and absorption. No loading phase required. Mixes easily in water.",
+          "Patented creatine hydrochloride for superior solubility and absorption. No loading phase required.",
         price: 24.99,
         sku: "KM-CHCL-90S",
         inStock: true,
+        imageUrl:
+          "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=400&h=400&fit=crop&auto=format",
         tags: ["creatine", "hcl", "solubility", "strength"],
         servings: "90 servings",
         weight: "135 g",
@@ -182,10 +207,12 @@ export const seed = mutation({
         brand: "Garden of Life",
         category: "Protein",
         description:
-          "Organic plant protein blend from pea, brown rice, and chia seed. 22g protein per serving with live probiotics and enzymes.",
+          "Organic plant protein blend from pea, brown rice, and chia seed with live probiotics.",
         price: 39.99,
         sku: "GOL-PBP-2LB",
         inStock: true,
+        imageUrl:
+          "https://images.unsplash.com/photo-1593095948071-474c5cc2c129?w=400&h=400&fit=crop&auto=format",
         tags: ["plant protein", "vegan", "organic", "digestive"],
         servings: "20 servings",
         weight: "2 lbs",
@@ -196,10 +223,12 @@ export const seed = mutation({
         brand: "Optimum Nutrition",
         category: "Protein",
         description:
-          "Slow-digesting micellar casein protein with 24g protein per serving. Ideal for overnight muscle recovery and sustained amino acid release.",
+          "Slow-digesting micellar casein protein with 24g protein per serving for overnight recovery.",
         price: 32.99,
         sku: "ON-CP-2LB",
         inStock: true,
+        imageUrl:
+          "https://images.unsplash.com/photo-1574266122935-64d0e810c2c8?w=400&h=400&fit=crop&auto=format",
         tags: ["casein", "protein", "slow digesting", "overnight"],
         servings: "23 servings",
         weight: "2 lbs",
@@ -210,10 +239,12 @@ export const seed = mutation({
         brand: "MuscleTech",
         category: "Protein",
         description:
-          "Premium whey protein isolate with 30g protein and 6.8g BCAAs per scoop. Enhanced with creatine and amino acids for lean muscle gains.",
+          "Premium whey protein isolate with 30g protein and 6.8g BCAAs per scoop for lean muscle.",
         price: 36.99,
         sku: "MT-NTWG-4LB",
         inStock: true,
+        imageUrl:
+          "https://images.unsplash.com/photo-1622485831930-6961e42a6e9d?w=400&h=400&fit=crop&auto=format",
         tags: ["whey", "protein", "isolate", "lean muscle"],
         servings: "40 servings",
         weight: "4 lbs",
@@ -224,10 +255,12 @@ export const seed = mutation({
         brand: "Xtend",
         category: "Aminos",
         description:
-          "Complete essential amino acid formula with all 9 EAAs. Supports muscle protein synthesis, recovery, and hydration.",
+          "Complete essential amino acid formula with all 9 EAAs for muscle protein synthesis.",
         price: 26.99,
         sku: "XT-EAA-30S",
         inStock: true,
+        imageUrl:
+          "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&h=400&fit=crop&auto=format",
         tags: ["eaa", "amino acids", "recovery", "hydration"],
         servings: "30 servings",
         weight: "270 g",
@@ -238,10 +271,12 @@ export const seed = mutation({
         brand: "Myprotein",
         category: "Fat Burners",
         description:
-          "Green tea extract, caffeine, and cayenne pepper thermogenic formula. Supports metabolic rate and energy during calorie-deficit phases.",
+          "Green tea extract, caffeine, and cayenne pepper thermogenic formula for metabolic support.",
         price: 18.99,
         sku: "MP-TP-90C",
         inStock: true,
+        imageUrl:
+          "https://images.unsplash.com/photo-1556816752-3e8c3e1e1e1e?w=400&h=400&fit=crop&auto=format",
         tags: ["fat burner", "thermogenic", "green tea", "metabolism"],
         servings: "90 capsules",
         weight: "108 g",
@@ -252,10 +287,12 @@ export const seed = mutation({
         brand: "Sports Research",
         category: "Vitamins & Minerals",
         description:
-          "High-potency vitamin D3 derived from organic coconut oil. Supports bone health, immune function, and muscle recovery.",
+          "High-potency vitamin D3 from organic coconut oil for bone health and immune function.",
         price: 15.99,
         sku: "SR-D3-360S",
         inStock: true,
+        imageUrl:
+          "https://images.unsplash.com/photo-1550572017-edd951aa8f72?w=400&h=400&fit=crop&auto=format",
         tags: ["vitamin d3", "immune", "bone health", "supplement"],
         servings: "360 softgels",
         weight: "200 g",
@@ -266,10 +303,12 @@ export const seed = mutation({
         brand: "Optimum Nutrition",
         category: "Recovery",
         description:
-          "Zinc, magnesium, and vitamin B6 complex for enhanced recovery, deeper sleep, and hormonal support during intense training cycles.",
+          "Zinc, magnesium, and vitamin B6 complex for enhanced recovery and deeper sleep.",
         price: 12.99,
         sku: "ON-ZMA-90S",
         inStock: true,
+        imageUrl:
+          "https://images.unsplash.com/photo-1579722821273-0f6c7d44362f?w=400&h=400&fit=crop&auto=format",
         tags: ["zma", "recovery", "sleep", "zinc", "magnesium"],
         servings: "90 capsules",
         weight: "120 g",
@@ -280,10 +319,12 @@ export const seed = mutation({
         brand: "BSN",
         category: "Performance",
         description:
-          "Standardized tribulus terrestris extract supporting natural testosterone production, libido, and athletic performance.",
+          "Standardized tribulus terrestris extract for natural testosterone support and performance.",
         price: 16.99,
         sku: "BSN-TT-90S",
         inStock: true,
+        imageUrl:
+          "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=400&h=400&fit=crop&auto=format",
         tags: ["tribulus", "testosterone", "performance", "herb"],
         servings: "90 capsules",
         weight: "108 g",
@@ -294,10 +335,12 @@ export const seed = mutation({
         brand: "Optimum Nutrition",
         category: "Mass Gainers",
         description:
-          "Extreme calorie weight gainer with 1,250 calories, 50g protein, and 252g carbs per serving. Ideal for serious size and strength goals.",
+          "Extreme calorie weight gainer with 1,250 calories, 50g protein, and 252g carbs.",
         price: 42.99,
         sku: "ON-SM-12LB",
         inStock: true,
+        imageUrl:
+          "https://images.unsplash.com/photo-1546782899-dfd58be99da0?w=400&h=400&fit=crop&auto=format",
         tags: ["mass gainer", "calories", "bulking", "strength"],
         servings: "8 servings",
         weight: "12 lbs",
@@ -308,10 +351,12 @@ export const seed = mutation({
         brand: "LMNT",
         category: "Hydration",
         description:
-          "Zero-sugar electrolyte drink with 1000mg sodium, 200mg potassium, and 60mg magnesium per packet. Supports peak hydration during training.",
-        price: 35.00,
+          "Zero-sugar electrolyte drink with 1000mg sodium, 200mg potassium for peak hydration.",
+        price: 35.0,
         sku: "LMNT-EH-30P",
         inStock: true,
+        imageUrl:
+          "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=400&fit=crop&auto=format",
         tags: ["electrolyte", "hydration", "zero sugar", "sodium"],
         servings: "30 packets",
         weight: "180 g",
@@ -322,10 +367,12 @@ export const seed = mutation({
         brand: "MusclePharm",
         category: "Recovery",
         description:
-          "L-glutamine powder supporting immune function, gut health, and muscle recovery after intense workouts.",
+          "L-glutamine powder for immune function, gut health, and post-workout muscle recovery.",
         price: 19.99,
         sku: "MP-GRP-60S",
         inStock: true,
+        imageUrl:
+          "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&h=400&fit=crop&auto=format",
         tags: ["glutamine", "recovery", "immune", "gut health"],
         servings: "60 servings",
         weight: "300 g",
