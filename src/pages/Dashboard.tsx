@@ -143,7 +143,7 @@ function CategorySection({
           >            {/* Product Image */}
             <div
               onClick={() => onSelectProduct(product)}
-              className="relative aspect-square overflow-hidden mb-3 cursor-pointer border border-[#2b2a27]"
+              className="relative aspect-square overflow-hidden mb-3 cursor-pointer border border-[#2b2a27] bg-[#f4f2ee]"
             >
               {product.imageUrl ? (
                 <img
@@ -393,7 +393,7 @@ export default function Dashboard() {
               >
                 <div
                   onClick={() => setSelectedProduct(product)}
-                  className="relative aspect-square overflow-hidden mb-3 cursor-pointer border border-[#2b2a27]"
+                  className="relative aspect-square overflow-hidden mb-3 cursor-pointer border border-[#2b2a27] bg-[#f4f2ee]"
                 >
                   {product.imageUrl ? (
                     <img
