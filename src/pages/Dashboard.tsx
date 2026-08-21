@@ -15,13 +15,32 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router";
 import { cn } from "@/lib/utils";
+import ProductDetail from "@/components/ProductDetail";
 
 function formatINR(price: number) {
   return `₹${price.toLocaleString("en-IN")}`;
 }
 
+type Product = {
+  _id: string;
+  name: string;
+  brand: string;
+  category: string;
+  description: string;
+  price: number;
+  sku: string;
+  inStock: boolean;
+  imageUrl?: string;
+  tags: string[];
+  servings?: string;
+  weight?: string;
+  featured?: boolean;
+  stockQuantity?: number;
+};
+
 export default function Dashboard() {
   const navigate = useNavigate();
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -51,6 +70,14 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
+      {/* Product Detail Modal */}
+      {selectedProduct && (
+        <ProductDetail
+          product={selectedProduct}
+          onClose={() => setSelectedProduct(null)}
+        />
+      )}
+
       {/* Top Bar */}
       <header className="sticky top-0 z-40 border-b border-white/5 bg-[#0a0a0a]/90 backdrop-blur-xl">
         <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
@@ -58,7 +85,7 @@ export default function Dashboard() {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#00ff66]">
               <Dumbbell className="h-4 w-4 text-black" />
             </div>
-            <span className="text-base font-bold tracking-tight">SUPPLYCO</span>
+            <span className="text-base font-bold tracking-tight">TheDietStore</span>
             <span className="hidden sm:inline text-xs text-white/30 ml-2 border-l border-white/10 pl-3">
               Product Catalogue
             </span>
@@ -147,7 +174,6 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Filter Panels */}
           {showFilters && (
             <div className="grid sm:grid-cols-2 gap-4 p-5 rounded-xl border border-white/5 bg-white/[0.02]">
               <div>
@@ -203,7 +229,6 @@ export default function Dashboard() {
             </div>
           )}
 
-          {/* Active filter chips */}
           {(selectedCategory || selectedBrand || search) && (
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-xs text-white/30">Active:</span>
@@ -305,7 +330,8 @@ export default function Dashboard() {
             {filteredProducts.map((product) => (
               <div
                 key={product._id}
-                className="group rounded-2xl border border-white/5 bg-white/[0.02] overflow-hidden hover:border-[#00ff66]/30 hover:shadow-[0_0_40px_rgba(0,255,102,0.06)] transition-all duration-500"
+                onClick={() => setSelectedProduct(product)}
+                className="group rounded-2xl border border-white/5 bg-white/[0.02] overflow-hidden hover:border-[#00ff66]/30 hover:shadow-[0_0_40px_rgba(0,255,102,0.06)] transition-all duration-500 cursor-pointer"
               >
                 {/* Product Image */}
                 <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-white/[0.03] to-transparent">
@@ -320,7 +346,6 @@ export default function Dashboard() {
                       <Package className="h-12 w-12 text-white/10" />
                     </div>
                   )}
-                  {/* Overlay badges */}
                   <div className="absolute top-3 left-3 flex gap-2">
                     <Badge
                       variant="outline"
@@ -334,11 +359,9 @@ export default function Dashboard() {
                       </Badge>
                     )}
                   </div>
-                  {/* Hover overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 </div>
 
-                {/* Product Info */}
                 <div className="p-5">
                   <p className="text-[10px] text-[#00ff66]/70 font-semibold uppercase tracking-wider mb-1">
                     {product.brand}
@@ -350,7 +373,6 @@ export default function Dashboard() {
                     {product.description}
                   </p>
 
-                  {/* Tags */}
                   <div className="flex items-center gap-1.5 text-[10px] text-white/25 mb-4 flex-wrap">
                     {product.weight && (
                       <span className="px-2 py-0.5 rounded-md bg-white/[0.04]">
@@ -364,7 +386,6 @@ export default function Dashboard() {
                     )}
                   </div>
 
-                  {/* Price & Stock */}
                   <div className="flex items-end justify-between pt-4 border-t border-white/5">
                     <div>
                       <p className="text-lg font-bold text-white">
@@ -411,7 +432,8 @@ export default function Dashboard() {
             {filteredProducts.map((product) => (
               <div
                 key={product._id}
-                className="grid grid-cols-[auto_1fr_120px_100px_100px_80px] gap-4 px-6 py-3 border-t border-white/5 hover:bg-white/[0.02] transition-colors items-center"
+                onClick={() => setSelectedProduct(product)}
+                className="grid grid-cols-[auto_1fr_120px_100px_100px_80px] gap-4 px-6 py-3 border-t border-white/5 hover:bg-white/[0.02] transition-colors items-center cursor-pointer"
               >
                 <div className="h-10 w-10 rounded-lg overflow-hidden bg-white/[0.04] flex-shrink-0">
                   {product.imageUrl ? (
