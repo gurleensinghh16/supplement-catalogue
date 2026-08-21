@@ -154,23 +154,24 @@ export default function Landing() {
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-[#2b2a27] bg-black/95 backdrop-blur-xl">
         <div className="mx-auto max-w-[1440px] px-6 lg:px-10">
           {/* Top row — tall like Unmatched Supps */}
-          <div className="h-24 flex items-center justify-between">
-            {/* Left — search icon */}
-            <button className="w-10 h-10 flex items-center justify-center hover:text-[#c2202f] transition-colors cursor-pointer">
-              <Search className="h-5 w-5" />
-            </button>
+          <div className="h-28 flex items-center justify-between">
+            {/* Left — search + supplements */}
+            <div className="hidden lg:flex items-center gap-8">
+              <button className="w-10 h-10 flex items-center justify-center hover:text-[#c2202f] transition-colors cursor-pointer">
+                <Search className="h-5 w-5" />
+              </button>
 
-            {/* Center — nav links */}
-            <div className="hidden lg:flex items-center gap-10">
               {/* Supplements dropdown */}
               <div
                 className="relative"
                 onMouseEnter={handleDropdownEnter}
                 onMouseLeave={handleDropdownLeave}
               >
-                <button className="flex items-center gap-2 font-['Orbitron'] text-[15px] font-normal tracking-[0.15em] uppercase text-white hover:text-[#c2202f] transition-colors cursor-pointer py-8">
+                <button className="group flex items-center gap-2 font-['Orbitron'] text-[16px] font-normal tracking-[0.15em] uppercase text-white hover:text-[#c2202f] transition-colors cursor-pointer py-8">
                   SUPPLEMENTS
                   <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${supplementsOpen ? "rotate-180" : ""}`} />
+                  {/* Underline on hover */}
+                  <span className="absolute bottom-6 left-0 w-full h-[2px] bg-[#c2202f] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
                 </button>
 
                 {/* Dropdown */}
@@ -181,10 +182,13 @@ export default function Landing() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 8 }}
                       transition={{ duration: 0.2 }}
-                      className="absolute top-full left-0 w-72 bg-black border border-[#2b2a27] shadow-[0_20px_60px_rgba(0,0,0,0.8)] py-3"
+                      className="absolute top-full left-0 w-72 bg-black border border-[#2b2a27] shadow-[0_20px_60px_rgba(0,0,0,0.8)] py-4 z-50"
                       onMouseEnter={handleDropdownEnter}
                       onMouseLeave={handleDropdownLeave}
                     >
+                      <div className="px-6 pb-3 mb-2 border-b border-[#2b2a27]">
+                        <span className="font-['Orbitron'] text-xs tracking-[0.2em] uppercase text-[#c2202f]">Browse All</span>
+                      </div>
                       {navCategories.map((cat) => (
                         <button
                           key={cat}
@@ -192,9 +196,10 @@ export default function Landing() {
                             setSupplementsOpen(false);
                             navigate("/catalogue");
                           }}
-                          className="w-full text-left px-6 py-3 text-[15px] text-[#999999] hover:text-white hover:bg-white/5 transition-colors tracking-wide cursor-pointer"
+                          className="w-full text-left px-6 py-3 text-[15px] text-[#999999] hover:text-white hover:bg-white/5 transition-all duration-200 tracking-wide cursor-pointer flex items-center justify-between group/item"
                         >
-                          {cat}
+                          <span>{cat}</span>
+                          <ArrowRight className="h-3.5 w-3.5 opacity-0 group-hover/item:opacity-100 -translate-x-2 group-hover/item:translate-x-0 transition-all duration-200" />
                         </button>
                       ))}
                     </motion.div>
@@ -203,19 +208,21 @@ export default function Landing() {
               </div>
             </div>
 
-            {/* Center — logo */}
-            <button onClick={() => navigate("/")} className="absolute left-1/2 -translate-x-1/2 flex items-center gap-3 cursor-pointer">
-              <Dumbbell className="h-8 w-8 text-[#c2202f]" />
-              <span className="font-['Orbitron'] text-2xl font-normal tracking-[0.15em] uppercase">TheDietStore</span>
+            {/* Center — logo (not absolute, proper flex) */}
+            <button onClick={() => navigate("/")} className="flex items-center gap-3 cursor-pointer">
+              <Dumbbell className="h-9 w-9 text-[#c2202f]" />
+              <span className="font-['Orbitron'] text-[26px] font-normal tracking-[0.15em] uppercase whitespace-nowrap">TheDietStore</span>
             </button>
 
-            {/* Right — nav links */}
+            {/* Right — nav links + CTA */}
             <div className="hidden lg:flex items-center gap-10">
-              <a href="#featured" className="font-['Orbitron'] text-[15px] font-normal tracking-[0.15em] uppercase text-white hover:text-[#c2202f] transition-colors">
+              <a href="#featured" className="relative font-['Orbitron'] text-[16px] font-normal tracking-[0.15em] uppercase text-white hover:text-[#c2202f] transition-colors group/link py-8">
                 FEATURED
+                <span className="absolute bottom-6 left-0 w-full h-[2px] bg-[#c2202f] scale-x-0 group-hover/link:scale-x-100 transition-transform duration-300 origin-left" />
               </a>
-              <a href="#features" className="font-['Orbitron'] text-[15px] font-normal tracking-[0.15em] uppercase text-white hover:text-[#c2202f] transition-colors">
+              <a href="#features" className="relative font-['Orbitron'] text-[16px] font-normal tracking-[0.15em] uppercase text-white hover:text-[#c2202f] transition-colors group/link py-8">
                 WHY US
+                <span className="absolute bottom-6 left-0 w-full h-[2px] bg-[#c2202f] scale-x-0 group-hover/link:scale-x-100 transition-transform duration-300 origin-left" />
               </a>
             </div>
 
