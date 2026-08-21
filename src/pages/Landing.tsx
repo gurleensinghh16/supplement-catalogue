@@ -172,7 +172,7 @@ export default function Landing() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white overflow-hidden">
+    <div className="min-h-screen bg-black text-white overflow-x-hidden w-full max-w-full">
       {/* ── Navigation ── */}
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-[#2b2a27] bg-black/95 backdrop-blur-xl">
         <div className="mx-auto max-w-[1440px] px-6 lg:px-10">
@@ -264,7 +264,7 @@ export default function Landing() {
       </nav>
 
       {/* ── Hero Carousel — Full clickable images, no text overlay ── */}
-      <section ref={heroRef} className="relative w-full h-[70vh] min-h-[500px] max-h-[750px] overflow-hidden mt-28">
+      <section ref={heroRef} className="relative w-full h-[60vh] min-h-[400px] max-h-[650px] overflow-hidden mt-28">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentSlide}
