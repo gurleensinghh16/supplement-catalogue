@@ -6,22 +6,21 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   Dumbbell,
-  LogOut,
   Search,
   Package,
-  Tag,
   X,
   Filter,
   Grid3X3,
   List,
-  ChevronDown,
 } from "lucide-react";
-import { useAuth } from "@/hooks/use-auth";
 import { useNavigate } from "react-router";
 import { cn } from "@/lib/utils";
 
+function formatINR(price: number) {
+  return `₹${price.toLocaleString("en-IN")}`;
+}
+
 export default function Dashboard() {
-  const { user, signOut } = useAuth();
   const navigate = useNavigate();
 
   const [search, setSearch] = useState("");
@@ -36,11 +35,6 @@ export default function Dashboard() {
     search: search || undefined,
     category: selectedCategory || undefined,
   });
-
-  const handleSignOut = useCallback(async () => {
-    await signOut();
-    navigate("/");
-  }, [signOut, navigate]);
 
   const activeFilterCount =
     (selectedCategory ? 1 : 0) + (selectedBrand ? 1 : 0);
@@ -61,28 +55,30 @@ export default function Dashboard() {
       <header className="sticky top-0 z-40 border-b border-white/5 bg-[#0a0a0a]/90 backdrop-blur-xl">
         <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#c3f73a]">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#00ff66]">
               <Dumbbell className="h-4 w-4 text-black" />
             </div>
-            <span className="text-base font-bold tracking-tight">IRONFUEL</span>
+            <span className="text-base font-bold tracking-tight">SUPPLYCO</span>
             <span className="hidden sm:inline text-xs text-white/30 ml-2 border-l border-white/10 pl-3">
               Product Catalogue
             </span>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="text-right hidden sm:block">
-              <p className="text-xs text-white/40">Signed in as</p>
-              <p className="text-sm font-medium text-white/80">
-                {user?.name || user?.email || "Buyer"}
-              </p>
-            </div>
+          <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-[#00ff66] hover:text-[#00ff66] hover:bg-[#00ff66]/5 cursor-pointer text-xs font-medium"
+              onClick={() => navigate("/admin")}
+            >
+              Admin Panel
+            </Button>
             <Button
               variant="ghost"
               size="sm"
               className="text-white/50 hover:text-white hover:bg-white/5 cursor-pointer"
-              onClick={handleSignOut}
+              onClick={() => navigate("/")}
             >
-              <LogOut className="h-4 w-4" />
+              Home
             </Button>
           </div>
         </div>
@@ -98,7 +94,7 @@ export default function Dashboard() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search products, brands, or keywords..."
-                className="pl-10 h-11 bg-white/[0.04] border-white/10 text-white placeholder:text-white/30 focus-visible:border-[#c3f73a]/40 focus-visible:ring-[#c3f73a]/20 rounded-xl"
+                className="pl-10 h-11 bg-white/[0.04] border-white/10 text-white placeholder:text-white/30 focus-visible:border-[#00ff66]/40 focus-visible:ring-[#00ff66]/20 rounded-xl"
               />
               {search && (
                 <button
@@ -113,14 +109,14 @@ export default function Dashboard() {
               variant="outline"
               className={cn(
                 "border-white/10 hover:bg-white/5 h-11 px-4 gap-2 cursor-pointer rounded-xl",
-                showFilters && "border-[#c3f73a]/30 bg-[#c3f73a]/[0.06] text-[#c3f73a]",
+                showFilters && "border-[#00ff66]/30 bg-[#00ff66]/[0.06] text-[#00ff66]",
               )}
               onClick={() => setShowFilters(!showFilters)}
             >
               <Filter className="h-4 w-4" />
               <span className="hidden sm:inline">Filters</span>
               {activeFilterCount > 0 && (
-                <Badge className="ml-1 h-5 w-5 p-0 flex items-center justify-center rounded-full bg-[#c3f73a] text-black text-[10px] font-bold">
+                <Badge className="ml-1 h-5 w-5 p-0 flex items-center justify-center rounded-full bg-[#00ff66] text-black text-[10px] font-bold">
                   {activeFilterCount}
                 </Badge>
               )}
@@ -154,7 +150,6 @@ export default function Dashboard() {
           {/* Filter Panels */}
           {showFilters && (
             <div className="grid sm:grid-cols-2 gap-4 p-5 rounded-xl border border-white/5 bg-white/[0.02]">
-              {/* Categories */}
               <div>
                 <p className="text-xs font-medium text-white/40 uppercase tracking-wider mb-3">
                   Category
@@ -171,7 +166,7 @@ export default function Dashboard() {
                       className={cn(
                         "px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer border",
                         selectedCategory === cat
-                          ? "bg-[#c3f73a] text-black border-[#c3f73a]"
+                          ? "bg-[#00ff66] text-black border-[#00ff66]"
                           : "bg-white/[0.04] text-white/60 border-white/5 hover:border-white/15 hover:text-white/80",
                       )}
                     >
@@ -180,8 +175,6 @@ export default function Dashboard() {
                   ))}
                 </div>
               </div>
-
-              {/* Brands */}
               <div>
                 <p className="text-xs font-medium text-white/40 uppercase tracking-wider mb-3">
                   Brand
@@ -198,7 +191,7 @@ export default function Dashboard() {
                       className={cn(
                         "px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer border",
                         selectedBrand === brand
-                          ? "bg-[#c3f73a] text-black border-[#c3f73a]"
+                          ? "bg-[#00ff66] text-black border-[#00ff66]"
                           : "bg-white/[0.04] text-white/60 border-white/5 hover:border-white/15 hover:text-white/80",
                       )}
                     >
@@ -246,7 +239,7 @@ export default function Dashboard() {
               )}
               <button
                 onClick={clearAllFilters}
-                className="text-xs text-[#c3f73a] hover:underline ml-1 cursor-pointer"
+                className="text-xs text-[#00ff66] hover:underline ml-1 cursor-pointer"
               >
                 Clear all
               </button>
@@ -276,15 +269,14 @@ export default function Dashboard() {
             {Array.from({ length: 6 }).map((_, i) => (
               <div
                 key={i}
-                className="rounded-2xl border border-white/5 bg-white/[0.02] p-6 animate-pulse"
+                className="rounded-2xl border border-white/5 bg-white/[0.02] overflow-hidden animate-pulse"
               >
-                <div className="h-4 bg-white/5 rounded w-20 mb-4" />
-                <div className="h-5 bg-white/5 rounded w-3/4 mb-2" />
-                <div className="h-3 bg-white/5 rounded w-1/2 mb-6" />
-                <div className="h-16 bg-white/5 rounded mb-4" />
-                <div className="flex justify-between">
+                <div className="aspect-square bg-white/[0.04]" />
+                <div className="p-5">
+                  <div className="h-4 bg-white/5 rounded w-20 mb-3" />
+                  <div className="h-5 bg-white/5 rounded w-3/4 mb-2" />
+                  <div className="h-3 bg-white/5 rounded w-1/2 mb-4" />
                   <div className="h-4 bg-white/5 rounded w-16" />
-                  <div className="h-4 bg-white/5 rounded w-12" />
                 </div>
               </div>
             ))}
@@ -298,8 +290,7 @@ export default function Dashboard() {
               No products found
             </h3>
             <p className="text-sm text-white/30 max-w-sm">
-              Try adjusting your search or filters to find what you're looking
-              for.
+              Try adjusting your search or filters.
             </p>
             <Button
               variant="outline"
@@ -314,66 +305,93 @@ export default function Dashboard() {
             {filteredProducts.map((product) => (
               <div
                 key={product._id}
-                className="group rounded-2xl border border-white/5 bg-white/[0.02] p-6 hover:border-[#c3f73a]/20 hover:bg-[#c3f73a]/[0.02] transition-all duration-300"
+                className="group rounded-2xl border border-white/5 bg-white/[0.02] overflow-hidden hover:border-[#00ff66]/30 hover:shadow-[0_0_40px_rgba(0,255,102,0.06)] transition-all duration-500"
               >
-                <div className="flex items-start justify-between mb-4">
-                  <Badge
-                    variant="outline"
-                    className="border-white/10 text-white/50 text-[10px] font-medium"
-                  >
-                    {product.category}
-                  </Badge>
-                  {product.featured && (
-                    <Badge className="bg-[#c3f73a]/10 text-[#c3f73a] border-[#c3f73a]/20 text-[10px]">
-                      Featured
-                    </Badge>
-                  )}
-                </div>
-
-                <h3 className="font-semibold text-sm text-white/90 mb-1 leading-snug group-hover:text-[#c3f73a] transition-colors">
-                  {product.name}
-                </h3>
-                <p className="text-xs text-white/40 mb-3">{product.brand}</p>
-
-                <p className="text-xs text-white/30 leading-relaxed mb-5 line-clamp-2">
-                  {product.description}
-                </p>
-
-                <div className="flex items-center gap-2 text-[10px] text-white/25 mb-4 flex-wrap">
-                  {product.weight && (
-                    <span className="px-2 py-0.5 rounded bg-white/[0.04]">
-                      {product.weight}
-                    </span>
-                  )}
-                  {product.servings && (
-                    <span className="px-2 py-0.5 rounded bg-white/[0.04]">
-                      {product.servings}
-                    </span>
-                  )}
-                  <span className="px-2 py-0.5 rounded bg-white/[0.04]">
-                    {product.sku}
-                  </span>
-                </div>
-
-                <div className="flex items-end justify-between pt-4 border-t border-white/5">
-                  <div>
-                    <p className="text-[10px] text-white/30 uppercase tracking-wider">
-                      Retail
-                    </p>
-                    <p className="text-lg font-bold text-white/90">
-                      ${product.price.toFixed(2)}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <span
-                      className={cn(
-                        "h-2 w-2 rounded-full",
-                        product.inStock ? "bg-emerald-400" : "bg-red-400",
-                      )}
+                {/* Product Image */}
+                <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-white/[0.03] to-transparent">
+                  {product.imageUrl ? (
+                    <img
+                      src={product.imageUrl}
+                      alt={product.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                     />
-                    <span className="text-xs text-white/40">
-                      {product.inStock ? "In Stock" : "Out of Stock"}
-                    </span>
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <Package className="h-12 w-12 text-white/10" />
+                    </div>
+                  )}
+                  {/* Overlay badges */}
+                  <div className="absolute top-3 left-3 flex gap-2">
+                    <Badge
+                      variant="outline"
+                      className="border-white/10 bg-black/60 backdrop-blur-sm text-white/70 text-[10px] font-medium"
+                    >
+                      {product.category}
+                    </Badge>
+                    {product.featured && (
+                      <Badge className="bg-[#00ff66]/90 text-black border-0 text-[10px] font-bold">
+                        ★ Featured
+                      </Badge>
+                    )}
+                  </div>
+                  {/* Hover overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                </div>
+
+                {/* Product Info */}
+                <div className="p-5">
+                  <p className="text-[10px] text-[#00ff66]/70 font-semibold uppercase tracking-wider mb-1">
+                    {product.brand}
+                  </p>
+                  <h3 className="font-semibold text-sm text-white/90 mb-2 leading-snug group-hover:text-[#00ff66] transition-colors duration-300 line-clamp-2">
+                    {product.name}
+                  </h3>
+                  <p className="text-xs text-white/30 leading-relaxed mb-4 line-clamp-2">
+                    {product.description}
+                  </p>
+
+                  {/* Tags */}
+                  <div className="flex items-center gap-1.5 text-[10px] text-white/25 mb-4 flex-wrap">
+                    {product.weight && (
+                      <span className="px-2 py-0.5 rounded-md bg-white/[0.04]">
+                        {product.weight}
+                      </span>
+                    )}
+                    {product.servings && (
+                      <span className="px-2 py-0.5 rounded-md bg-white/[0.04]">
+                        {product.servings}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Price & Stock */}
+                  <div className="flex items-end justify-between pt-4 border-t border-white/5">
+                    <div>
+                      <p className="text-lg font-bold text-white">
+                        {formatINR(product.price)}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      {product.stockQuantity !== undefined &&
+                        product.stockQuantity !== null && (
+                          <span className="text-[10px] text-white/25">
+                            {product.stockQuantity} units
+                          </span>
+                        )}
+                      <div className="flex items-center gap-1.5">
+                        <span
+                          className={cn(
+                            "h-2 w-2 rounded-full",
+                            product.inStock
+                              ? "bg-emerald-400"
+                              : "bg-red-400",
+                          )}
+                        />
+                        <span className="text-xs text-white/40">
+                          {product.inStock ? "In Stock" : "Out of Stock"}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -382,7 +400,8 @@ export default function Dashboard() {
         ) : (
           /* List View */
           <div className="rounded-xl border border-white/5 overflow-hidden">
-            <div className="grid grid-cols-[1fr_120px_100px_100px_80px] gap-4 px-6 py-3 bg-white/[0.03] text-[10px] text-white/30 uppercase tracking-wider font-medium">
+            <div className="grid grid-cols-[auto_1fr_120px_100px_100px_80px] gap-4 px-6 py-3 bg-white/[0.03] text-[10px] text-white/30 uppercase tracking-wider font-medium">
+              <span></span>
               <span>Product</span>
               <span>Category</span>
               <span>SKU</span>
@@ -392,20 +411,35 @@ export default function Dashboard() {
             {filteredProducts.map((product) => (
               <div
                 key={product._id}
-                className="grid grid-cols-[1fr_120px_100px_100px_80px] gap-4 px-6 py-4 border-t border-white/5 hover:bg-white/[0.02] transition-colors items-center"
+                className="grid grid-cols-[auto_1fr_120px_100px_100px_80px] gap-4 px-6 py-3 border-t border-white/5 hover:bg-white/[0.02] transition-colors items-center"
               >
+                <div className="h-10 w-10 rounded-lg overflow-hidden bg-white/[0.04] flex-shrink-0">
+                  {product.imageUrl ? (
+                    <img
+                      src={product.imageUrl}
+                      alt={product.name}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="h-full w-full flex items-center justify-center">
+                      <Package className="h-4 w-4 text-white/10" />
+                    </div>
+                  )}
+                </div>
                 <div>
                   <p className="text-sm font-medium text-white/80">
                     {product.name}
                   </p>
                   <p className="text-xs text-white/35">{product.brand}</p>
                 </div>
-                <span className="text-xs text-white/50">{product.category}</span>
+                <span className="text-xs text-white/50">
+                  {product.category}
+                </span>
                 <span className="text-xs text-white/35 font-mono">
                   {product.sku}
                 </span>
                 <span className="text-sm font-semibold text-white/80 text-right">
-                  ${product.price.toFixed(2)}
+                  {formatINR(product.price)}
                 </span>
                 <div className="flex items-center justify-end gap-1.5">
                   <span

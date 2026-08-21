@@ -3,15 +3,13 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import {
   ArrowRight,
   Dumbbell,
-  Flame,
   Shield,
-  Zap,
   Star,
   ChevronRight,
   ShoppingBag,
-  Truck,
   Award,
   TrendingUp,
+  Headphones,
 } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useRef } from "react";
@@ -38,28 +36,28 @@ const featuredProducts = [
   {
     name: "Gold Standard Whey",
     brand: "Optimum Nutrition",
-    price: "$34.99",
+    price: "₹2,999",
     image:
       "https://images.unsplash.com/photo-1622485831930-6961e42a6e9d?w=400&h=400&fit=crop&auto=format",
   },
   {
     name: "Pre-Workout Ignite",
     brand: "C4 Original",
-    price: "$29.99",
+    price: "₹2,499",
     image:
       "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=400&fit=crop&auto=format",
   },
   {
     name: "Nitro-Tech Whey Gold",
     brand: "MuscleTech",
-    price: "$36.99",
+    price: "₹3,149",
     image:
       "https://images.unsplash.com/photo-1622485831930-6961e42a6e9d?w=400&h=400&fit=crop&auto=format",
   },
   {
     name: "Electrolyte Hydration",
     brand: "LMNT",
-    price: "$35.00",
+    price: "₹2,999",
     image:
       "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=400&fit=crop&auto=format",
   },
@@ -112,10 +110,10 @@ const features = [
       "Every product sourced from authorized distributors with full traceability.",
   },
   {
-    icon: Truck,
-    title: "Fast Shipping",
+    icon: Headphones,
+    title: "24/7 Support",
     description:
-      "Orders ship same day. Most deliveries arrive within 2-3 business days.",
+      "Dedicated account managers and round-the-clock customer support.",
   },
   {
     icon: Award,
@@ -192,7 +190,6 @@ export default function Landing() {
 
       {/* Hero */}
       <section ref={heroRef} className="relative pt-32 pb-24 px-6 overflow-hidden">
-        {/* Animated background elements */}
         <div className="absolute top-20 left-1/4 w-[500px] h-[500px] bg-[#00ff66]/6 rounded-full blur-[150px] pointer-events-none" />
         <div className="absolute top-40 right-1/4 w-[300px] h-[300px] bg-[#00ff66]/4 rounded-full blur-[120px] pointer-events-none" />
 
@@ -272,7 +269,7 @@ export default function Landing() {
               { label: "Products", value: "500+" },
               { label: "Brands", value: "20+" },
               { label: "Happy Clients", value: "1,200+" },
-              { label: "Delivery", value: "2-3 Days" },
+              { label: "Categories", value: "15+" },
             ].map((stat) => (
               <div key={stat.label}>
                 <div className="text-2xl sm:text-3xl font-bold text-[#00ff66]">
@@ -326,7 +323,7 @@ export default function Landing() {
                 onClick={() => navigate("/catalogue")}
                 className="group cursor-pointer"
               >
-                <div className="relative rounded-2xl overflow-hidden bg-white/[0.03] border border-white/5 hover:border-[#00ff66]/30 transition-all duration-500">
+                <div className="relative rounded-2xl overflow-hidden bg-white/[0.03] border border-white/5 hover:border-[#00ff66]/30 transition-all duration-500 hover:shadow-[0_0_40px_rgba(0,255,102,0.08)]">
                   <div className="aspect-square overflow-hidden bg-gradient-to-br from-[#00ff66]/5 to-transparent">
                     <img
                       src={product.image}
@@ -393,7 +390,9 @@ export default function Landing() {
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 p-5">
                   <h3 className="font-bold text-lg">{cat.name}</h3>
-                  <p className="text-sm text-white/40">{cat.count} products</p>
+                  <p className="text-sm text-white/40">
+                    {cat.count} products
+                  </p>
                 </div>
                 <div className="absolute top-4 right-4 h-8 w-8 rounded-full bg-white/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                   <ChevronRight className="h-4 w-4" />

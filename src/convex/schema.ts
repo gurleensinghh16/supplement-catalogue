@@ -45,6 +45,7 @@ const schema = defineSchema(
       servings: v.optional(v.string()),
       weight: v.optional(v.string()),
       featured: v.optional(v.boolean()),
+      stockQuantity: v.optional(v.number()),
     })
       .index("by_category", ["category"])
       .index("by_brand", ["brand"])
