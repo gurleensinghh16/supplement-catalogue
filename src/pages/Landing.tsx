@@ -5,8 +5,6 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
-  Dumbbell,
-  Eye,
   Search,
   Shield,
   Award,
@@ -208,10 +206,9 @@ export default function Landing() {
               </div>
             </div>
 
-            {/* Center — logo (not absolute, proper flex) */}
-            <button onClick={() => navigate("/")} className="flex items-center gap-3 cursor-pointer">
-              <Dumbbell className="h-9 w-9 text-[#c2202f]" />
-              <span className="font-['Orbitron'] text-[26px] font-normal tracking-[0.15em] uppercase whitespace-nowrap">TheDietStore</span>
+            {/* Center — logo */}
+            <button onClick={() => navigate("/")} className="flex items-center cursor-pointer">
+              <img src={`${BASE}logoo.png`} alt="TheDietStore" className="h-16 w-auto object-contain" />
             </button>
 
             {/* Right — nav links + CTA */}
@@ -242,7 +239,7 @@ export default function Landing() {
       </nav>
 
       {/* ── Hero Carousel — Full clickable images, no text overlay ── */}
-      <section ref={heroRef} className="relative h-[85vh] min-h-[600px] overflow-hidden mt-24">
+      <section ref={heroRef} className="relative w-full h-[70vh] min-h-[500px] max-h-[750px] overflow-hidden mt-28">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentSlide}
@@ -392,8 +389,7 @@ export default function Landing() {
       <footer className="border-t border-[#2b2a27] py-12 px-6">
         <div className="mx-auto max-w-[1440px] flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <Dumbbell className="h-5 w-5 text-[#c2202f]" />
-            <span className="font-['Orbitron'] text-base font-normal tracking-[0.15em] uppercase">TheDietStore</span>
+            <img src={`${BASE}logoo.png`} alt="TheDietStore" className="h-8 w-auto object-contain" />
           </div>
           <p className="text-sm text-[#999999] tracking-wide">© 2026 TheDietStore. All rights reserved.</p>
         </div>
