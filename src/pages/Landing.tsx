@@ -183,12 +183,36 @@ export default function Landing() {
     setSearchQuery("");
   };
 
-  // Product carousel scroll ref
+  // Product carousel
   const carouselRef = useRef<HTMLDivElement>(null);
+  const [carouselIndex, setCarouselIndex] = useState(0);
+  const cardsPerView = typeof window !== 'undefined' && window.innerWidth >= 1024 ? 4 : typeof window !== 'undefined' && window.innerWidth >= 640 ? 2 : 1;
+  const maxIndex = Math.max(0, (featuredFromDB.length || 12) - cardsPerView);
+
   const scrollCarousel = (dir: "left" | "right") => {
     if (!carouselRef.current) return;
-    const amount = 300;
-    carouselRef.current.scrollBy({ left: dir === "left" ? -amount : amount, behavior: "smooth" });
+    const cardWidth = 300;
+    const newIndex = dir === 'left' ? Math.max(0, carouselIndex - 1) : Math.min(maxIndex, carouselIndex + 1);
+    setCarouselIndex(newIndex);
+    carouselRef.current.scrollTo({ left: newIndex * (cardWidth + 24), behavior: 'smooth' });
+  };
+
+  // Touch/drag support
+  const touchStartX = useRef(0);
+  const handleTouchStart = (e: React.TouchEvent) => { touchStartX.current = e.touches[0].clientX; };
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) scrollCarousel(diff > 0 ? 'right' : 'left');
+  };
+  const isDragging = useRef(false);
+  const dragStartX = useRef(0);
+  const handleMouseDown = (e: React.MouseEvent) => { isDragging.current = true; dragStartX.current = e.clientX; };
+  const handleMouseMove = (e: React.MouseEvent) => { if (!isDragging.current) return; e.preventDefault(); };
+  const handleMouseUp = (e: React.MouseEvent) => {
+    if (!isDragging.current) return;
+    isDragging.current = false;
+    const diff = dragStartX.current - e.clientX;
+    if (Math.abs(diff) > 50) scrollCarousel(diff > 0 ? 'right' : 'left');
   };
 
   // Carousel state
@@ -500,7 +524,17 @@ export default function Landing() {
               </button>
 
               {/* Horizontal scroll carousel */}
-              <div ref={carouselRef} className="flex gap-6 overflow-x-auto scroll-smooth pb-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+              <div
+                ref={carouselRef}
+                className="flex gap-6 overflow-x-auto scroll-smooth pb-4"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
+                onTouchStart={handleTouchStart}
+                onTouchEnd={handleTouchEnd}
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={() => { isDragging.current = false; }}
+              >
               {featuredFromDB.slice(0, 12).map((product, i) => {
                 const msg = encodeURIComponent(`Hi TheDietStore 👋\n\nI'm interested in:\n\n📦 *${product.name}*\n🏷️ Brand: ${product.brand}\n💰 Price: ${formatINR(product.price)}\n📋 SKU: ${product.sku}\n\nPlease share details about:\n• Availability & stock\n• Bulk/wholesale pricing\n• Delivery options\n\nThank you!`);
                 return (
