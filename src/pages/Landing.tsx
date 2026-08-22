@@ -365,7 +365,7 @@ export default function Landing() {
                 const msg = encodeURIComponent(`Hi TheDietStore 👋\n\nI'm interested in:\n\n📦 *${product.name}*\n🏷️ Brand: ${product.brand}\n💰 Price: ${formatINR(product.price)}\n📋 SKU: ${product.sku}\n\nPlease share details about:\n• Availability & stock\n• Bulk/wholesale pricing\n• Delivery options\n\nThank you!`);
                 return (
                 <motion.div key={product._id} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
-                  variants={scaleIn} custom={i} className="group">
+                  variants={scaleIn} custom={i} className={`group ${!product.inStock ? 'opacity-60 grayscale' : ''}`}>
                   {/* Product card — clickable, opens detail modal */}
                   <div
                     onClick={() => setSelectedProduct(product)}
@@ -375,6 +375,14 @@ export default function Landing() {
                       <img src={product.imageUrl} alt={product.name} className="w-full h-full object-contain p-2" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-[#999999]">No Image</div>
+                    )}
+                    {/* Sold out badge */}
+                    {!product.inStock && (
+                      <div className="absolute top-3 left-3">
+                        <span className="bg-[#c2202f] text-white text-[10px] font-bold px-2 py-1 uppercase tracking-wider font-['Orbitron']">
+                          Sold out
+                        </span>
+                      </div>
                     )}
                     {/* Quick View overlay */}
                     <div className="absolute inset-x-0 bottom-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">

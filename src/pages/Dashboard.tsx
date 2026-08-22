@@ -138,7 +138,7 @@ function CategorySection({
           return (
           <div
             key={product._id}
-            className="flex-shrink-0 w-[220px] sm:w-[240px] group"
+            className={`flex-shrink-0 w-[220px] sm:w-[240px] group ${!product.inStock ? 'opacity-60 grayscale' : ''}`}
             style={{ scrollSnapAlign: "start" }}
           >            {/* Product Image */}
             <div
@@ -400,7 +400,7 @@ export default function Dashboard() {
               return (
               <div
                 key={product._id}
-                className="group"
+                className={`group ${!product.inStock ? 'opacity-60 grayscale' : ''}`}
               >
                 <div
                   onClick={() => setSelectedProduct(product)}

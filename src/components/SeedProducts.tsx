@@ -1,22 +1,25 @@
 import { useEffect, useState } from "react";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
 export function SeedProducts({ children }: { children: React.ReactNode }) {
   const seed = useMutation(api.products.seed);
-  const reseed = useMutation(api.products.reseed);
+  const products = useQuery(api.products.list, {});
   const [seeded, setSeeded] = useState(false);
 
   useEffect(() => {
-    // Force reseed: delete all old products first, then insert fresh data
-    reseed()
-      .then(() => seed())
-      .then(() => setSeeded(true))
-      .catch(() => seed().then(() => setSeeded(true)).catch(() => setSeeded(true)));
-  }, [seed, reseed]);
+    if (products === undefined) return; // still loading
+    if (products.length === 0) {
+      // DB is empty — seed default products
+      seed().then(() => setSeeded(true)).catch(() => setSeeded(true));
+    } else {
+      // DB already has products — use them as-is, do NOT delete/reseed
+      setSeeded(true);
+    }
+  }, [products, seed]);
 
-  // Expose reseed globally for admin use
-  (window as any).__reseed = reseed;
+  // Expose seed/reseed globally for admin use
+  (window as any).__reseed = seed;
 
   if (!seeded) {
     return (

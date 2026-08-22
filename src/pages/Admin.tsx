@@ -32,6 +32,7 @@ export default function Admin() {
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editPrice, setEditPrice] = useState("");
+  const [editCompareAtPrice, setEditCompareAtPrice] = useState("");
   const [editImage, setEditImage] = useState("");
   const [editStock, setEditStock] = useState("");
   const [editInStock, setEditInStock] = useState(true);
@@ -52,6 +53,7 @@ export default function Admin() {
   const startEditing = (product: (typeof products extends (infer T)[] | undefined ? T : never)) => {
     setEditingId(product._id);
     setEditPrice(String(product.price));
+    setEditCompareAtPrice(String(product.compareAtPrice ?? ""));
     setEditImage(product.imageUrl || "");
     setEditStock(String(product.stockQuantity ?? ""));
     setEditInStock(product.inStock);
@@ -61,6 +63,7 @@ export default function Admin() {
     await updateProduct({
       productId: productId as any,
       price: Number(editPrice),
+      compareAtPrice: editCompareAtPrice ? Number(editCompareAtPrice) : undefined,
       imageUrl: editImage || undefined,
       stockQuantity: editStock ? Number(editStock) : undefined,
       inStock: editInStock,
@@ -177,7 +180,7 @@ export default function Admin() {
             Product Management
           </h1>
           <p className="text-sm text-[#999999] mt-1">
-            Edit prices, images, and stock quantities for all products.
+            Edit prices, MRP, images, stock quantities, and availability for all products.
           </p>
         </div>
 
@@ -186,11 +189,12 @@ export default function Admin() {
         ) : (
           <div className="border border-[#2b2a27] overflow-hidden">
             {/* Table Header */}
-            <div className="hidden md:grid grid-cols-[auto_1fr_100px_100px_120px_80px_80px_80px] gap-3 px-4 py-3 bg-[#111111] text-xs text-[#999999] uppercase tracking-wider font-medium border-b border-[#2b2a27]">
+            <div className="hidden md:grid grid-cols-[auto_1fr_90px_80px_80px_100px_70px_70px_70px] gap-2 px-3 py-3 bg-[#111111] text-[10px] text-[#999999] uppercase tracking-wider font-medium border-b border-[#2b2a27]">
               <span></span>
               <span>Product</span>
               <span>Category</span>
               <span className="text-right">Price</span>
+              <span className="text-right">MRP</span>
               <span>Image URL</span>
               <span className="text-right">Stock</span>
               <span className="text-center">In Stock</span>
@@ -203,7 +207,7 @@ export default function Admin() {
                 <div
                   key={product._id}
                   className={cn(
-                    "grid grid-cols-1 md:grid-cols-[auto_1fr_100px_100px_120px_80px_80px_80px] gap-3 px-4 py-3 border-t border-[#2b2a27] items-center transition-colors",
+                    "grid grid-cols-1 md:grid-cols-[auto_1fr_90px_80px_80px_100px_70px_70px_70px] gap-2 px-3 py-3 border-t border-[#2b2a27] items-center transition-colors",
                     isEditing && "bg-[#c2202f]/[0.03]",
                   )}
                 >
@@ -247,6 +251,22 @@ export default function Admin() {
                     )}
                   </div>
 
+                  <div className="text-right">
+                    {isEditing ? (
+                      <Input
+                        value={editCompareAtPrice}
+                        onChange={(e) => setEditCompareAtPrice(e.target.value)}
+                        type="number"
+                        className="h-8 text-xs bg-[#111111] border-[#2b2a27] text-white w-full text-right"
+                        placeholder="MRP"
+                      />
+                    ) : (
+                      <span className="text-xs text-[#999999] line-through">
+                        {product.compareAtPrice ? formatINR(product.compareAtPrice) : "—"}
+                      </span>
+                    )}
+                  </div>
+
                   <div className="hidden md:block">
                     {isEditing ? (
                       <Input
@@ -277,29 +297,33 @@ export default function Admin() {
                     )}
                   </div>
 
-                  <div className="flex justify-center">
+                  <div className="flex flex-col items-center gap-1">
                     {isEditing ? (
                       <button
                         onClick={() => setEditInStock(!editInStock)}
                         className={cn(
-                          "h-6 w-11 transition-colors cursor-pointer relative",
+                          "h-7 w-12 transition-colors cursor-pointer relative rounded-full",
                           editInStock ? "bg-[#57a256]" : "bg-[#2b2a27]",
                         )}
                       >
                         <span
                           className={cn(
-                            "absolute top-0.5 h-5 w-5 bg-white transition-transform",
-                            editInStock ? "translate-x-[22px]" : "translate-x-0.5",
+                            "absolute top-0.5 h-6 w-6 bg-white transition-transform rounded-full shadow",
+                            editInStock ? "translate-x-[25px]" : "translate-x-0.5",
                           )}
                         />
                       </button>
                     ) : (
                       <span
                         className={cn(
-                          "h-2 w-2 rounded-full inline-block",
-                          product.inStock ? "bg-[#57a256]" : "bg-[#c2202f]",
+                          "text-[10px] font-bold px-2 py-1 uppercase tracking-wider",
+                          product.inStock
+                            ? "bg-[#57a256]/10 text-[#57a256] border border-[#57a256]/20"
+                            : "bg-[#c2202f]/10 text-[#c2202f] border border-[#c2202f]/20",
                         )}
-                      />
+                      >
+                        {product.inStock ? "In Stock" : "Out of Stock"}
+                      </span>
                     )}
                   </div>
 
