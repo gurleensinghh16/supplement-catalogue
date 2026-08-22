@@ -175,6 +175,11 @@ function CategorySection({
               </div>
             </div>
 
+            {/* Brand */}
+            <p className="text-[10px] text-[#c2202f] font-medium uppercase tracking-wider mb-1">
+              {product.brand}
+            </p>
+
             {/* Product Name — Orbitron uppercase */}
             <h3
               onClick={() => onSelectProduct(product)}
@@ -182,6 +187,11 @@ function CategorySection({
             >
               {product.name}
             </h3>
+
+            {/* Description snippet */}
+            <p className="text-[11px] text-[#999999] leading-relaxed mb-2 line-clamp-2">
+              {product.description}
+            </p>
 
             {/* Price */}
             <div className="flex items-center gap-2 mb-2">
@@ -421,12 +431,18 @@ export default function Dashboard() {
                     </button>
                   </div>
                 </div>
+                <p className="text-[10px] text-[#c2202f] font-medium uppercase tracking-wider mb-1">
+                  {product.brand}
+                </p>
                 <h3
                   onClick={() => setSelectedProduct(product)}
                   className="font-['Orbitron'] text-xs font-normal tracking-[0.15em] uppercase text-white mb-1 line-clamp-2 cursor-pointer hover:text-[#c2202f] transition-colors"
                 >
                   {product.name}
                 </h3>
+                <p className="text-[11px] text-[#999999] leading-relaxed mb-2 line-clamp-2">
+                  {product.description}
+                </p>
                 <div className="flex items-center gap-2 mb-2">
                   <p className="text-sm font-semibold text-white">
                     {formatINR(product.price)}

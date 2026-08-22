@@ -14,6 +14,9 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useRef, useState, useEffect, useCallback } from "react";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import ProductDetail from "@/components/ProductDetail";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
@@ -58,41 +61,6 @@ const navCategories = [
   "Samples",
 ];
 
-const featuredProducts = [
-  {
-    name: "Whey Protein Isolate",
-    price: "₹7,499",
-    compareAtPrice: "₹10,999",
-    image: "https://cdn.shopify.com/s/files/1/0021/4302/7249/files/01_chocolate.png?v=1776397394",
-    rating: 4.8,
-    reviews: 13,
-  },
-  {
-    name: "Blood & Guts Pre-Workout",
-    price: "₹3,299",
-    compareAtPrice: "₹3,999",
-    image: "https://cdn.shopify.com/s/files/1/0021/4302/7249/files/71oGlDLF5dL._AC_SL1500.jpg?v=1721899129",
-    rating: 4.6,
-    reviews: 8,
-  },
-  {
-    name: "Stim Reaper Black",
-    price: "₹2,599",
-    compareAtPrice: "₹3,499",
-    image: "https://cdn.shopify.com/s/files/1/0021/4302/7249/files/81dVpMvgXLL._AC_SL1500.jpg?v=1721899130",
-    rating: 4.9,
-    reviews: 21,
-  },
-  {
-    name: "Napalm Pre-Workout",
-    price: "₹4,999",
-    compareAtPrice: "₹6,999",
-    image: "https://cdn.shopify.com/s/files/1/0021/4302/7249/files/tango-foxtrot.webp?v=1741765326",
-    rating: 4.7,
-    reviews: 15,
-  },
-];
-
 const features = [
   {
     title: "Genuine Products",
@@ -110,6 +78,10 @@ const features = [
     icon: Zap,
   },
 ];
+
+function formatINR(price: number) {
+  return `₹${price.toLocaleString("en-IN")}`;
+}
 
 function StarRating({ rating, reviews }: { rating: number; reviews: number }) {
   return (
@@ -129,6 +101,24 @@ function StarRating({ rating, reviews }: { rating: number; reviews: number }) {
   );
 }
 
+type Product = {
+  _id: string;
+  name: string;
+  brand: string;
+  category: string;
+  description: string;
+  price: number;
+  compareAtPrice?: number;
+  sku: string;
+  inStock: boolean;
+  imageUrl?: string;
+  tags: string[];
+  servings?: string;
+  weight?: string;
+  featured?: boolean;
+  stockQuantity?: number;
+};
+
 export default function Landing() {
   const navigate = useNavigate();
   const heroRef = useRef<HTMLDivElement>(null);
@@ -137,6 +127,13 @@ export default function Landing() {
     offset: ["start start", "end start"],
   });
   const heroY = useTransform(scrollYProgress, [0, 1], [0, 100]);
+
+  // Fetch featured products from Convex database
+  const allProducts = useQuery(api.products.list, {}) as Product[] | undefined;
+  const featuredFromDB = (allProducts ?? []).filter((p) => p.featured);
+
+  // Selected product for detail modal
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   // Carousel state
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -178,6 +175,14 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-black text-white w-full" style={{ overflowX: 'hidden', maxWidth: '100vw' }}>
+      {/* Product Detail Modal */}
+      {selectedProduct && (
+        <ProductDetail
+          product={selectedProduct}
+          onClose={() => setSelectedProduct(null)}
+        />
+      )}
+
       {/* ── Navigation ── */}
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-[#2b2a27] bg-black/95 backdrop-blur-xl">
         <div className="mx-auto max-w-[1440px] px-6 lg:px-10">
@@ -334,7 +339,7 @@ export default function Landing() {
         )}
       </section>
 
-      {/* ── Featured Products ── */}
+      {/* ── Featured Products — from database ── */}
       <section id="featured" className="py-24 px-6">
         <div className="mx-auto max-w-[1440px]">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeUp} custom={0}
@@ -343,59 +348,83 @@ export default function Landing() {
               <h2 className="font-['Orbitron'] text-3xl sm:text-4xl font-normal tracking-[0.15em] uppercase">
                 Hot Selling <span className="text-[#c2202f]">Products</span>
               </h2>
-              <p className="mt-3 text-[#999999] text-lg">Our most popular supplements this month.</p>
+              <p className="mt-3 text-[#999999] text-lg">Our most popular supplements — all from our catalogue.</p>
             </div>
             <Button variant="ghost" className="text-[#c2202f] hover:text-[#de3746] hover:bg-[#c2202f]/5 cursor-pointer hidden sm:flex" onClick={() => navigate("/catalogue")}>
               View All <ArrowRight className="ml-1.5 h-4 w-4" />
             </Button>
           </motion.div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-            {featuredProducts.map((product, i) => {
-              const msg = encodeURIComponent(`Hi TheDietStore 👋\n\nI'm interested in:\n\n📦 *${product.name}*\n💰 Price: ${product.price}\n\nPlease share details about availability, pricing & delivery.\n\nThank you!`);
-              return (
-              <motion.div key={product.name} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
-                variants={scaleIn} custom={i} className="group">
-                {/* Product card */}
-                <div
-                  onClick={() => navigate("/catalogue")}
-                  className="relative aspect-square overflow-hidden mb-4 cursor-pointer group-hover:scale-[1.02] transition-transform duration-500"
-                >
-                  <img src={product.image} alt={product.name} className="w-full h-full object-contain p-2" />
-                  {/* Quick View overlay */}
-                  <div className="absolute inset-x-0 bottom-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <div className="w-full bg-[#c2202f] text-white py-3 font-['Orbitron'] text-sm tracking-wider uppercase text-center cursor-pointer">
-                      Quick view
+          {featuredFromDB.length === 0 ? (
+            <div className="text-center py-16">
+              <p className="text-[#999999] text-lg">Loading products from catalogue...</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+              {featuredFromDB.slice(0, 8).map((product, i) => {
+                const msg = encodeURIComponent(`Hi TheDietStore 👋\n\nI'm interested in:\n\n📦 *${product.name}*\n🏷️ Brand: ${product.brand}\n💰 Price: ${formatINR(product.price)}\n📋 SKU: ${product.sku}\n\nPlease share details about:\n• Availability & stock\n• Bulk/wholesale pricing\n• Delivery options\n\nThank you!`);
+                return (
+                <motion.div key={product._id} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
+                  variants={scaleIn} custom={i} className="group">
+                  {/* Product card — clickable, opens detail modal */}
+                  <div
+                    onClick={() => setSelectedProduct(product)}
+                    className="relative aspect-square overflow-hidden mb-4 cursor-pointer group-hover:scale-[1.02] transition-transform duration-500"
+                  >
+                    {product.imageUrl ? (
+                      <img src={product.imageUrl} alt={product.name} className="w-full h-full object-contain p-2" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-[#999999]">No Image</div>
+                    )}
+                    {/* Quick View overlay */}
+                    <div className="absolute inset-x-0 bottom-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <div className="w-full bg-[#c2202f] text-white py-3 font-['Orbitron'] text-sm tracking-wider uppercase text-center cursor-pointer">
+                        Quick view
+                      </div>
                     </div>
                   </div>
-                </div>
-                {/* Star rating */}
-                <StarRating rating={product.rating} reviews={product.reviews} />
-                {/* Product name — uppercase Orbitron */}
-                <h3 className="font-['Orbitron'] text-sm font-normal tracking-[0.15em] uppercase text-white mb-1">
-                  {product.name}
-                </h3>
-                {/* Price */}
-                <div className="flex items-center gap-2 mb-3">
-                  <p className="text-base font-semibold text-white">{product.price}</p>
-                  {product.compareAtPrice && (
-                    <p className="text-sm text-[#999999] line-through">{product.compareAtPrice}</p>
-                  )}
-                </div>
-                {/* WhatsApp Enquiry Button */}
-                <a
-                  href={`https://wa.me/918295158184?text=${msg}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 w-full py-2.5 border border-[#25D366]/30 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-white transition-all duration-300 text-xs font-medium tracking-wider font-['Orbitron'] uppercase"
-                >
-                  <MessageCircle className="h-3.5 w-3.5" />
-                  Enquire on WhatsApp
-                </a>
-              </motion.div>
-              );
-            })}
-          </div>
+
+                  {/* Brand */}
+                  <p className="text-[10px] text-[#c2202f] font-medium uppercase tracking-wider mb-1">
+                    {product.brand}
+                  </p>
+
+                  {/* Product name — uppercase Orbitron */}
+                  <h3
+                    onClick={() => setSelectedProduct(product)}
+                    className="font-['Orbitron'] text-sm font-normal tracking-[0.15em] uppercase text-white mb-1 line-clamp-2 cursor-pointer hover:text-[#c2202f] transition-colors"
+                  >
+                    {product.name}
+                  </h3>
+
+                  {/* Description snippet */}
+                  <p className="text-xs text-[#999999] leading-relaxed mb-2 line-clamp-2">
+                    {product.description}
+                  </p>
+
+                  {/* Price */}
+                  <div className="flex items-center gap-2 mb-3">
+                    <p className="text-base font-semibold text-white">{formatINR(product.price)}</p>
+                    {product.compareAtPrice && (
+                      <p className="text-sm text-[#999999] line-through">{formatINR(product.compareAtPrice)}</p>
+                    )}
+                  </div>
+
+                  {/* WhatsApp Enquiry Button */}
+                  <a
+                    href={`https://wa.me/918295158184?text=${msg}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 w-full py-2.5 border border-[#25D366]/30 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-white transition-all duration-300 text-xs font-medium tracking-wider font-['Orbitron'] uppercase"
+                  >
+                    <MessageCircle className="h-3.5 w-3.5" />
+                    Enquire on WhatsApp
+                  </a>
+                </motion.div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </section>
 
