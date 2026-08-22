@@ -381,7 +381,7 @@ export default function Landing() {
 
             {/* Center — logo */}
             <button onClick={() => navigate("/")} className="flex items-center cursor-pointer">
-              <img src={`${BASE}logoo.png`} alt="TheDietStore" className="h-12 lg:h-16 w-auto object-contain" />
+              <img id="site-logo" src={`${BASE}logoo.png`} alt="TheDietStore" className="h-12 lg:h-16 w-auto object-contain" />
             </button>
 
             {/* Right — nav links + CTA */}

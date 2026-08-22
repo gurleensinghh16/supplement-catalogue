@@ -19,6 +19,7 @@
 import '@vly-ai/integrations';
 import { Toaster } from "@/components/ui/sonner";
 import { SeedProducts } from "@/components/SeedProducts";
+import { LoadingScreen } from "@/components/LoadingScreen";
 import { VlyToolbar } from "../vly-toolbar-readonly.tsx";
 import { ConvexAuthProvider } from "@convex-dev/auth/react";
 import { ConvexReactClient } from "convex/react";
@@ -128,6 +129,7 @@ function RouteSyncer() {
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <RootErrorBoundary>
+      <LoadingScreen />
       <ToolbarErrorBoundary>
         <VlyToolbar />
       </ToolbarErrorBoundary>
