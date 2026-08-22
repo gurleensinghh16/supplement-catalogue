@@ -424,12 +424,20 @@ export default function Landing() {
           >
             <button
               onClick={() => navigate("/catalogue")}
-              className="w-full h-full cursor-pointer block overflow-hidden"
+              className="relative w-full h-full cursor-pointer block overflow-hidden"
             >
+              {/* Blurred backdrop — fills the frame, kills empty side-bars, never shown sharp */}
+              <img
+                src={heroSlides[currentSlide].image}
+                alt=""
+                aria-hidden="true"
+                className="absolute inset-0 w-full h-full object-cover object-center block scale-110 blur-2xl opacity-60"
+              />
+              {/* Real image — always shown in full via object-contain, so nothing is ever cropped */}
               <img
                 src={heroSlides[currentSlide].image}
                 alt="Hero banner"
-                className="w-full h-full object-cover object-center block"
+                className="relative w-full h-full object-contain object-center block"
               />
             </button>
           </motion.div>
