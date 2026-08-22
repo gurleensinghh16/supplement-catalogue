@@ -237,8 +237,7 @@
   display: none;
 }
 
-/* Product images: remove white backgrounds on dark theme */
+/* Product images: softer look on dark theme */
 .product-img {
-  mix-blend-mode: multiply;
-  filter: contrast(1.05);
+  filter: brightness(1.05) contrast(1.02);
 }

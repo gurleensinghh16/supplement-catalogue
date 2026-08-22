@@ -419,7 +419,7 @@ export default function Dashboard() {
                       src={product.imageUrl}
                       alt={product.name}
                       className="w-full h-full object-contain p-2"
-                      style={{ mixBlendMode: 'normal' }}
+
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
