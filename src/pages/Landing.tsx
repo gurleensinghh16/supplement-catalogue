@@ -412,7 +412,7 @@ export default function Landing() {
       </nav>
 
       {/* ── Hero Carousel — Full clickable images, no text overlay ── */}
-      <section ref={heroRef} className="relative w-full h-[40vh] min-h-[250px] max-h-[350px] sm:h-[50vh] sm:min-h-[350px] sm:max-h-[500px] md:h-[60vh] md:min-h-[400px] md:max-h-[600px] lg:h-[75vh] lg:min-h-[500px] lg:max-h-[850px] mt-20 sm:mt-24 md:mt-28" style={{ overflow: 'hidden', clipPath: 'inset(0)' }}>
+      <section ref={heroRef} className="relative w-full h-[45vh] min-h-[280px] max-h-[400px] md:h-[65vh] md:min-h-[450px] lg:h-[75vh] lg:min-h-[500px] lg:max-h-[850px] mt-20 md:mt-28" style={{ overflow: 'hidden', clipPath: 'inset(0)' }}>
         <AnimatePresence mode="wait">
           <motion.div
             key={currentSlide}
@@ -436,23 +436,23 @@ export default function Landing() {
         </AnimatePresence>
 
         {/* Navigation arrows */}
-        <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 lg:bottom-8 lg:right-10 flex items-center gap-2 sm:gap-3 z-10">
+        <div className="absolute bottom-6 right-6 md:bottom-8 md:right-10 flex items-center gap-3 z-10">
           <button
             onClick={() => { prevSlide(); setIsAutoPlaying(false); }}
-            className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 border border-[#2b2a27] bg-black/60 backdrop-blur-sm flex items-center justify-center hover:border-[#c2202f] hover:bg-[#c2202f]/10 transition-all cursor-pointer"
+            className="w-10 h-10 md:w-12 md:h-12 border border-[#2b2a27] bg-black/60 backdrop-blur-sm flex items-center justify-center hover:border-[#c2202f] hover:bg-[#c2202f]/10 transition-all cursor-pointer"
           >
             <ChevronLeft className="h-5 w-5 text-white" />
           </button>
           <button
             onClick={() => { nextSlide(); setIsAutoPlaying(false); }}
-            className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 border border-[#2b2a27] bg-black/60 backdrop-blur-sm flex items-center justify-center hover:border-[#c2202f] hover:bg-[#c2202f]/10 transition-all cursor-pointer"
+            className="w-10 h-10 md:w-12 md:h-12 border border-[#2b2a27] bg-black/60 backdrop-blur-sm flex items-center justify-center hover:border-[#c2202f] hover:bg-[#c2202f]/10 transition-all cursor-pointer"
           >
             <ChevronRight className="h-5 w-5 text-white" />
           </button>
         </div>
 
         {/* Slide indicators */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 sm:bottom-6 md:bottom-8 flex items-center gap-2 sm:gap-3 z-10">
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 md:bottom-8 flex items-center gap-3 z-10">
           {heroSlides.map((_, i) => (
             <button
               key={i}
