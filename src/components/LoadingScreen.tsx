@@ -19,7 +19,7 @@ export function LoadingScreen() {
 
     if (phase === "enter") {
       // Grow big, then start flipping
-      t = setTimeout(() => setPhase("flip"), 900);
+      t = setTimeout(() => setPhase("flip"),1200);
     }
 
     if (phase === "flip") {
@@ -68,21 +68,12 @@ export function LoadingScreen() {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.6, ease: "easeInOut" }}
         >
-          {/* Ambient glow — pulses during flip */}
-          <motion.div
-            className="pointer-events-none absolute rounded-full bg-[#c2202f]/15 blur-[120px]"
-            style={{ width: 500, height: 500, top: centerY - 250, left: centerX - 250 }}
-            animate={{
-              opacity: phase === "enter" || phase === "flip" ? [0, 1, 0.6, 1, 0.6, 0] : 0,
-              scale:   phase === "enter" || phase === "flip" ? [0.8, 1.2, 1, 1.2, 1, 0.8] : 0,
-            }}
-            transition={{ duration: 2.2, ease: "easeInOut" }}
-          />
+          
 
           {/* Ground shadow */}
           <motion.div
             className="pointer-events-none absolute rounded-full bg-black blur-md"
-            style={{ width: 130, height: 18, top: centerY + 145, left: centerX, x: "-50%" }}
+            style={{ width: 130, height: 18, top: centerY + 175, left: centerX, x: "-50%" }}
             animate={{
               opacity: phase === "enter" || phase === "flip" ? 0.5 : 0,
               scaleX:  phase === "enter" || phase === "flip" ? 1 : 0.4,
@@ -97,16 +88,16 @@ export function LoadingScreen() {
               alt="TheDietStore"
               style={{ position: "absolute" }}
 
-              initial={{
-                opacity: 0,
-                scale: 0.4,
-                rotateY: 0,
-                top: centerY,
-                left: centerX,
-                x: "-50%",
-                y: "-50%",
-                width: 80,
-              }}
+             initial={{
+  opacity: 0,
+  scale: 0.8,
+  rotateY: 0,
+  top: centerY,
+  left: typeof window !== "undefined" ? window.innerWidth + 200 : 1400,
+  x: "-50%",
+  y: "-50%",
+  width: 80,
+}}
 
               animate={
                 phase === "enter"
@@ -119,26 +110,26 @@ export function LoadingScreen() {
                       left: centerX,
                       x: "-50%",
                       y: "-50%",
-                      width: 280,
+                      width: 340,
                     }
                   : phase === "flip"
                   ? {
                       // Stays big, flips 2-3 times (rotateY cycles)
                       opacity: 1,
-                      scale: [1, 1.08, 1, 1.08, 1, 1.05, 1],
-                      rotateY: [0, 180, 360, 540, 720],
+                      scale: [1, 1.06, 1],
+                      rotateY: 0,
                       top: centerY,
                       left: centerX,
                       x: "-50%",
                       y: "-50%",
-                      width: 280,
+                      width: 340,
                     }
                   : flying && target
                   ? {
                       // Flies to nav logo position
                       opacity: phase === "exit" ? 0 : 1,
                       scale: phase === "landed" ? 1.12 : 1,
-                      rotateY: 0,
+                      rotateY: phase === "move" ? [0, 360, 720] : 0,  // flips 2x while flying
                       top: target.y,
                       left: target.x,
                       x: "-50%",
@@ -149,12 +140,14 @@ export function LoadingScreen() {
               }
 
               transition={
-                phase === "enter"
-                  ? {
-                      opacity: { duration: 0.4 },
-                      scale:   { type: "spring", stiffness: 100, damping: 12 },
-                      width:   { type: "spring", stiffness: 100, damping: 12 },
-                    }
+              phase === "enter"
+? {
+    opacity: { duration: 0.3 },
+    left: { type: "spring", stiffness: 80, damping: 15 },  // slides in
+    scale: { type: "spring", stiffness: 100, damping: 12 },
+    width: { type: "spring", stiffness: 100, damping: 12 },
+  }
+
                   : phase === "flip"
                   ? {
                       rotateY: {
@@ -168,8 +161,18 @@ export function LoadingScreen() {
                       },
                     }
                   : phase === "landed"
-                  ? { duration: 0.15, ease: "easeOut" }
-                  : { duration: 0.65, ease: [0.65, 0, 0.35, 1] }
+  ? { duration: 0.15, ease: "easeOut" }
+  : phase === "move"
+  ? {
+      duration: 0.65,
+      ease: [0.65, 0, 0.35, 1],
+      rotateY: {
+        duration: 0.65,
+        ease: "easeInOut",
+        times: [0, 0.5, 1],
+      },
+    }
+  : { duration: 0.65, ease: [0.65, 0, 0.35, 1] }
               }
             />
           </div>
@@ -177,7 +180,7 @@ export function LoadingScreen() {
           {/* Tagline — visible during enter + flip, fades on move */}
           <motion.p
             className="absolute font-['Orbitron'] text-xs sm:text-sm tracking-[0.5em] uppercase text-[#c2202f]/70"
-            style={{ top: centerY + 160, left: centerX, transform: "translateX(-50%)", whiteSpace: "nowrap" }}
+            style={{ top: centerY + 190, left: centerX, transform: "translateX(-50%)", whiteSpace: "nowrap" }}
             animate={{
               opacity: phase === "enter" || phase === "flip" ? 1 : 0,
               y:       phase === "enter" || phase === "flip" ? 0 : 10,
