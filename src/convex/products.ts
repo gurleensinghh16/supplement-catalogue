@@ -51,6 +51,52 @@ export const featured = query({
   },
 });
 
+export const createProduct = mutation({
+  args: {
+    name: v.string(),
+    brand: v.string(),
+    category: v.string(),
+    description: v.optional(v.string()),
+    price: v.number(),
+    compareAtPrice: v.optional(v.number()),
+    sku: v.optional(v.string()),
+    inStock: v.optional(v.boolean()),
+    imageUrl: v.optional(v.string()),
+    tags: v.optional(v.array(v.string())),
+    servings: v.optional(v.string()),
+    weight: v.optional(v.string()),
+    featured: v.optional(v.boolean()),
+    stockQuantity: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const id = await ctx.db.insert("products", {
+      name: args.name,
+      brand: args.brand,
+      category: args.category,
+      description: args.description || "",
+      price: args.price,
+      compareAtPrice: args.compareAtPrice,
+      sku: args.sku || "",
+      inStock: args.inStock ?? true,
+      imageUrl: args.imageUrl,
+      tags: args.tags || [],
+      servings: args.servings,
+      weight: args.weight,
+      featured: args.featured ?? false,
+      stockQuantity: args.stockQuantity ?? 0,
+    });
+    return id;
+  },
+});
+
+export const deleteProduct = mutation({
+  args: { productId: v.id("products") },
+  handler: async (ctx, args) => {
+    await ctx.db.delete(args.productId);
+    return "deleted";
+  },
+});
+
 export const updateProduct = mutation({
   args: {
     productId: v.id("products"),

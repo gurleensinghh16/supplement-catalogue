@@ -10,7 +10,9 @@ import {
   LogOut,
   Package,
   Pencil,
+  Plus,
   Save,
+  Trash2,
   X,
 } from "lucide-react";
 import { useNavigate } from "react-router";
@@ -37,8 +39,27 @@ export default function Admin() {
   const [editStock, setEditStock] = useState("");
   const [editInStock, setEditInStock] = useState(true);
 
+  // Add product form state
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newName, setNewName] = useState("");
+  const [newBrand, setNewBrand] = useState("");
+  const [newCategory, setNewCategory] = useState("");
+  const [newDescription, setNewDescription] = useState("");
+  const [newPrice, setNewPrice] = useState("");
+  const [newCompareAtPrice, setNewCompareAtPrice] = useState("");
+  const [newSku, setNewSku] = useState("");
+  const [newImageUrl, setNewImageUrl] = useState("");
+  const [newWeight, setNewWeight] = useState("");
+  const [newServings, setNewServings] = useState("");
+  const [newStock, setNewStock] = useState("0");
+  const [newInStock, setNewInStock] = useState(true);
+  const [newFeatured, setNewFeatured] = useState(false);
+  const [newTags, setNewTags] = useState("");
+
   const products = useQuery(api.products.list, {});
   const updateProduct = useMutation(api.products.updateProduct);
+  const createProduct = useMutation(api.products.createProduct);
+  const deleteProduct = useMutation(api.products.deleteProduct);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,6 +90,42 @@ export default function Admin() {
       inStock: editInStock,
     });
     setEditingId(null);
+  };
+
+  const resetAddForm = () => {
+    setNewName(""); setNewBrand(""); setNewCategory(""); setNewDescription("");
+    setNewPrice(""); setNewCompareAtPrice(""); setNewSku("");
+    setNewImageUrl(""); setNewWeight(""); setNewServings("");
+    setNewStock("0"); setNewInStock(true); setNewFeatured(false); setNewTags("");
+    setShowAddForm(false);
+  };
+
+  const handleAddProduct = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newName || !newBrand || !newCategory || !newPrice) return;
+    await createProduct({
+      name: newName,
+      brand: newBrand,
+      category: newCategory,
+      description: newDescription,
+      price: Number(newPrice),
+      compareAtPrice: newCompareAtPrice ? Number(newCompareAtPrice) : undefined,
+      sku: newSku,
+      imageUrl: newImageUrl || undefined,
+      weight: newWeight || undefined,
+      servings: newServings || undefined,
+      stockQuantity: Number(newStock),
+      inStock: newInStock,
+      featured: newFeatured,
+      tags: newTags ? newTags.split(",").map((t) => t.trim()).filter(Boolean) : [],
+    });
+    resetAddForm();
+  };
+
+  const handleDeleteProduct = async (productId: string) => {
+    if (confirm("Delete this product?")) {
+      await deleteProduct({ productId: productId as any });
+    }
   };
 
   if (!isLoggedIn) {
@@ -175,14 +232,67 @@ export default function Admin() {
       </header>
 
       <div className="mx-auto max-w-7xl px-6 py-8">
-        <div className="mb-8">
-          <h1 className="font-['Orbitron'] text-2xl font-normal tracking-[0.15em] uppercase">
-            Product Management
-          </h1>
-          <p className="text-sm text-[#999999] mt-1">
-            Edit prices, MRP, images, stock quantities, and availability for all products.
-          </p>
+        {/* Header + Add Product button */}
+        <div className="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+          <div>
+            <h1 className="font-['Orbitron'] text-2xl font-normal tracking-[0.15em] uppercase">
+              Product Management
+            </h1>
+            <p className="text-sm text-[#999999] mt-1">
+              Edit prices, MRP, images, stock quantities, and availability for all products.
+            </p>
+          </div>
+          <Button
+            onClick={() => setShowAddForm(!showAddForm)}
+            className="bg-[#c2202f] text-white hover:bg-[#de3746] font-medium cursor-pointer font-['Orbitron'] text-xs tracking-wider uppercase h-10 px-6"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Add Product
+          </Button>
         </div>
+
+        {/* Add Product Form */}
+        {showAddForm && (
+          <form onSubmit={handleAddProduct} className="mb-8 border border-[#2b2a27] bg-[#0a0a0a] p-6">
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="font-['Orbitron'] text-base tracking-[0.15em] uppercase text-white">New Product</h2>
+              <button type="button" onClick={resetAddForm} className="text-[#999999] hover:text-white cursor-pointer">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <Input placeholder="Product Name *" value={newName} onChange={(e) => setNewName(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" required />
+              <Input placeholder="Brand *" value={newBrand} onChange={(e) => setNewBrand(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" required />
+              <Input placeholder="Category *" value={newCategory} onChange={(e) => setNewCategory(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" required />
+              <Input placeholder="Price (₹) *" type="number" value={newPrice} onChange={(e) => setNewPrice(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" required />
+              <Input placeholder="MRP (₹)" type="number" value={newCompareAtPrice} onChange={(e) => setNewCompareAtPrice(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" />
+              <Input placeholder="SKU" value={newSku} onChange={(e) => setNewSku(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" />
+              <Input placeholder="Image URL" value={newImageUrl} onChange={(e) => setNewImageUrl(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" />
+              <Input placeholder="Weight" value={newWeight} onChange={(e) => setNewWeight(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" />
+              <Input placeholder="Servings" value={newServings} onChange={(e) => setNewServings(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" />
+              <Input placeholder="Stock Quantity" type="number" value={newStock} onChange={(e) => setNewStock(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" />
+              <Input placeholder="Tags (comma-separated)" value={newTags} onChange={(e) => setNewTags(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50 sm:col-span-2 lg:col-span-1" />
+              <textarea placeholder="Description" value={newDescription} onChange={(e) => setNewDescription(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50 px-3 py-2 text-sm resize-none sm:col-span-2 lg:col-span-3" rows={2} />
+            </div>
+            <div className="flex items-center gap-4 mt-4">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <button type="button" onClick={() => setNewInStock(!newInStock)} className={cn("h-6 w-10 transition-colors cursor-pointer relative rounded-full", newInStock ? "bg-[#57a256]" : "bg-[#2b2a27]")}>
+                  <span className={cn("absolute top-0.5 h-5 w-5 bg-white transition-transform rounded-full shadow", newInStock ? "translate-x-[20px]" : "translate-x-0.5")} />
+                </button>
+                <span className="text-xs text-[#999999]">In Stock</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <button type="button" onClick={() => setNewFeatured(!newFeatured)} className={cn("h-6 w-10 transition-colors cursor-pointer relative rounded-full", newFeatured ? "bg-[#c2202f]" : "bg-[#2b2a27]")}>
+                  <span className={cn("absolute top-0.5 h-5 w-5 bg-white transition-transform rounded-full shadow", newFeatured ? "translate-x-[20px]" : "translate-x-0.5")} />
+                </button>
+                <span className="text-xs text-[#999999]">Featured on Home</span>
+              </label>
+              <Button type="submit" className="bg-[#c2202f] text-white hover:bg-[#de3746] cursor-pointer font-['Orbitron'] text-xs tracking-wider uppercase ml-auto">
+                <Save className="h-3.5 w-3.5 mr-2" /> Create Product
+              </Button>
+            </div>
+          </form>
+        )}
 
         {products === undefined ? (
           <div className="text-center py-20 text-[#999999]">Loading products...</div>
@@ -344,12 +454,20 @@ export default function Admin() {
                         </button>
                       </>
                     ) : (
-                      <button
-                        onClick={() => startEditing(product)}
-                        className="h-7 w-7 bg-[#111111] text-[#999999] flex items-center justify-center hover:bg-[#2b2a27] hover:text-white cursor-pointer transition-colors"
-                      >
-                        <Pencil className="h-3.5 w-3.5" />
-                      </button>
+                      <>
+                        <button
+                          onClick={() => startEditing(product)}
+                          className="h-7 w-7 bg-[#111111] text-[#999999] flex items-center justify-center hover:bg-[#2b2a27] hover:text-white cursor-pointer transition-colors"
+                        >
+                          <Pencil className="h-3.5 w-3.5" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteProduct(product._id)}
+                          className="h-7 w-7 bg-[#111111] text-[#999999] flex items-center justify-center hover:bg-[#c2202f]/10 hover:text-[#c2202f] cursor-pointer transition-colors"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </>
                     )}
                   </div>
                 </div>

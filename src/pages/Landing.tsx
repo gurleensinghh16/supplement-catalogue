@@ -135,6 +135,44 @@ export default function Landing() {
   // Selected product for detail modal
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
+  // Search
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (searchOpen && searchInputRef.current) searchInputRef.current.focus();
+  }, [searchOpen]);
+
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "/" && !searchOpen && !(e.target instanceof HTMLInputElement)) {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+      if (e.key === "Escape" && searchOpen) setSearchOpen(false);
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [searchOpen]);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/catalogue?search=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchOpen(false);
+      setSearchQuery("");
+    }
+  };
+
+  // Product carousel scroll ref
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const scrollCarousel = (dir: "left" | "right") => {
+    if (!carouselRef.current) return;
+    const amount = 300;
+    carouselRef.current.scrollBy({ left: dir === "left" ? -amount : amount, behavior: "smooth" });
+  };
+
   // Carousel state
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
@@ -183,6 +221,48 @@ export default function Landing() {
         />
       )}
 
+      {/* Search Overlay */}
+      <AnimatePresence>
+        {searchOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-start justify-center pt-32"
+            onClick={() => setSearchOpen(false)}
+          >
+            <motion.form
+              initial={{ opacity: 0, y: -20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -20, scale: 0.95 }}
+              transition={{ duration: 0.2 }}
+              onClick={(e) => e.stopPropagation()}
+              onSubmit={handleSearch}
+              className="w-full max-w-xl mx-6"
+            >
+              <div className="relative">
+                <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-[#999999]" />
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search products, brands, categories..."
+                  className="w-full h-16 pl-14 pr-20 bg-[#111111] border border-[#2b2a27] text-white text-lg placeholder:text-[#999999] focus:outline-none focus:border-[#c2202f]/40 font-['Orbitron'] tracking-wider"
+                />
+                <button
+                  type="submit"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 h-10 px-5 bg-[#c2202f] text-white font-['Orbitron'] text-xs tracking-wider uppercase hover:bg-[#de3746] transition-colors cursor-pointer"
+                >
+                  Search
+                </button>
+              </div>
+              <p className="text-xs text-[#999999] mt-3 text-center">Press <kbd className="px-1.5 py-0.5 bg-[#111111] border border-[#2b2a27] text-[#999999]">ESC</kbd> to close</p>
+            </motion.form>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* ── Navigation ── */}
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-[#2b2a27] bg-black/95 backdrop-blur-xl">
         <div className="mx-auto max-w-[1440px] px-6 lg:px-10">
@@ -190,7 +270,7 @@ export default function Landing() {
           <div className="h-28 flex items-center justify-between">
             {/* Left — search + supplements */}
             <div className="hidden lg:flex items-center gap-8">
-              <button className="w-10 h-10 flex items-center justify-center hover:text-[#c2202f] transition-colors cursor-pointer">
+              <button onClick={() => setSearchOpen(true)} className="w-10 h-10 flex items-center justify-center hover:text-[#c2202f] transition-colors cursor-pointer">
                 <Search className="h-5 w-5" />
               </button>
 
@@ -360,12 +440,22 @@ export default function Landing() {
               <p className="text-[#999999] text-lg">Loading products from catalogue...</p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-              {featuredFromDB.slice(0, 8).map((product, i) => {
+            <div className="relative">
+              {/* Scroll buttons */}
+              <button onClick={() => scrollCarousel("left")} className="absolute -left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 border border-[#2b2a27] bg-black/80 backdrop-blur-sm flex items-center justify-center hover:border-[#c2202f] transition-all cursor-pointer hidden sm:flex">
+                <ChevronLeft className="h-5 w-5 text-white" />
+              </button>
+              <button onClick={() => scrollCarousel("right")} className="absolute -right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 border border-[#2b2a27] bg-black/80 backdrop-blur-sm flex items-center justify-center hover:border-[#c2202f] transition-all cursor-pointer hidden sm:flex">
+                <ChevronRight className="h-5 w-5 text-white" />
+              </button>
+
+              {/* Horizontal scroll carousel */}
+              <div ref={carouselRef} className="flex gap-6 overflow-x-auto scroll-smooth pb-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+              {featuredFromDB.slice(0, 12).map((product, i) => {
                 const msg = encodeURIComponent(`Hi TheDietStore 👋\n\nI'm interested in:\n\n📦 *${product.name}*\n🏷️ Brand: ${product.brand}\n💰 Price: ${formatINR(product.price)}\n📋 SKU: ${product.sku}\n\nPlease share details about:\n• Availability & stock\n• Bulk/wholesale pricing\n• Delivery options\n\nThank you!`);
                 return (
                 <motion.div key={product._id} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
-                  variants={scaleIn} custom={i} className={`group ${!product.inStock ? 'opacity-60 grayscale' : ''}`}>
+                  variants={scaleIn} custom={i} className={`group flex-shrink-0 w-[260px] sm:w-[280px] ${!product.inStock ? 'opacity-60 grayscale' : ''}`}>
                   {/* Product card — clickable, opens detail modal */}
                   <div
                     onClick={() => setSelectedProduct(product)}
@@ -431,6 +521,7 @@ export default function Landing() {
                 </motion.div>
                 );
               })}
+              </div>
             </div>
           )}
         </div>
