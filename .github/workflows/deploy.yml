@@ -31,6 +31,8 @@ jobs:
 
       - name: Build (skip tsc, Vite only)
         run: npx vite build
+        env:
+          VITE_CONVEX_URL: ${{ secrets.VITE_CONVEX_URL }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
