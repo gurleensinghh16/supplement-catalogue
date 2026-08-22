@@ -126,9 +126,13 @@ export default function ProductDetail({ product, onClose }: ProductDetailProps) 
               )}
             </div>
 
-            <p className="text-sm text-[#999999] leading-relaxed mb-6">
-              {product.description}
-            </p>
+            <div className="mb-6">
+              {product.description.split(/(?<=[.!?])\s+/).filter(Boolean).map((sentence, i) => (
+                <p key={i} className="text-sm text-[#999999] leading-relaxed mb-2">
+                  {sentence.trim()}
+                </p>
+              ))}
+            </div>
 
             <div className="mb-6">
               <h4 className="text-xs font-medium text-[#999999] uppercase tracking-wider mb-3">
