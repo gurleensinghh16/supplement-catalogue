@@ -325,16 +325,16 @@ export default function Landing() {
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-[#2b2a27] bg-black/95 backdrop-blur-xl">
         <div className="mx-auto max-w-[1440px] px-6 lg:px-10">
           {/* Top row — tall like Unmatched Supps */}
-          <div className="h-28 flex items-center justify-between">
+          <div className="h-20 lg:h-28 grid grid-cols-[1fr_auto_1fr] items-center">
             {/* Left — search + supplements */}
-            <div className="hidden lg:flex items-center gap-8">
+            <div className="flex items-center gap-4 lg:gap-8">
               <button onClick={() => setSearchOpen(true)} className="w-10 h-10 flex items-center justify-center hover:text-[#c2202f] transition-colors cursor-pointer">
                 <Search className="h-5 w-5" />
               </button>
 
-              {/* Supplements dropdown */}
+              {/* Supplements dropdown — desktop only; mobile uses the bottom link row's "Catalogue" link */}
               <div
-                className="relative"
+                className="hidden lg:block relative"
                 onMouseEnter={handleDropdownEnter}
                 onMouseLeave={handleDropdownLeave}
               >
@@ -381,25 +381,25 @@ export default function Landing() {
 
             {/* Center — logo */}
             <button onClick={() => navigate("/")} className="flex items-center cursor-pointer">
-              <img src={`${BASE}logoo.png`} alt="TheDietStore" className="h-16 w-auto object-contain" />
+              <img src={`${BASE}logoo.png`} alt="TheDietStore" className="h-12 lg:h-16 w-auto object-contain" />
             </button>
 
             {/* Right — nav links + CTA */}
-            <div className="hidden lg:flex items-center gap-10">
-              <a href="#featured" className="relative font-['Orbitron'] text-[16px] font-normal tracking-[0.15em] uppercase text-white hover:text-[#c2202f] transition-colors group/link py-8">
+            <div className="flex items-center justify-end gap-4 lg:gap-10">
+              <a href="#featured" className="hidden lg:block relative font-['Orbitron'] text-[16px] font-normal tracking-[0.15em] uppercase text-white hover:text-[#c2202f] transition-colors group/link py-8">
                 FEATURED
                 <span className="absolute bottom-6 left-0 w-full h-[2px] bg-[#c2202f] scale-x-0 group-hover/link:scale-x-100 transition-transform duration-300 origin-left" />
               </a>
-              <a href="#features" className="relative font-['Orbitron'] text-[16px] font-normal tracking-[0.15em] uppercase text-white hover:text-[#c2202f] transition-colors group/link py-8">
+              <a href="#features" className="hidden lg:block relative font-['Orbitron'] text-[16px] font-normal tracking-[0.15em] uppercase text-white hover:text-[#c2202f] transition-colors group/link py-8">
                 WHY US
                 <span className="absolute bottom-6 left-0 w-full h-[2px] bg-[#c2202f] scale-x-0 group-hover/link:scale-x-100 transition-transform duration-300 origin-left" />
               </a>
-            </div>
 
-            {/* Right — catalogue button */}
-            <Button className="bg-[#c2202f] text-white hover:bg-[#de3746] font-medium text-[14px] h-12 px-8 cursor-pointer tracking-wider font-['Orbitron'] uppercase" onClick={() => navigate("/catalogue")}>
-              View Catalogue
-            </Button>
+              {/* Catalogue button */}
+              <Button className="hidden lg:inline-flex bg-[#c2202f] text-white hover:bg-[#de3746] font-medium text-[14px] h-12 px-8 cursor-pointer tracking-wider font-['Orbitron'] uppercase" onClick={() => navigate("/catalogue")}>
+                View Catalogue
+              </Button>
+            </div>
           </div>
 
           {/* Mobile menu */}
@@ -412,7 +412,7 @@ export default function Landing() {
       </nav>
 
       {/* ── Hero Carousel — Full clickable images, no text overlay ── */}
-      <section ref={heroRef} className="relative w-full h-[45vh] min-h-[280px] max-h-[400px] md:h-[65vh] md:min-h-[450px] lg:h-[75vh] lg:min-h-[500px] lg:max-h-[850px] mt-20 md:mt-28" style={{ overflow: 'hidden', clipPath: 'inset(0)' }}>
+      <section ref={heroRef} className="relative w-full aspect-[4/3] sm:aspect-[16/9] lg:aspect-[21/9] lg:max-h-[850px] mt-32 lg:mt-28" style={{ overflow: 'hidden', clipPath: 'inset(0)' }}>
         <AnimatePresence mode="wait">
           <motion.div
             key={currentSlide}
@@ -429,7 +429,7 @@ export default function Landing() {
               <img
                 src={heroSlides[currentSlide].image}
                 alt="Hero banner"
-                className="w-full h-full object-contain object-center block max-w-full"
+                className="w-full h-full object-cover object-center block"
               />
             </button>
           </motion.div>
@@ -478,15 +478,15 @@ export default function Landing() {
       </section>
 
       {/* ── Featured Products — from database ── */}
-      <section id="featured" className="py-24 px-6">
+      <section id="featured" className="py-16 sm:py-24 px-4 sm:px-6">
         <div className="mx-auto max-w-[1440px]">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeUp} custom={0}
             className="flex items-end justify-between mb-12">
             <div>
-              <h2 className="font-['Orbitron'] text-3xl sm:text-4xl font-normal tracking-[0.15em] uppercase">
+              <h2 className="font-['Orbitron'] text-2xl sm:text-4xl font-normal tracking-[0.15em] uppercase">
                 Hot Selling <span className="text-[#c2202f]">Products</span>
               </h2>
-              <p className="mt-3 text-[#999999] text-lg">Our most popular supplements — all from our catalogue.</p>
+              <p className="mt-3 text-[#999999] text-base sm:text-lg">Our most popular supplements — all from our catalogue.</p>
             </div>
             <Button variant="ghost" className="text-[#c2202f] hover:text-[#de3746] hover:bg-[#c2202f]/5 cursor-pointer hidden sm:flex" onClick={() => navigate("/catalogue")}>
               View All <ArrowRight className="ml-1.5 h-4 w-4" />
@@ -592,20 +592,20 @@ export default function Landing() {
       </section>
 
       {/* ── Features ── */}
-      <section id="features" className="py-24 px-6 border-t border-[#2b2a27]">
+      <section id="features" className="py-16 sm:py-24 px-4 sm:px-6 border-t border-[#2b2a27]">
         <div className="mx-auto max-w-[1440px]">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeUp} custom={0} className="text-center mb-16">
-            <h2 className="font-['Orbitron'] text-3xl sm:text-4xl font-normal tracking-[0.15em] uppercase">
+            <h2 className="font-['Orbitron'] text-2xl sm:text-4xl font-normal tracking-[0.15em] uppercase">
               Why <span className="text-[#c2202f]">TheDietStore</span>
             </h2>
-            <p className="mt-4 text-[#999999] max-w-lg mx-auto text-lg">We make supplement browsing simple, fast, and reliable.</p>
+            <p className="mt-4 text-[#999999] max-w-lg mx-auto text-base sm:text-lg">We make supplement browsing simple, fast, and reliable.</p>
           </motion.div>
           <div className="grid sm:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {features.map((feature, i) => {
               const Icon = feature.icon;
               return (
                 <motion.div key={feature.title} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
-                  variants={fadeUp} custom={i} className="group border border-[#2b2a27] bg-[#111111] p-10 hover:border-[#c2202f]/30 transition-all duration-300">
+                  variants={fadeUp} custom={i} className="group border border-[#2b2a27] bg-[#111111] p-6 sm:p-10 hover:border-[#c2202f]/30 transition-all duration-300">
                   <Icon className="h-8 w-8 text-[#c2202f] mb-5" strokeWidth={1.5} />
                   <h3 className="font-['Orbitron'] text-base font-normal tracking-[0.15em] uppercase mb-3 text-white">{feature.title}</h3>
                   <p className="text-sm text-[#999999] leading-relaxed">{feature.description}</p>
@@ -617,14 +617,14 @@ export default function Landing() {
       </section>
 
       {/* ── CTA ── */}
-      <section className="py-24 px-6 border-t border-[#2b2a27]">
+      <section className="py-16 sm:py-24 px-4 sm:px-6 border-t border-[#2b2a27]">
         <div className="mx-auto max-w-[1440px]">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeUp} custom={0}
-            className="relative border border-[#2b2a27] bg-[#111111] p-12 sm:p-16 text-center overflow-hidden">
+            className="relative border border-[#2b2a27] bg-[#111111] p-8 sm:p-16 text-center overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-b from-[#c2202f]/5 to-transparent pointer-events-none" />
             <div className="relative">
-              <h2 className="font-['Orbitron'] text-3xl sm:text-4xl font-normal tracking-[0.15em] uppercase">Ready to stock up?</h2>
-              <p className="mt-4 text-[#999999] max-w-md mx-auto text-lg">Browse our full catalogue with wholesale pricing and real-time inventory.</p>
+              <h2 className="font-['Orbitron'] text-2xl sm:text-4xl font-normal tracking-[0.15em] uppercase">Ready to stock up?</h2>
+              <p className="mt-4 text-[#999999] max-w-md mx-auto text-base sm:text-lg">Browse our full catalogue with wholesale pricing and real-time inventory.</p>
               <Button size="lg" className="mt-8 bg-[#c2202f] text-white hover:bg-[#de3746] font-medium px-10 h-13 text-[15px] cursor-pointer tracking-wide" onClick={() => navigate("/catalogue")}>
                 View Catalogue <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
@@ -634,7 +634,7 @@ export default function Landing() {
       </section>
 
       {/* ── Footer ── */}
-      <footer className="border-t border-[#2b2a27] py-12 px-6">
+      <footer className="border-t border-[#2b2a27] py-12 px-4 sm:px-6">
         <div className="mx-auto max-w-[1440px] flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <img src={`${BASE}logoo.png`} alt="TheDietStore" className="h-8 w-auto object-contain" />
