@@ -429,7 +429,7 @@ export default function Landing() {
               <img
                 src={heroSlides[currentSlide].image}
                 alt="Hero banner"
-                className="w-full h-full object-contain object-center block"
+                className="w-full h-full object-cover object-center block"
               />
             </button>
           </motion.div>
