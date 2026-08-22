@@ -11,6 +11,7 @@ import {
   Zap,
   Star,
   MessageCircle,
+  Package,
 } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useRef, useState, useEffect, useCallback } from "react";
@@ -156,6 +157,17 @@ export default function Landing() {
     return () => window.removeEventListener("keydown", handleKey);
   }, [searchOpen]);
 
+  // Search suggestions - filter from loaded products
+  const searchSuggestions = (allProducts ?? []).filter((p) => {
+    if (!searchQuery.trim()) return false;
+    const q = searchQuery.toLowerCase();
+    return (
+      p.name.toLowerCase().includes(q) ||
+      p.brand.toLowerCase().includes(q) ||
+      p.category.toLowerCase().includes(q)
+    );
+  }).slice(0, 6);
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -163,6 +175,12 @@ export default function Landing() {
       setSearchOpen(false);
       setSearchQuery("");
     }
+  };
+
+  const selectSuggestion = (product: Product) => {
+    setSelectedProduct(product);
+    setSearchOpen(false);
+    setSearchQuery("");
   };
 
   // Product carousel scroll ref
@@ -257,7 +275,39 @@ export default function Landing() {
                   Search
                 </button>
               </div>
-              <p className="text-xs text-[#999999] mt-3 text-center">Press <kbd className="px-1.5 py-0.5 bg-[#111111] border border-[#2b2a27] text-[#999999]">ESC</kbd> to close</p>
+
+              {/* Suggestions dropdown */}
+              {searchQuery.trim() && searchSuggestions.length > 0 && (
+                <div className="w-full mt-2 bg-[#111111] border border-[#2b2a27] max-h-[300px] overflow-y-auto">
+                  {searchSuggestions.map((product) => (
+                    <button
+                      key={product._id}
+                      type="button"
+                      onClick={() => selectSuggestion(product)}
+                      className="w-full flex items-center gap-3 px-5 py-3 hover:bg-white/5 transition-colors text-left cursor-pointer border-b border-[#2b2a27] last:border-0"
+                    >
+                      {product.imageUrl ? (
+                        <img src={product.imageUrl} alt="" className="h-10 w-10 object-contain flex-shrink-0" />
+                      ) : (
+                        <div className="h-10 w-10 bg-[#2b2a27] flex items-center justify-center flex-shrink-0">
+                          <Package className="h-4 w-4 text-[#999999]/30" />
+                        </div>
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm text-white truncate">{product.name}</p>
+                        <p className="text-xs text-[#999999]">{product.brand} · {formatINR(product.price)}</p>
+                      </div>
+                      <Package className="h-4 w-4 text-[#999999]/30 flex-shrink-0" />
+                    </button>
+                  ))}
+                </div>
+              )}
+              {searchQuery.trim() && searchSuggestions.length === 0 && (
+                <p className="text-xs text-[#999999] mt-2 text-center">No products found for "{searchQuery}"</p>
+              )}
+              {!searchQuery.trim() && (
+                <p className="text-xs text-[#999999] mt-3 text-center">Press <kbd className="px-1.5 py-0.5 bg-[#111111] border border-[#2b2a27] text-[#999999]">ESC</kbd> to close</p>
+              )}
             </motion.form>
           </motion.div>
         )}
