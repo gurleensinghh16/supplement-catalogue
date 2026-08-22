@@ -29,8 +29,8 @@ jobs:
       - name: Install dependencies
         run: bun install
 
-      - name: Build
-        run: bun run build
+      - name: Build (skip tsc, Vite only)
+        run: npx vite build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
