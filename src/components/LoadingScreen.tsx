@@ -8,13 +8,7 @@ type Target = { x: number; y: number; width: number };
 type Phase = "enter" | "move" | "landed" | "exit";
 
 export function LoadingScreen() {
-  const [visible, setVisible] = useState(() => {
-    // Initialise state synchronously — avoids the stale closure bug
-    if (typeof window === "undefined") return false;
-    const played = sessionStorage.getItem(SESSION_KEY) === "1";
-    if (!played) sessionStorage.setItem(SESSION_KEY, "1");
-    return !played;
-  });
+  const [visible, setVisible] = useState(true);
 
   const [phase, setPhase] = useState<Phase>("enter");
   const [target, setTarget] = useState<Target | null>(null);
@@ -48,7 +42,7 @@ export function LoadingScreen() {
       };
 
       findTarget();
-    }, 800); // slightly longer hold so lazy Landing has time to mount
+    }, 1800); // slightly longer hold so lazy Landing has time to mount
 
     return () => clearTimeout(holdTimer);
   }, [visible]);
@@ -59,7 +53,7 @@ export function LoadingScreen() {
     let t: ReturnType<typeof setTimeout>;
     if (phase === "move")   t = setTimeout(() => setPhase("landed"), 700);
     if (phase === "landed") t = setTimeout(() => setPhase("exit"),   180);
-    if (phase === "exit")   t = setTimeout(() => setVisible(false),  350);
+    if (phase === "exit")   t = setTimeout(() => setVisible(false),  600);
     return () => clearTimeout(t!);
   }, [phase, visible]);
 
