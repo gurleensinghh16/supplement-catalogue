@@ -143,13 +143,14 @@ function CategorySection({
           >            {/* Product Image */}
             <div
               onClick={() => onSelectProduct(product)}
-              className="relative aspect-square overflow-hidden mb-3 cursor-pointer border border-[#2b2a27] bg-[#f4f2ee]"
+              className="relative aspect-square overflow-hidden mb-3 cursor-pointer group-hover:scale-[1.02] transition-transform duration-500"
             >
               {product.imageUrl ? (
                 <img
                   src={product.imageUrl}
                   alt={product.name}
-                  className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-contain p-2"
+                  style={{ mixBlendMode: 'normal' }}
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
@@ -393,13 +394,14 @@ export default function Dashboard() {
               >
                 <div
                   onClick={() => setSelectedProduct(product)}
-                  className="relative aspect-square overflow-hidden mb-3 cursor-pointer border border-[#2b2a27] bg-[#f4f2ee]"
+                  className="relative aspect-square overflow-hidden mb-3 cursor-pointer group-hover:scale-[1.02] transition-transform duration-500"
                 >
                   {product.imageUrl ? (
                     <img
                       src={product.imageUrl}
                       alt={product.name}
-                      className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-contain p-2"
+                      style={{ mixBlendMode: 'normal' }}
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">

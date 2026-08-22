@@ -8,10 +8,12 @@ export function SeedProducts({ children }: { children: React.ReactNode }) {
   const [seeded, setSeeded] = useState(false);
 
   useEffect(() => {
-    seed()
+    // Force reseed: delete all old products first, then insert fresh data
+    reseed()
+      .then(() => seed())
       .then(() => setSeeded(true))
-      .catch(() => setSeeded(true));
-  }, [seed]);
+      .catch(() => seed().then(() => setSeeded(true)).catch(() => setSeeded(true)));
+  }, [seed, reseed]);
 
   // Expose reseed globally for admin use
   (window as any).__reseed = reseed;

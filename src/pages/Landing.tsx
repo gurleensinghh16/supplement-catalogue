@@ -359,9 +359,9 @@ export default function Landing() {
                 {/* Product card */}
                 <div
                   onClick={() => navigate("/catalogue")}
-                  className="relative aspect-square overflow-hidden mb-4 cursor-pointer border border-[#2b2a27]"
+                  className="relative aspect-square overflow-hidden mb-4 cursor-pointer group-hover:scale-[1.02] transition-transform duration-500"
                 >
-                  <img src={product.image} alt={product.name} className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500" />
+                  <img src={product.image} alt={product.name} className="w-full h-full object-contain p-2" />
                   {/* Quick View overlay */}
                   <div className="absolute inset-x-0 bottom-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <div className="w-full bg-[#c2202f] text-white py-3 font-['Orbitron'] text-sm tracking-wider uppercase text-center cursor-pointer">
