@@ -158,8 +158,7 @@ function CategorySection({
                 <img
                   src={product.imageUrl}
                   alt={product.name}
-                  className="w-full h-full object-contain p-2"
-                  style={{ mixBlendMode: 'normal' }}
+                  className="w-full h-full object-contain p-2 product-img"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">

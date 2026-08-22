@@ -372,7 +372,7 @@ export default function Landing() {
                     className="relative aspect-square overflow-hidden mb-4 cursor-pointer group-hover:scale-[1.02] transition-transform duration-500"
                   >
                     {product.imageUrl ? (
-                      <img src={product.imageUrl} alt={product.name} className="w-full h-full object-contain p-2" />
+                      <img src={product.imageUrl} alt={product.name} className="w-full h-full object-contain p-2 product-img" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-[#999999]">No Image</div>
                     )}

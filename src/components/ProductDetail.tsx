@@ -77,7 +77,7 @@ export default function ProductDetail({ product, onClose }: ProductDetailProps) 
               <img
                 src={product.imageUrl}
                 alt={product.name}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover product-img"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">

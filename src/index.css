@@ -236,3 +236,9 @@
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* Product images: remove white backgrounds on dark theme */
+.product-img {
+  mix-blend-mode: multiply;
+  filter: contrast(1.05);
+}
