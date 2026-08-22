@@ -518,7 +518,7 @@ export default function Landing() {
               {/* Horizontal scroll carousel */}
               <div
                 ref={carouselRef}
-                className="flex gap-4 sm:gap-6 overflow-x-auto scroll-smooth pb-4"
+                className="flex gap-3 sm:gap-6 overflow-x-auto scroll-smooth pb-4"
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
@@ -527,7 +527,7 @@ export default function Landing() {
                 const msg = encodeURIComponent(`Hi TheDietStore 👋\n\nI'm interested in:\n\n📦 *${product.name}*\n🏷️ Brand: ${product.brand}\n💰 Price: ${formatINR(product.price)}\n📋 SKU: ${product.sku}\n\nPlease share details about:\n• Availability & stock\n• Bulk/wholesale pricing\n• Delivery options\n\nThank you!`);
                 return (
                 <motion.div key={product._id} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
-                  variants={scaleIn} custom={i} className={`group flex-shrink-0 w-[70vw] sm:w-[260px] md:w-[280px] lg:w-[280px] ${!product.inStock ? 'opacity-60 grayscale' : ''}`}>
+                  variants={scaleIn} custom={i} className={`group flex-shrink-0 w-[42vw] xs:w-[180px] sm:w-[260px] md:w-[280px] lg:w-[280px] ${!product.inStock ? 'opacity-60 grayscale' : ''}`}>
                   {/* Product card — clickable, opens detail modal */}
                   <div
                     onClick={() => setSelectedProduct(product)}

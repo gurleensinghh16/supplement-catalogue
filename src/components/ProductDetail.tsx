@@ -54,25 +54,27 @@ export default function ProductDetail({ product, onClose }: ProductDetailProps) 
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
+      className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-6"
       onClick={onClose}
     >
       <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
 
+            {/* Close button — fixed to the viewport, not the scroll container, so it never scrolls away */}
+      <button
+        onClick={onClose}
+        className="fixed top-4 right-4 z-[60] h-9 w-9 bg-[#111111] border border-[#2b2a27] text-[#999999] hover:text-white flex items-center justify-center transition-colors cursor-pointer shadow-lg"
+      >
+        <X className="h-4 w-4" />
+      </button>
+
       <div
-        className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto border border-[#2b2a27] bg-[#0a0a0a] shadow-[0_15px_45px_rgba(0,0,0,0.3)]"
+        className="relative w-full h-full sm:h-auto sm:max-w-3xl sm:max-h-[90vh] overflow-y-auto border-0 sm:border border-[#2b2a27] bg-[#0a0a0a] shadow-[0_15px_45px_rgba(0,0,0,0.3)]"
         onClick={(e) => e.stopPropagation()}
       >
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 z-10 h-8 w-8 bg-[#111111] border border-[#2b2a27] text-[#999999] hover:text-white flex items-center justify-center transition-colors cursor-pointer"
-        >
-          <X className="h-4 w-4" />
-        </button>
 
         <div className="grid md:grid-cols-2 gap-0">
           {/* Image */}
-          <div className="relative aspect-square md:aspect-auto md:min-h-[400px] overflow-hidden bg-[#0a0a0a]">
+         <div className="relative aspect-[4/3] sm:aspect-square md:aspect-auto md:min-h-[400px] overflow-hidden bg-[#0a0a0a]">
             {product.imageUrl ? (
               <img
                 src={product.imageUrl}
