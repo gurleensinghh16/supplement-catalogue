@@ -412,7 +412,7 @@ export default function Landing() {
       </nav>
 
       {/* ── Hero Carousel — Full clickable images, no text overlay ── */}
-      <section ref={heroRef} className="relative w-full h-[45vh] min-h-[280px] max-h-[400px] md:h-[60vh] md:min-h-[400px] lg:h-[75vh] lg:min-h-[500px] lg:max-h-[850px] mt-16 md:mt-24 lg:mt-28" style={{ overflow: 'hidden', clipPath: 'inset(0)' }}>
+      <section ref={heroRef} className="relative w-full aspect-video max-h-[850px] mt-16 md:mt-24 lg:mt-28" style={{ overflow: 'hidden', clipPath: 'inset(0)' }}>
         <AnimatePresence mode="wait">
           <motion.div
             key={currentSlide}
