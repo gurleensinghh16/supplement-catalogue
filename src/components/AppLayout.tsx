@@ -1,3 +1,4 @@
+const [mobileSuppsOpen, setMobileSuppsOpen] = useState(false);
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowRight,
@@ -185,7 +186,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       {/* Nav */}
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-[#2b2a27] bg-black/95 backdrop-blur-xl">
         <div className="mx-auto max-w-[1440px] px-6 lg:px-10">
-          <div className="h-20 lg:h-28 grid grid-cols-[1fr_auto_1fr] items-center">
+          <div className="h-16 lg:h-28 grid grid-cols-[1fr_auto_1fr] items-center">
             {/* Left */}
             <div className="flex items-center gap-4 lg:gap-8">
               <button onClick={() => setSearchOpen(true)} className="w-10 h-10 flex items-center justify-center hover:text-[#c2202f] transition-colors cursor-pointer">
@@ -240,6 +241,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
             {/* Right */}
             <div className="flex items-center justify-end gap-4 lg:gap-10">
+                {/* Invisible placeholder on mobile to balance the search icon */}
               <a href="#featured" className="hidden lg:block relative font-['Orbitron'] text-[16px] font-normal tracking-[0.15em] uppercase text-white hover:text-[#c2202f] transition-colors group/link py-8">
                 FEATURED
                 <span className="absolute bottom-6 left-0 w-full h-[2px] bg-[#c2202f] scale-x-0 group-hover/link:scale-x-100 transition-transform duration-300 origin-left" />
@@ -255,11 +257,50 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           </div>
 
           {/* Mobile menu */}
-          <div className="lg:hidden pb-4 flex items-center gap-6 text-sm text-[#999999]">
-            <button onClick={() => navigate("/catalogue")} className="hover:text-white transition-colors cursor-pointer">Catalogue</button>
-            <a href="#featured" className="hover:text-white transition-colors">Featured</a>
-            <a href="#features" className="hover:text-white transition-colors">Why Us</a>
-          </div>
+<div className="lg:hidden border-t border-[#2b2a27]">
+  {/* Supplements expandable row */}
+  <button
+    onClick={() => setMobileSuppsOpen((p) => !p)}
+    className="w-full flex items-center justify-between px-1 py-3 text-sm text-[#999999] hover:text-white transition-colors cursor-pointer"
+  >
+    <span className="font-['Orbitron'] tracking-[0.15em] uppercase text-xs">Supplements</span>
+    <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${mobileSuppsOpen ? "rotate-180" : ""}`} />
+  </button>
+
+  {/* Category list */}
+  <AnimatePresence>
+    {mobileSuppsOpen && (
+      <motion.div
+        initial={{ height: 0, opacity: 0 }}
+        animate={{ height: "auto", opacity: 1 }}
+        exit={{ height: 0, opacity: 0 }}
+        transition={{ duration: 0.25 }}
+        className="overflow-hidden"
+      >
+        <div className="grid grid-cols-2 gap-1 pb-3">
+          {navCategories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => { setMobileSuppsOpen(false); navigate("/catalogue"); }}
+              className="text-left px-2 py-2 text-xs text-[#999999] hover:text-white hover:bg-white/5 transition-all rounded tracking-wide cursor-pointer"
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+      </motion.div>
+    )}
+  </AnimatePresence>
+
+  {/* Other links */}
+  <div className="flex items-center gap-6 py-3 border-t border-[#2b2a27] text-sm text-[#999999]">
+    <a href="#featured" className="hover:text-white transition-colors font-['Orbitron'] text-xs tracking-wider uppercase">Featured</a>
+    <a href="#features" className="hover:text-white transition-colors font-['Orbitron'] text-xs tracking-wider uppercase">Why Us</a>
+    <button onClick={() => navigate("/catalogue")} className="hover:text-white transition-colors font-['Orbitron'] text-xs tracking-wider uppercase cursor-pointer ml-auto text-[#c2202f]">
+      View Catalogue →
+    </button>
+  </div>
+</div>
         </div>
       </nav>
 
