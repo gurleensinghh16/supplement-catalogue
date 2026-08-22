@@ -147,6 +147,38 @@ export const bulkImport = mutation({
   },
 });
 
+// Update a single product image
+export const updateImage = mutation({
+  args: {
+    productId: v.id("products"),
+    imageUrl: v.string(),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.productId, { imageUrl: args.imageUrl });
+    return "updated";
+  },
+});
+
+// Bulk update images
+export const bulkUpdateImages = mutation({
+  args: {
+    updates: v.array(
+      v.object({
+        productId: v.id("products"),
+        imageUrl: v.string(),
+      }),
+    ),
+  },
+  handler: async (ctx, args) => {
+    let count = 0;
+    for (const u of args.updates) {
+      await ctx.db.patch(u.productId, { imageUrl: u.imageUrl });
+      count++;
+    }
+    return `updated ${count} images`;
+  },
+});
+
 // Clear all products (admin only)
 export const clearAll = mutation({
   args: {},
