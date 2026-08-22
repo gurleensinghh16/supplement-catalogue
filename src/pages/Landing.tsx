@@ -238,7 +238,7 @@ export default function Landing() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white w-full" style={{ overflowX: 'hidden', maxWidth: '100vw' }}>
+    <div className="min-h-screen bg-black text-white w-full overflow-x-hidden">
       {/* Product Detail Modal */}
       {selectedProduct && (
         <ProductDetail
@@ -379,6 +379,11 @@ export default function Landing() {
               </div>
             </div>
 
+            {/* Mobile search — visible on mobile only */}
+            <button onClick={() => setSearchOpen(true)} className="lg:hidden w-9 h-9 flex items-center justify-center hover:text-[#c2202f] transition-colors cursor-pointer">
+              <Search className="h-5 w-5" />
+            </button>
+
             {/* Center — logo */}
             <button onClick={() => navigate("/")} className="flex items-center cursor-pointer">
               <img src={`${BASE}logoo.png`} alt="TheDietStore" className="h-10 md:h-14 lg:h-16 w-auto object-contain" />
@@ -403,8 +408,8 @@ export default function Landing() {
           </div>
 
           {/* Mobile menu */}
-          <div className="lg:hidden pb-4 flex items-center gap-6 text-sm text-[#999999]">
-            <button onClick={() => navigate("/catalogue")} className="hover:text-white transition-colors cursor-pointer">Catalogue</button>
+          <div className="lg:hidden pb-3 flex items-center gap-5 text-[13px] text-[#999999]">
+            <button onClick={() => navigate("/catalogue")} className="hover:text-white transition-colors cursor-pointer font-medium">Catalogue</button>
             <a href="#featured" className="hover:text-white transition-colors">Featured</a>
             <a href="#features" className="hover:text-white transition-colors">Why Us</a>
           </div>
@@ -412,7 +417,7 @@ export default function Landing() {
       </nav>
 
       {/* ── Hero Carousel — Full clickable images, no text overlay ── */}
-      <section ref={heroRef} className="relative w-full mt-14 md:mt-20 lg:mt-28" style={{ aspectRatio: '16/9', maxHeight: '850px', overflow: 'hidden', clipPath: 'inset(0)' }}>
+      <section ref={heroRef} className="relative w-full h-[45vh] min-h-[250px] sm:h-[50vh] sm:min-h-[300px] md:h-[55vh] md:min-h-[350px] lg:h-[65vh] lg:min-h-[450px] xl:h-[70vh] xl:min-h-[500px] mt-14 md:mt-20 lg:mt-28">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentSlide}
@@ -420,23 +425,23 @@ export default function Landing() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
-            className="absolute inset-0 overflow-hidden"
+            className="absolute inset-0"
           >
             <button
               onClick={() => navigate("/catalogue")}
-              className="w-full h-full cursor-pointer block overflow-hidden"
+              className="w-full h-full cursor-pointer block"
             >
               <img
                 src={heroSlides[currentSlide].image}
                 alt="Hero banner"
-                className="w-full h-full object-contain object-center block"
+                className="w-full h-full object-cover object-center block"
               />
             </button>
           </motion.div>
         </AnimatePresence>
 
         {/* Navigation arrows */}
-        <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 md:bottom-8 md:right-8 lg:right-10 flex items-center gap-2 sm:gap-3 z-10">
+        <div className="absolute bottom-3 right-3 sm:bottom-5 sm:right-5 md:bottom-6 md:right-6 lg:bottom-8 lg:right-10 flex items-center gap-2 sm:gap-3 z-10">
           <button
             onClick={() => { prevSlide(); setIsAutoPlaying(false); }}
             className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 border border-[#2b2a27] bg-black/60 backdrop-blur-sm flex items-center justify-center hover:border-[#c2202f] hover:bg-[#c2202f]/10 transition-all cursor-pointer"
@@ -452,7 +457,7 @@ export default function Landing() {
         </div>
 
         {/* Slide indicators */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 sm:bottom-6 md:bottom-8 flex items-center gap-2 sm:gap-3 z-10">
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 sm:bottom-5 md:bottom-6 lg:bottom-8 flex items-center gap-2 sm:gap-3 z-10">
           {heroSlides.map((_, i) => (
             <button
               key={i}
@@ -468,7 +473,7 @@ export default function Landing() {
 
         {/* Auto-play indicator */}
         {isAutoPlaying && (
-          <div className="absolute top-4 right-8 lg:right-10 z-10">
+          <div className="absolute top-3 right-4 sm:top-4 sm:right-6 lg:right-10 z-10">
             <div className="flex items-center gap-2 text-[10px] text-[#999999] uppercase tracking-wider">
               <div className="w-1.5 h-1.5 rounded-full bg-[#c2202f] animate-pulse" />
               Auto
