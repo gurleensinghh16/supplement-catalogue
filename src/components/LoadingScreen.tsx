@@ -3,16 +3,14 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export function LoadingScreen() {
   const [visible, setVisible] = useState(true);
-  const [phase, setPhase] = useState<"glitch" | "reveal" | "exit">("glitch");
+  const [phase, setPhase] = useState<"reveal" | "exit">("reveal");
 
   useEffect(() => {
-    const t1 = setTimeout(() => setPhase("reveal"), 1400);
-    const t2 = setTimeout(() => setPhase("exit"), 2600);
-    const t3 = setTimeout(() => setVisible(false), 3400);
+    const t1 = setTimeout(() => setPhase("exit"), 1800);
+    const t2 = setTimeout(() => setVisible(false), 2600);
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
-      clearTimeout(t3);
     };
   }, []);
 
@@ -29,68 +27,48 @@ export function LoadingScreen() {
           <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[#c2202f]/[0.05] blur-[120px]" />
 
           <div className="relative flex flex-col items-center gap-2 sm:gap-4">
-            {/* Line 1: THE */}
+                        {/* Line 1: THE */}
             <div className="relative overflow-hidden">
-              <h1
-                className={`glitch-line font-['Orbitron'] text-6xl sm:text-8xl md:text-[10rem] font-normal tracking-[0.15em] uppercase text-white leading-none ${
-                  phase === "glitch" ? "animate-glitch" : ""
-                }`}
-                data-text="THE"
+              <motion.h1
+                className="font-['Orbitron'] text-6xl sm:text-8xl md:text-[10rem] font-normal tracking-[0.15em] uppercase text-white leading-none"
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.1, ease: "easeOut" }}
               >
                 THE
-              </h1>
-              {phase === "glitch" && (
-                <>
-                  <span className="glitch-copy-1 absolute inset-0 font-['Orbitron'] text-6xl sm:text-8xl md:text-[10rem] font-normal tracking-[0.15em] uppercase text-[#c2202f] leading-none pointer-events-none" aria-hidden="true">THE</span>
-                  <span className="glitch-copy-2 absolute inset-0 font-['Orbitron'] text-6xl sm:text-8xl md:text-[10rem] font-normal tracking-[0.15em] uppercase text-[#de3746] leading-none pointer-events-none" aria-hidden="true">THE</span>
-                </>
-              )}
+              </motion.h1>
             </div>
 
             {/* Line 2: DIET */}
             <div className="relative overflow-hidden">
-              <h1
-                className={`glitch-line font-['Orbitron'] text-6xl sm:text-8xl md:text-[10rem] font-normal tracking-[0.15em] uppercase leading-none ${
-                  phase === "glitch" ? "animate-glitch-delayed" : ""
-                }`}
+              <motion.h1
+                className="font-['Orbitron'] text-6xl sm:text-8xl md:text-[10rem] font-normal tracking-[0.15em] uppercase leading-none"
                 style={{ color: "#c2202f" }}
-                data-text="DIET"
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.25, ease: "easeOut" }}
               >
                 DIET
-              </h1>
-              {phase === "glitch" && (
-                <>
-                  <span className="glitch-copy-1 absolute inset-0 font-['Orbitron'] text-6xl sm:text-8xl md:text-[10rem] font-normal tracking-[0.15em] uppercase text-white leading-none pointer-events-none" aria-hidden="true">DIET</span>
-                  <span className="glitch-copy-2 absolute inset-0 font-['Orbitron'] text-6xl sm:text-8xl md:text-[10rem] font-normal tracking-[0.15em] uppercase text-[#de3746] leading-none pointer-events-none" aria-hidden="true">DIET</span>
-                </>
-              )}
+              </motion.h1>
             </div>
 
             {/* Line 3: STORE */}
             <div className="relative overflow-hidden">
-              <h1
-                className={`glitch-line font-['Orbitron'] text-6xl sm:text-8xl md:text-[10rem] font-normal tracking-[0.15em] uppercase text-white leading-none ${
-                  phase === "glitch" ? "animate-glitch" : ""
-                }`}
-                data-text="STORE"
+              <motion.h1
+                className="font-['Orbitron'] text-6xl sm:text-8xl md:text-[10rem] font-normal tracking-[0.15em] uppercase text-white leading-none"
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.4, ease: "easeOut" }}
               >
                 STORE
-              </h1>
-              {phase === "glitch" && (
-                <>
-                  <span className="glitch-copy-1 absolute inset-0 font-['Orbitron'] text-6xl sm:text-8xl md:text-[10rem] font-normal tracking-[0.15em] uppercase text-[#c2202f] leading-none pointer-events-none" aria-hidden="true">STORE</span>
-                  <span className="glitch-copy-2 absolute inset-0 font-['Orbitron'] text-6xl sm:text-8xl md:text-[10rem] font-normal tracking-[0.15em] uppercase text-[#de3746] leading-none pointer-events-none" aria-hidden="true">STORE</span>
-                </>
-              )}
+              </motion.h1>
             </div>
 
             {/* Underline bar */}
             <motion.div
               className="mt-6 h-1.5 bg-gradient-to-r from-transparent via-[#c2202f] to-transparent"
               initial={{ width: 0 }}
-              animate={{
-                width: phase === "exit" ? "100%" : phase === "reveal" ? "100%" : "40%",
-              }}
+                            animate={{ width: "100%" }}
               transition={{ duration: 0.8, ease: "easeOut" }}
             />
 
@@ -99,8 +77,8 @@ export function LoadingScreen() {
               className="mt-4 font-['Orbitron'] text-sm sm:text-base md:text-lg tracking-[0.6em] uppercase font-normal"
               style={{ color: "rgba(194, 32, 47, 0.5)" }}
               initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: phase !== "glitch" ? 1 : 0, y: phase !== "glitch" ? 0 : 10 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
+                            animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.7 }}
             >
               Premium Supplements
             </motion.p>
