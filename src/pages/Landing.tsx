@@ -323,9 +323,9 @@ export default function Landing() {
 
       {/* ── Navigation ── */}
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-[#2b2a27] bg-black/95 backdrop-blur-xl">
-        <div className="mx-auto max-w-[1440px] px-6 lg:px-10">
+        <div className="mx-auto max-w-[1440px] px-4 md:px-6 lg:px-10">
           {/* Top row — tall like Unmatched Supps */}
-          <div className="h-28 flex items-center justify-between">
+          <div className="h-16 md:h-20 lg:h-28 flex items-center justify-between">
             {/* Left — search + supplements */}
             <div className="hidden lg:flex items-center gap-8">
               <button onClick={() => setSearchOpen(true)} className="w-10 h-10 flex items-center justify-center hover:text-[#c2202f] transition-colors cursor-pointer">
@@ -381,7 +381,7 @@ export default function Landing() {
 
             {/* Center — logo */}
             <button onClick={() => navigate("/")} className="flex items-center cursor-pointer">
-              <img src={`${BASE}logoo.png`} alt="TheDietStore" className="h-16 w-auto object-contain" />
+              <img src={`${BASE}logoo.png`} alt="TheDietStore" className="h-10 md:h-14 lg:h-16 w-auto object-contain" />
             </button>
 
             {/* Right — nav links + CTA */}
@@ -397,7 +397,7 @@ export default function Landing() {
             </div>
 
             {/* Right — catalogue button */}
-            <Button className="bg-[#c2202f] text-white hover:bg-[#de3746] font-medium text-[14px] h-12 px-8 cursor-pointer tracking-wider font-['Orbitron'] uppercase" onClick={() => navigate("/catalogue")}>
+            <Button className="bg-[#c2202f] text-white hover:bg-[#de3746] font-medium text-[11px] md:text-[13px] lg:text-[14px] h-9 md:h-10 lg:h-12 px-4 md:px-6 lg:px-8 cursor-pointer tracking-wider font-['Orbitron'] uppercase" onClick={() => navigate("/catalogue")}>
               View Catalogue
             </Button>
           </div>
@@ -412,7 +412,7 @@ export default function Landing() {
       </nav>
 
       {/* ── Hero Carousel — Full clickable images, no text overlay ── */}
-      <section ref={heroRef} className="relative w-full aspect-video max-h-[850px] mt-16 md:mt-24 lg:mt-28" style={{ overflow: 'hidden', clipPath: 'inset(0)' }}>
+      <section ref={heroRef} className="relative w-full mt-14 md:mt-20 lg:mt-28" style={{ aspectRatio: '16/9', maxHeight: '850px', overflow: 'hidden', clipPath: 'inset(0)' }}>
         <AnimatePresence mode="wait">
           <motion.div
             key={currentSlide}
