@@ -16,6 +16,7 @@
   }
 })(window.location);
 
+import { AppLayout } from "@/components/AppLayout";
 import '@vly-ai/integrations';
 import { Toaster } from "@/components/ui/sonner";
 import { SeedProducts } from "@/components/SeedProducts";
@@ -26,6 +27,7 @@ import { ConvexReactClient } from "convex/react";
 import React, { StrictMode, useEffect, lazy, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router";
+
 import "./index.css";
 
 const Landing = lazy(() => import("./pages/Landing.tsx"));
@@ -134,33 +136,21 @@ createRoot(document.getElementById("root")!).render(
         <VlyToolbar />
       </ToolbarErrorBoundary>
       <ConvexAuthProvider client={convex}>
-        <BrowserRouter basename="/supplement-catalogue">
-          <RouteSyncer />
-          <Suspense fallback={<RouteLoading />}>
-            <Routes>
-              <Route path="/" element={<Landing />} />
-              <Route
-                path="/catalogue"
-                element={
-                  <SeedProducts>
-                    <Catalogue />
-                  </SeedProducts>
-                }
-              />
-              <Route
-                path="/admin"
-                element={
-                  <SeedProducts>
-                    <Admin />
-                  </SeedProducts>
-                }
-              />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Suspense>
-        </BrowserRouter>
-        <Toaster />
-      </ConvexAuthProvider>
+  <BrowserRouter basename="/supplement-catalogue">
+    <RouteSyncer />
+    <AppLayout>                          
+      <Suspense fallback={<RouteLoading />}>
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/catalogue" element={<SeedProducts><Catalogue /></SeedProducts>} />
+          <Route path="/admin" element={<SeedProducts><Admin /></SeedProducts>} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Suspense>
+    </AppLayout>                       
+  </BrowserRouter>
+  <Toaster />
+</ConvexAuthProvider>
     </RootErrorBoundary>
   </StrictMode>,
 );
