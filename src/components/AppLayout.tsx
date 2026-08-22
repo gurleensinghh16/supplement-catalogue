@@ -1,4 +1,3 @@
-const [mobileSuppsOpen, setMobileSuppsOpen] = useState(false);
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowRight,
@@ -48,6 +47,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const allProducts = useQuery(api.products.list, {}) as Product[] | undefined;
 
   // Search
+  const [mobileSuppsOpen, setMobileSuppsOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
