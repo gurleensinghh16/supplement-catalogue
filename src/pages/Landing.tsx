@@ -185,34 +185,18 @@ export default function Landing() {
 
   // Product carousel
   const carouselRef = useRef<HTMLDivElement>(null);
-  const [carouselIndex, setCarouselIndex] = useState(0);
-  const cardsPerView = typeof window !== 'undefined' && window.innerWidth >= 1024 ? 4 : typeof window !== 'undefined' && window.innerWidth >= 640 ? 2 : 1;
-  const maxIndex = Math.max(0, (featuredFromDB.length || 12) - cardsPerView);
-
   const scrollCarousel = (dir: "left" | "right") => {
     if (!carouselRef.current) return;
-    const cardWidth = 300;
-    const newIndex = dir === 'left' ? Math.max(0, carouselIndex - 1) : Math.min(maxIndex, carouselIndex + 1);
-    setCarouselIndex(newIndex);
-    carouselRef.current.scrollTo({ left: newIndex * (cardWidth + 24), behavior: 'smooth' });
+    const scrollAmount = carouselRef.current.offsetWidth * 0.75;
+    carouselRef.current.scrollBy({ left: dir === 'left' ? -scrollAmount : scrollAmount, behavior: 'smooth' });
   };
 
-  // Touch/drag support
+  // Touch/drag support for carousel
   const touchStartX = useRef(0);
   const handleTouchStart = (e: React.TouchEvent) => { touchStartX.current = e.touches[0].clientX; };
   const handleTouchEnd = (e: React.TouchEvent) => {
     const diff = touchStartX.current - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 50) scrollCarousel(diff > 0 ? 'right' : 'left');
-  };
-  const isDragging = useRef(false);
-  const dragStartX = useRef(0);
-  const handleMouseDown = (e: React.MouseEvent) => { isDragging.current = true; dragStartX.current = e.clientX; };
-  const handleMouseMove = (e: React.MouseEvent) => { if (!isDragging.current) return; e.preventDefault(); };
-  const handleMouseUp = (e: React.MouseEvent) => {
-    if (!isDragging.current) return;
-    isDragging.current = false;
-    const diff = dragStartX.current - e.clientX;
-    if (Math.abs(diff) > 50) scrollCarousel(diff > 0 ? 'right' : 'left');
+    if (Math.abs(diff) > 40) scrollCarousel(diff > 0 ? 'right' : 'left');
   };
 
   // Carousel state
@@ -445,7 +429,7 @@ export default function Landing() {
               <img
                 src={heroSlides[currentSlide].image}
                 alt="Hero banner"
-                className="w-full h-full object-cover object-top block"
+                className="w-full h-full object-contain object-center block max-w-full"
               />
             </button>
           </motion.div>
@@ -526,20 +510,16 @@ export default function Landing() {
               {/* Horizontal scroll carousel */}
               <div
                 ref={carouselRef}
-                className="flex gap-6 overflow-x-auto scroll-smooth pb-4"
+                className="flex gap-4 sm:gap-6 overflow-x-auto scroll-smooth pb-4"
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
-                onMouseDown={handleMouseDown}
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleMouseUp}
-                onMouseLeave={() => { isDragging.current = false; }}
               >
               {featuredFromDB.slice(0, 12).map((product, i) => {
                 const msg = encodeURIComponent(`Hi TheDietStore 👋\n\nI'm interested in:\n\n📦 *${product.name}*\n🏷️ Brand: ${product.brand}\n💰 Price: ${formatINR(product.price)}\n📋 SKU: ${product.sku}\n\nPlease share details about:\n• Availability & stock\n• Bulk/wholesale pricing\n• Delivery options\n\nThank you!`);
                 return (
                 <motion.div key={product._id} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
-                  variants={scaleIn} custom={i} className={`group flex-shrink-0 w-[260px] sm:w-[280px] ${!product.inStock ? 'opacity-60 grayscale' : ''}`}>
+                  variants={scaleIn} custom={i} className={`group flex-shrink-0 w-[70vw] sm:w-[260px] md:w-[280px] lg:w-[280px] ${!product.inStock ? 'opacity-60 grayscale' : ''}`}>
                   {/* Product card — clickable, opens detail modal */}
                   <div
                     onClick={() => setSelectedProduct(product)}
