@@ -19,7 +19,7 @@ export function LoadingScreen() {
 
     if (phase === "enter") {
       // Grow big, then start flipping
-      t = setTimeout(() => setPhase("flip"),1200);
+      t = setTimeout(() => setPhase("flip"),400);
     }
 
     if (phase === "flip") {
@@ -44,7 +44,7 @@ export function LoadingScreen() {
           }
         };
         findTarget();
-      }, 1400); // wait for flips to finish (3 flips × ~400ms + buffer)
+      }, 600); // wait for flips to finish (3 flips × ~400ms + buffer)
     }
 
     if (phase === "move")   t = setTimeout(() => setPhase("landed"), 700);
