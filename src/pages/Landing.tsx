@@ -412,7 +412,7 @@ export default function Landing() {
       </nav>
 
       {/* ── Hero Carousel — Full clickable images, no text overlay ── */}
-      <section ref={heroRef} className="relative w-full h-[75vh] min-h-[500px] max-h-[850px] mt-28" style={{ overflow: 'hidden', clipPath: 'inset(0)' }}>
+      <section ref={heroRef} className="relative w-full h-[45vh] min-h-[280px] max-h-[400px] md:h-[60vh] md:min-h-[400px] lg:h-[75vh] lg:min-h-[500px] lg:max-h-[850px] mt-16 md:mt-24 lg:mt-28" style={{ overflow: 'hidden', clipPath: 'inset(0)' }}>
         <AnimatePresence mode="wait">
           <motion.div
             key={currentSlide}
@@ -436,23 +436,23 @@ export default function Landing() {
         </AnimatePresence>
 
         {/* Navigation arrows */}
-        <div className="absolute bottom-8 right-8 lg:right-10 flex items-center gap-3 z-10">
+        <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 md:bottom-8 md:right-8 lg:right-10 flex items-center gap-2 sm:gap-3 z-10">
           <button
             onClick={() => { prevSlide(); setIsAutoPlaying(false); }}
-            className="w-12 h-12 border border-[#2b2a27] bg-black/60 backdrop-blur-sm flex items-center justify-center hover:border-[#c2202f] hover:bg-[#c2202f]/10 transition-all cursor-pointer"
+            className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 border border-[#2b2a27] bg-black/60 backdrop-blur-sm flex items-center justify-center hover:border-[#c2202f] hover:bg-[#c2202f]/10 transition-all cursor-pointer"
           >
-            <ChevronLeft className="h-5 w-5 text-white" />
+            <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
           </button>
           <button
             onClick={() => { nextSlide(); setIsAutoPlaying(false); }}
-            className="w-12 h-12 border border-[#2b2a27] bg-black/60 backdrop-blur-sm flex items-center justify-center hover:border-[#c2202f] hover:bg-[#c2202f]/10 transition-all cursor-pointer"
+            className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 border border-[#2b2a27] bg-black/60 backdrop-blur-sm flex items-center justify-center hover:border-[#c2202f] hover:bg-[#c2202f]/10 transition-all cursor-pointer"
           >
-            <ChevronRight className="h-5 w-5 text-white" />
+            <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
           </button>
         </div>
 
         {/* Slide indicators */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3 z-10">
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 sm:bottom-6 md:bottom-8 flex items-center gap-2 sm:gap-3 z-10">
           {heroSlides.map((_, i) => (
             <button
               key={i}
@@ -519,7 +519,7 @@ export default function Landing() {
                 const msg = encodeURIComponent(`Hi TheDietStore 👋\n\nI'm interested in:\n\n📦 *${product.name}*\n🏷️ Brand: ${product.brand}\n💰 Price: ${formatINR(product.price)}\n📋 SKU: ${product.sku}\n\nPlease share details about:\n• Availability & stock\n• Bulk/wholesale pricing\n• Delivery options\n\nThank you!`);
                 return (
                 <motion.div key={product._id} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
-                  variants={scaleIn} custom={i} className={`group flex-shrink-0 w-[70vw] sm:w-[260px] md:w-[280px] lg:w-[280px] ${!product.inStock ? 'opacity-60 grayscale' : ''}`}>
+                  variants={scaleIn} custom={i} className={`group flex-shrink-0 w-[60vw] sm:w-[220px] md:w-[260px] lg:w-[280px] ${!product.inStock ? 'opacity-60 grayscale' : ''}`}>
                   {/* Product card — clickable, opens detail modal */}
                   <div
                     onClick={() => setSelectedProduct(product)}
