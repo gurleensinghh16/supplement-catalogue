@@ -3,53 +3,30 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const BASE = import.meta.env.BASE_URL || "/";
 
-type Target = { x: number; y: number; width: number };
-type Phase = "enter" | "flip" | "move" | "landed" | "exit";
+type Phase = "enter" | "glow" | "exit";
 
 export function LoadingScreen() {
   const [visible, setVisible] = useState(true);
   const [phase, setPhase] = useState<Phase>("enter");
-  const [target, setTarget] = useState<Target | null>(null);
-  const attemptsRef = useRef(0);
 
-  // Phase transitions
   useEffect(() => {
     if (!visible) return;
     let t: ReturnType<typeof setTimeout>;
 
     if (phase === "enter") {
-      // Grow big, then start flipping
-      t = setTimeout(() => setPhase("flip"),400);
+      // grows from small to big, then trigger glow
+      t = setTimeout(() => setPhase("glow"), 1000);
     }
 
-    if (phase === "flip") {
-      // After flips complete, find target and fly
-      t = setTimeout(() => {
-        attemptsRef.current = 0;
-        const findTarget = () => {
-          const el = document.getElementById("site-logo");
-          if (el) {
-            const rect = el.getBoundingClientRect();
-            setTarget({
-              x: rect.left + rect.width / 2,
-              y: rect.top + rect.height / 2,
-              width: rect.width,
-            });
-            setPhase("move");
-          } else if (attemptsRef.current < 120) {
-            attemptsRef.current++;
-            requestAnimationFrame(findTarget);
-          } else {
-            setPhase("exit");
-          }
-        };
-        findTarget();
-      }, 600); // wait for flips to finish (3 flips × ~400ms + buffer)
+    if (phase === "glow") {
+      // shining effect holds briefly then exit
+      t = setTimeout(() => setPhase("exit"), 800);
     }
 
-    if (phase === "move")   t = setTimeout(() => setPhase("landed"), 700);
-    if (phase === "landed") t = setTimeout(() => setPhase("exit"),   180);
-    if (phase === "exit")   t = setTimeout(() => setVisible(false),  600);
+    if (phase === "exit") {
+      // fade out everything
+      t = setTimeout(() => setVisible(false), 700);
+    }
 
     return () => clearTimeout(t!);
   }, [phase, visible]);
@@ -58,137 +35,159 @@ export function LoadingScreen() {
 
   const centerX = typeof window !== "undefined" ? window.innerWidth / 2 : 300;
   const centerY = typeof window !== "undefined" ? window.innerHeight / 2 : 400;
-  const flying = phase === "move" || phase === "landed" || phase === "exit";
 
   return (
     <AnimatePresence>
       {visible && (
         <motion.div
-          className="fixed inset-0 z-[9999] bg-black"
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.6, ease: "easeInOut" }}
+          className="fixed inset-0 z-[9999] bg-black flex items-center justify-center overflow-hidden"
+          animate={{ opacity: phase === "exit" ? 0 : 1 }}
+          transition={{ duration: 0.7, ease: "easeInOut" }}
         >
-          
-
-          {/* Ground shadow */}
+          {/* Glow burst behind logo */}
           <motion.div
-            className="pointer-events-none absolute rounded-full bg-black blur-md"
-            style={{ width: 130, height: 18, top: centerY + 175, left: centerX, x: "-50%" }}
-            animate={{
-              opacity: phase === "enter" || phase === "flip" ? 0.5 : 0,
-              scaleX:  phase === "enter" || phase === "flip" ? 1 : 0.4,
+            className="pointer-events-none absolute rounded-full"
+            style={{
+              background: "radial-gradient(circle, rgba(194,32,47,0.6) 0%, rgba(194,32,47,0.2) 40%, transparent 70%)",
+              top: centerY,
+              left: centerX,
+              x: "-50%",
+              y: "-50%",
             }}
-            transition={{ duration: 0.5 }}
+            initial={{ width: 0, height: 0, opacity: 0 }}
+            animate={
+              phase === "enter"
+                ? { width: 0, height: 0, opacity: 0 }
+                : phase === "glow"
+                ? { width: 600, height: 600, opacity: 1 }
+                : { width: 800, height: 800, opacity: 0 }
+            }
+            transition={
+              phase === "glow"
+                ? { duration: 0.5, ease: "easeOut" }
+                : { duration: 0.6, ease: "easeIn" }
+            }
           />
 
-          {/* Logo */}
-          <div style={{ perspective: 900, position: "fixed", inset: 0, pointerEvents: "none" }}>
+          {/* Shine sweep — diagonal light ray across the logo */}
+          <motion.div
+            className="pointer-events-none absolute z-10"
+            style={{
+              top: centerY,
+              left: centerX,
+              x: "-50%",
+              y: "-50%",
+              width: 340,
+              height: 340,
+              overflow: "hidden",
+              borderRadius: 8,
+            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: phase === "glow" ? 1 : 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <motion.div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "60%",
+                height: "200%",
+                background: "linear-gradient(105deg, transparent 20%, rgba(255,255,255,0.35) 50%, transparent 80%)",
+                transform: "skewX(-15deg)",
+              }}
+              initial={{ x: "-100%" }}
+              animate={phase === "glow" ? { x: "300%" } : { x: "-100%" }}
+              transition={{ duration: 0.7, ease: "easeInOut", delay: 0.1 }}
+            />
+          </motion.div>
+
+          {/* Logo — grows from small to large */}
+          <div style={{ perspective: 900, position: "relative", zIndex: 20 }}>
             <motion.img
-              src={`${BASE}logoo.png`}
+              src={`${BASE}Animation.png`}
               alt="TheDietStore"
-              style={{ position: "absolute" }}
-
-             initial={{
-  opacity: 0,
-  scale: 0.8,
-  rotateY: 0,
-  top: centerY,
-  left: typeof window !== "undefined" ? window.innerWidth + 200 : 1400,
-  x: "-50%",
-  y: "-50%",
-  width: 80,
-}}
-
+              initial={{
+                opacity: 0,
+                scale: 0.15,
+                filter: "brightness(1)",
+              }}
               animate={
                 phase === "enter"
                   ? {
-                      // Grows from small to big
                       opacity: 1,
                       scale: 1,
-                      rotateY: 0,
-                      top: centerY,
-                      left: centerX,
-                      x: "-50%",
-                      y: "-50%",
-                      width: 340,
+                      filter: "brightness(1)",
                     }
-                  : phase === "flip"
+                  : phase === "glow"
                   ? {
-                      // Stays big, flips 2-3 times (rotateY cycles)
                       opacity: 1,
-                      scale: [1, 1.06, 1],
-                      rotateY: 0,
-                      top: centerY,
-                      left: centerX,
-                      x: "-50%",
-                      y: "-50%",
-                      width: 340,
+                      scale: 1.08,
+                      filter: "brightness(1.8) drop-shadow(0 0 30px rgba(194,32,47,0.9))",
                     }
-                  : flying && target
-                  ? {
-                      // Flies to nav logo position
-                      opacity: phase === "exit" ? 0 : 1,
-                      scale: phase === "landed" ? 1.12 : 1,
-                      rotateY: phase === "move" ? [0, 360, 720] : 0,  // flips 2x while flying
-                      top: target.y,
-                      left: target.x,
-                      x: "-50%",
-                      y: "-50%",
-                      width: target.width,
+                  : {
+                      opacity: 0,
+                      scale: 1.15,
+                      filter: "brightness(2.5) drop-shadow(0 0 60px rgba(194,32,47,1))",
                     }
-                  : { opacity: 1 }
               }
-
               transition={
-              phase === "enter"
-? {
-    opacity: { duration: 0.3 },
-    left: { type: "spring", stiffness: 80, damping: 15 },  // slides in
-    scale: { type: "spring", stiffness: 100, damping: 12 },
-    width: { type: "spring", stiffness: 100, damping: 12 },
-  }
-
-                  : phase === "flip"
+                phase === "enter"
                   ? {
-                      rotateY: {
-                        duration: 1.4,
-                        ease: "easeInOut",
-                        times: [0, 0.25, 0.5, 0.75, 1],
-                      },
-                      scale: {
-                        duration: 1.4,
-                        ease: "easeInOut",
-                      },
+                      opacity: { duration: 0.4 },
+                      scale: { type: "spring", stiffness: 80, damping: 12 },
                     }
-                  : phase === "landed"
-  ? { duration: 0.15, ease: "easeOut" }
-  : phase === "move"
-  ? {
-      duration: 0.65,
-      ease: [0.65, 0, 0.35, 1],
-      rotateY: {
-        duration: 0.65,
-        ease: "easeInOut",
-        times: [0, 0.5, 1],
-      },
-    }
-  : { duration: 0.65, ease: [0.65, 0, 0.35, 1] }
+                  : phase === "glow"
+                  ? { duration: 0.5, ease: "easeOut" }
+                  : { duration: 0.6, ease: "easeIn" }
               }
+              style={{ width: 300, height: "auto", display: "block" }}
             />
           </div>
 
-          {/* Tagline — visible during enter + flip, fades on move */}
+          {/* Tagline */}
           <motion.p
             className="absolute font-['Orbitron'] text-xs sm:text-sm tracking-[0.5em] uppercase text-[#c2202f]/70"
-            style={{ top: centerY + 190, left: centerX, transform: "translateX(-50%)", whiteSpace: "nowrap" }}
+            style={{ top: centerY + 180, left: centerX, transform: "translateX(-50%)", whiteSpace: "nowrap" }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{
-              opacity: phase === "enter" || phase === "flip" ? 1 : 0,
-              y:       phase === "enter" || phase === "flip" ? 0 : 10,
+              opacity: phase === "enter" ? 1 : phase === "glow" ? 1 : 0,
+              y: phase === "enter" ? 0 : phase === "glow" ? 0 : 10,
             }}
-            transition={{ duration: 0.4 }}
+            transition={{ duration: 0.4, delay: phase === "enter" ? 0.4 : 0 }}
           >
             Premium Supplements
           </motion.p>
+
+          {/* Particle sparks during glow */}
+          {[...Array(8)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="pointer-events-none absolute rounded-full bg-[#c2202f]"
+              style={{
+                width: 4,
+                height: 4,
+                top: centerY,
+                left: centerX,
+              }}
+              initial={{ opacity: 0, x: 0, y: 0, scale: 0 }}
+              animate={
+                phase === "glow"
+                  ? {
+                      opacity: [0, 1, 0],
+                      scale: [0, 1, 0],
+                      x: Math.cos((i / 8) * Math.PI * 2) * (80 + Math.random() * 60),
+                      y: Math.sin((i / 8) * Math.PI * 2) * (80 + Math.random() * 60),
+                    }
+                  : { opacity: 0 }
+              }
+              transition={{
+                duration: 0.7,
+                delay: i * 0.04,
+                ease: "easeOut",
+              }}
+            />
+          ))}
         </motion.div>
       )}
     </AnimatePresence>
