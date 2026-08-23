@@ -7,7 +7,7 @@ type Phase = "flip" | "glow1" | "glowoff" | "glow2" | "shatter" | "exit";
 
 type Tile = {
   id: number;
-  canvas: HTMLCanvasElement;
+  dataUrl: string;
   startX: number;
   startY: number;
   endX: number;
@@ -78,6 +78,7 @@ export function LoadingScreen() {
             0, 0, size, size
           );
 
+                    const dataUrl = tileCanvas.toDataURL("image/webp", 0.85);
           const startX = col * TILE_SIZE;
           const startY = row * TILE_SIZE;
           const cx = col - COLS / 2 + 0.5;
@@ -89,7 +90,7 @@ export function LoadingScreen() {
 
           generated.push({
             id: row * COLS + col,
-            canvas: tileCanvas,
+            dataUrl,
             startX, startY,
             endX: (cx / dist) * speed * (0.8 + Math.random() * 0.4),
             endY: (cy / dist) * speed * (0.8 + Math.random() * 0.4),
@@ -156,16 +157,11 @@ export function LoadingScreen() {
                     transition: `transform 0.7s cubic-bezier(0.2,0,0.6,1) ${tile.delay}s, opacity 0.7s ease-out ${tile.delay}s`,
                   }}
                 >
-                                    <div
-                    style={{ width: "100%", height: "100%", display: "block" }}
-                    ref={(el) => {
-                      if (el && tile.canvas.parentElement !== el) {
-                        tile.canvas.style.width = "100%";
-                        tile.canvas.style.height = "100%";
-                        tile.canvas.style.display = "block";
-                        el.appendChild(tile.canvas);
-                      }
-                    }}
+                                                      <img
+                    src={tile.dataUrl}
+                    alt=""
+                    draggable={false}
+                    style={{ width: "100%", height: "100%", display: "block", pointerEvents: "none" }}
                   />
                 </div>
               ))}
