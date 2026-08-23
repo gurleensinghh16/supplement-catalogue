@@ -261,7 +261,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   {/* Supplements expandable row */}
   <button
     onClick={() => setMobileSuppsOpen((p) => !p)}
-    className="w-full flex items-center justify-between px-1 py-3 text-sm text-[#999999] hover:text-white transition-colors cursor-pointer"
+    className="w-full flex items-center justify-between px-1 py-2 text-sm text-[#999999] hover:text-white transition-colors cursor-pointer"
   >
     <span className="font-['Orbitron'] tracking-[0.15em] uppercase text-xs">Supplements</span>
     <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${mobileSuppsOpen ? "rotate-180" : ""}`} />
@@ -293,7 +293,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   </AnimatePresence>
 
   {/* Other links */}
-  <div className="flex items-center gap-6 py-3 border-t border-[#2b2a27] text-sm text-[#999999]">
+  <div className="flex items-center gap-6 py-2 border-t border-[#2b2a27] text-sm text-[#999999]">
     <a href="#featured" className="hover:text-white transition-colors font-['Orbitron'] text-xs tracking-wider uppercase">Featured</a>
     <a href="#features" className="hover:text-white transition-colors font-['Orbitron'] text-xs tracking-wider uppercase">Why Us</a>
     <button onClick={() => navigate("/catalogue")} className="hover:text-white transition-colors font-['Orbitron'] text-xs tracking-wider uppercase cursor-pointer ml-auto text-[#c2202f]">
