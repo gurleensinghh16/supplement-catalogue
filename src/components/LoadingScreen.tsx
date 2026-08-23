@@ -104,7 +104,9 @@ export function LoadingScreen() {
   }, [COLS, ROWS, TILE_SIZE]);
 
   useEffect(() => {
-    if (phase === "shatter") generateTiles();
+    // pre-generate tiles early (during glow1) so they're ready by the time
+    // the shatter phase starts — avoids a visible stutter/delay after glow2
+    if (phase === "glow1") generateTiles();
   }, [phase, generateTiles]);
 
   if (!visible) return null;
