@@ -169,7 +169,7 @@ export function LoadingScreen() {
           )}
 
           {/* Hidden img for canvas source */}
-          <img ref={imgRef} src={`${BASE}logo_1.png`} alt="" crossOrigin="anonymous"
+          <img ref={imgRef} src={`${BASE}image.png`} alt="" crossOrigin="anonymous"
             style={{ position: "absolute", opacity: 0, pointerEvents: "none", width: LOGO_SIZE, height: LOGO_SIZE }}
           />
 
@@ -203,7 +203,7 @@ export function LoadingScreen() {
                 {/* Front face — establishes the box size (same pattern as original working code:
                     position relative, width LOGO_SIZE). Visible for first half of the flip. */}
                 <img
-                  src={`${BASE}logo_1.png`}
+                  src={`${BASE}image.png`}
                   alt="TheDietStore"
                   className="max-w-[70vw]"
                   style={{ position: "relative", zIndex: 20, width: "100%", display: "block", backfaceVisibility: "hidden" }}
@@ -212,7 +212,7 @@ export function LoadingScreen() {
                     wrapper finishes rotating 180deg, this face lands facing forward, right-side-up
                     (no mirroring). Overlaid exactly on top of the front face. Handles the glow filter. */}
                 <motion.img
-                  src={`${BASE}logo_1.png`}
+                  src={`${BASE}image.png`}
                   alt="TheDietStore"
                   className="max-w-[70vw]"
                   style={{
