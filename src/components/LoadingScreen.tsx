@@ -236,7 +236,7 @@ export function LoadingScreen() {
 
           {/* ─── Tagline ─── */}
           <motion.p
-            className="absolute font-['Orbitron'] text-xs sm:text-sm tracking-[0.5em] uppercase"
+            className="absolute font-['Orbitron'] text-[9px] xs:text-[10px] sm:text-sm tracking-[0.25em] sm:tracking-[0.5em] uppercase px-4 text-center"
             style={{ bottom: `calc(50% - ${LOGO_SIZE / 2 + 28}px)`, left: "50%", transform: "translateX(-50%)", whiteSpace: "nowrap" }}
             initial={{ opacity: 0, y: 8 }}
             animate={{
