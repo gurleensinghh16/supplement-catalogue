@@ -33,11 +33,11 @@ export function LoadingScreen() {
     if (!visible) return;
     let t: ReturnType<typeof setTimeout>;
 
-    if (phase === "flip") t = setTimeout(() => setPhase("glow1"), 2000);
-    if (phase === "glow1") t = setTimeout(() => setPhase("glowoff"), 500);
-    if (phase === "glowoff") t = setTimeout(() => setPhase("glow2"), 400);
-    if (phase === "glow2") t = setTimeout(() => setPhase("shatter"), 500);
-    if (phase === "shatter") t = setTimeout(() => setPhase("exit"), 1300);
+    if (phase === "flip") t = setTimeout(() => setPhase("glow1"), 2800);
+    if (phase === "glow1") t = setTimeout(() => setPhase("glowoff"), 300);
+    if (phase === "glowoff") t = setTimeout(() => setPhase("glow2"), 250);
+    if (phase === "glow2") t = setTimeout(() => setPhase("shatter"), 400);
+    if (phase === "shatter") t = setTimeout(() => setPhase("exit"), 900);
     if (phase === "exit") t = setTimeout(() => setVisible(false), 700);
 
     return () => clearTimeout(t!);
@@ -48,7 +48,6 @@ export function LoadingScreen() {
     if (!img) return;
 
     const generate = () => {
-      const run = () => {
       const generated: Tile[] = [];
       const natW = img.naturalWidth;
       const natH = img.naturalHeight;
@@ -98,14 +97,6 @@ export function LoadingScreen() {
         }
       }
       setTiles(generated);
-      };
-
-      // run off the main render pass so it doesn't stall the flip/glow animation frames
-      if ("requestIdleCallback" in window) {
-        (window as any).requestIdleCallback(run, { timeout: 1200 });
-      } else {
-        setTimeout(run, 0);
-      }
     };
 
     if (img.complete && img.naturalWidth > 0) generate();
@@ -113,10 +104,7 @@ export function LoadingScreen() {
   }, [COLS, ROWS, TILE_SIZE]);
 
   useEffect(() => {
-    // pre-generate tiles immediately on mount (during the 2s flip phase),
-    // so the heavy canvas work has plenty of headroom and never competes
-    // with the glow/shatter animation frames later
-    if (phase === "flip") generateTiles();
+    if (phase === "shatter") generateTiles();
   }, [phase, generateTiles]);
 
   if (!visible) return null;
@@ -130,7 +118,7 @@ export function LoadingScreen() {
         <motion.div
           className="fixed inset-0 z-[9999] bg-black flex items-center justify-center overflow-hidden"
           animate={{ opacity: phase === "exit" ? 0 : 1 }}
-          transition={{ duration: 0.4, ease: "easeInOut" }}
+          transition={{ duration: 0.7, ease: "easeInOut" }}
         >
           {/* ─── Shatter Tiles ─── */}
           {isShattering && tiles.length > 0 && (
@@ -158,7 +146,7 @@ export function LoadingScreen() {
                     scale: tile.scaleEnd,
                     rotate: tile.rotate,
                   }}
-                  transition={{ duration: 0.8, delay: tile.delay, ease: [0.2, 0, 0.6, 1] }}
+                  transition={{ duration: 0.7, delay: tile.delay, ease: [0.2, 0, 0.6, 1] }}
                 >
                   <img src={tile.dataUrl} alt="" style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover", display: "block" }} />
                 </motion.div>
@@ -171,37 +159,64 @@ export function LoadingScreen() {
             style={{ position: "absolute", opacity: 0, pointerEvents: "none", width: LOGO_SIZE, height: LOGO_SIZE }}
           />
 
-          {/* ─── Logo — flips to 180° (card-flip trick, no mirrored text), then glows twice, then shatters ─── */}
+          {/* ─── Logo — flips to 180° (front/back card-flip, no mirrored text), then glows twice, then shatters ─── */}
           {!isShattering && (
-            <div style={{ width: LOGO_SIZE, height: LOGO_SIZE, position: "relative" }}>
-              <motion.img
-                src={`${BASE}logo_1.png`}
-                alt="TheDietStore"
-                className="max-w-[70vw]"
-                style={{
-                  position: "absolute", inset: 0, width: "100%", height: "100%",
-                  objectFit: "contain",
-                }}
-                initial={{ opacity: 0, scale: 0.05, scaleX: 1, filter: "brightness(1) drop-shadow(0 0 0px transparent)" }}
+            <div style={{ perspective: 800 }}>
+              <motion.div
+                style={{ position: "relative", width: LOGO_SIZE, transformStyle: "preserve-3d" }}
+                initial={{ opacity: 0, scale: 0.05, rotateY: 0 }}
                 animate={
                   phase === "flip"
-                    ? { opacity: 1, scale: 1, scaleX: [1, 0.02, 1], filter: "brightness(1) drop-shadow(0 0 0px transparent)" }
+                    ? { opacity: 1, scale: 1, rotateY: 180 }
                     : phase === "glow1"
-                    ? { opacity: 1, scale: 1.08, scaleX: 1, filter: "brightness(1.5) drop-shadow(0 0 20px rgba(255,255,255,0.6)) drop-shadow(0 0 40px rgba(255,255,255,0.3))" }
+                    ? { opacity: 1, scale: 1.08, rotateY: 180 }
                     : phase === "glowoff"
-                    ? { opacity: 1, scale: 1, scaleX: 1, filter: "brightness(1) drop-shadow(0 0 0px transparent)" }
-                    : { opacity: 1, scale: 1.15, scaleX: 1, filter: "brightness(2) drop-shadow(0 0 50px rgba(255,255,255,0.9)) drop-shadow(0 0 80px rgba(255,255,255,0.5))" } // glow2
+                    ? { opacity: 1, scale: 1, rotateY: 180 }
+                    : phase === "glow2"
+                    ? { opacity: 1, scale: 1.15, rotateY: 180 }
+                    : { opacity: 0, scale: 1.3, rotateY: 180 } // exit fallback
                 }
                 transition={
                   phase === "flip"
                     ? {
-                        opacity: { duration: 0.3, ease: "easeOut" },
-                        scale: { duration: 2.0, ease: [0.16, 1, 0.3, 1] },
-                        scaleX: { duration: 2.0, times: [0, 0.5, 1], ease: "easeInOut" },
+                        opacity: { duration: 0.5, ease: "easeOut" },
+                        scale: { duration: 2.6, ease: [0.16, 1, 0.3, 1] },
+                        rotateY: { duration: 2.6, ease: [0.25, 0.1, 0.25, 1] },
                       }
                     : { duration: 0.25, ease: "easeOut" }
                 }
-              />
+              >
+                {/* Front face — establishes the box size (same pattern as original working code:
+                    position relative, width LOGO_SIZE). Visible for first half of the flip. */}
+                <img
+                  src={`${BASE}logo_1.png`}
+                  alt="TheDietStore"
+                  className="max-w-[70vw]"
+                  style={{ position: "relative", zIndex: 20, width: "100%", display: "block", backfaceVisibility: "hidden" }}
+                />
+                {/* Back face — same logo, pre-rotated 180deg relative to this wrapper, so once the
+                    wrapper finishes rotating 180deg, this face lands facing forward, right-side-up
+                    (no mirroring). Overlaid exactly on top of the front face. Handles the glow filter. */}
+                <motion.img
+                  src={`${BASE}logo_1.png`}
+                  alt="TheDietStore"
+                  className="max-w-[70vw]"
+                  style={{
+                    position: "absolute", top: 0, left: 0, zIndex: 20, width: "100%",
+                    backfaceVisibility: "hidden", transform: "rotateY(180deg)",
+                  }}
+                  animate={
+                    phase === "glow1"
+                      ? { filter: "brightness(1.5) drop-shadow(0 0 20px rgba(255,255,255,0.6)) drop-shadow(0 0 40px rgba(255,255,255,0.3))" }
+                      : phase === "glowoff"
+                      ? { filter: "brightness(1) drop-shadow(0 0 0px transparent)" }
+                      : phase === "glow2"
+                      ? { filter: "brightness(2) drop-shadow(0 0 50px rgba(255,255,255,0.9)) drop-shadow(0 0 80px rgba(255,255,255,0.5))" }
+                      : { filter: "brightness(1) drop-shadow(0 0 0px transparent)" }
+                  }
+                  transition={{ duration: 0.25, ease: "easeOut" }}
+                />
+              </motion.div>
             </div>
           )}
 
@@ -215,7 +230,7 @@ export function LoadingScreen() {
               y: phase === "flip" || isGlowing ? 0 : 8,
               color: isGlowing ? "rgba(255,255,255,1)" : "rgba(255,255,255,0.4)",
             }}
-            transition={{ duration: 0.2, delay: phase === "flip" ? 0.3 : 0 }}
+            transition={{ duration: 0.3, delay: phase === "flip" ? 0.6 : 0 }}
           >
             Premium Supplements
           </motion.p>
