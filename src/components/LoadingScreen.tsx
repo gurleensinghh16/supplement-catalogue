@@ -33,10 +33,10 @@ export function LoadingScreen() {
     if (!visible) return;
     let t: ReturnType<typeof setTimeout>;
 
-    if (phase === "flip") t = setTimeout(() => setPhase("glow1"), 2000);
-    if (phase === "glow1") t = setTimeout(() => setPhase("glowoff"), 300);
-    if (phase === "glowoff") t = setTimeout(() => setPhase("glow2"), 450);
-    if (phase === "glow2") t = setTimeout(() => setPhase("shatter"), 550);
+    if (phase === "flip") t = setTimeout(() => setPhase("glow1"), 1900);
+    if (phase === "glow1") t = setTimeout(() => setPhase("glowoff"), 500);
+    if (phase === "glowoff") t = setTimeout(() => setPhase("glow2"), 400);
+    if (phase === "glow2") t = setTimeout(() => setPhase("shatter"), 500);
     if (phase === "shatter") t = setTimeout(() => setPhase("exit"), 1300);
     if (phase === "exit") t = setTimeout(() => setVisible(false), 700);
 
@@ -48,6 +48,7 @@ export function LoadingScreen() {
     if (!img) return;
 
     const generate = () => {
+      const run = () => {
       const generated: Tile[] = [];
       const natW = img.naturalWidth;
       const natH = img.naturalHeight;
@@ -97,6 +98,14 @@ export function LoadingScreen() {
         }
       }
       setTiles(generated);
+      };
+
+      // run off the main render pass so it doesn't stall the flip/glow animation frames
+      if ("requestIdleCallback" in window) {
+        (window as any).requestIdleCallback(run, { timeout: 1200 });
+      } else {
+        setTimeout(run, 0);
+      }
     };
 
     if (img.complete && img.naturalWidth > 0) generate();
@@ -104,9 +113,10 @@ export function LoadingScreen() {
   }, [COLS, ROWS, TILE_SIZE]);
 
   useEffect(() => {
-    // pre-generate tiles early (during glow1) so they're ready by the time
-    // the shatter phase starts — avoids a visible stutter/delay after glow2
-    if (phase === "glow1") generateTiles();
+    // pre-generate tiles immediately on mount (during the 2s flip phase),
+    // so the heavy canvas work has plenty of headroom and never competes
+    // with the glow/shatter animation frames later
+    if (phase === "flip") generateTiles();
   }, [phase, generateTiles]);
 
   if (!visible) return null;
@@ -183,8 +193,8 @@ export function LoadingScreen() {
                   phase === "flip"
                     ? {
                         opacity: { duration: 0.3, ease: "easeOut" },
-                        scale: { duration: 2.0, ease: [0.16, 1, 0.3, 1] },
-                        rotateY: { duration: 2.0, ease: [0.25, 0.1, 0.25, 1] },
+                        scale: { duration: 1.9, ease: [0.16, 1, 0.3, 1] },
+                        rotateY: { duration: 1.9, ease: [0.25, 0.1, 0.25, 1] },
                       }
                     : { duration: 0 }
                 }
@@ -215,8 +225,8 @@ export function LoadingScreen() {
                   phase === "flip"
                     ? {
                         opacity: { duration: 0.3, ease: "easeOut" },
-                        scale: { duration: 2.0, ease: [0.16, 1, 0.3, 1] },
-                        rotateY: { duration: 2.0, ease: [0.25, 0.1, 0.25, 1] },
+                        scale: { duration: 1.9, ease: [0.16, 1, 0.3, 1] },
+                        rotateY: { duration: 1.9, ease: [0.25, 0.1, 0.25, 1] },
                       }
                     : { duration: 0.25, ease: "easeOut" }
                 }
