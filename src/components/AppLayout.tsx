@@ -186,7 +186,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       {/* Nav */}
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-[#2b2a27] bg-black/95 backdrop-blur-xl">
         <div className="mx-auto max-w-[1440px] px-6 lg:px-10">
-          <div className="h-16 lg:h-28 grid grid-cols-[1fr_auto_1fr] items-center">
+          <div className="h-14 lg:h-28 grid grid-cols-[1fr_auto_1fr] items-center">
             {/* Left */}
             <div className="flex items-center gap-4 lg:gap-8">
               <button onClick={() => setSearchOpen(true)} className="w-10 h-10 flex items-center justify-center hover:text-[#c2202f] transition-colors cursor-pointer">
@@ -261,7 +261,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   {/* Supplements expandable row */}
   <button
     onClick={() => setMobileSuppsOpen((p) => !p)}
-    className="w-full flex items-center justify-between px-1 py-2 text-sm text-[#999999] hover:text-white transition-colors cursor-pointer"
+    className="w-full flex items-center justify-between px-1 py-1.5 text-sm text-[#999999] hover:text-white transition-colors cursor-pointer"
   >
     <span className="font-['Orbitron'] tracking-[0.15em] uppercase text-xs">Supplements</span>
     <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${mobileSuppsOpen ? "rotate-180" : ""}`} />
@@ -293,7 +293,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   </AnimatePresence>
 
   {/* Other links */}
-  <div className="flex items-center gap-6 py-2 border-t border-[#2b2a27] text-sm text-[#999999]">
+  <div className="flex items-center gap-6 py-1.5 border-t border-[#2b2a27] text-sm text-[#999999]">
     <a href="#featured" className="hover:text-white transition-colors font-['Orbitron'] text-xs tracking-wider uppercase">Featured</a>
     <a href="#features" className="hover:text-white transition-colors font-['Orbitron'] text-xs tracking-wider uppercase">Why Us</a>
     <button onClick={() => navigate("/catalogue")} className="hover:text-white transition-colors font-['Orbitron'] text-xs tracking-wider uppercase cursor-pointer ml-auto text-[#c2202f]">
