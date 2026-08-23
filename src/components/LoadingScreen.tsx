@@ -13,7 +13,7 @@ export function LoadingScreen() {
     if (!visible) return;
     let t: ReturnType<typeof setTimeout>;
 
-    if (phase === "grow") t = setTimeout(() => setPhase("glow"), 1400);
+    if (phase === "grow") t = setTimeout(() => setPhase("glow"), 2500);
     if (phase === "glow") t = setTimeout(() => setPhase("exit"), 900);
     if (phase === "exit") t = setTimeout(() => setVisible(false), 700);
 
@@ -66,7 +66,7 @@ export function LoadingScreen() {
             style={{ position: "relative", zIndex: 20 }}
             initial={{
               opacity: 0,
-              scale: 0.05,
+              scale: 0.02,
               rotateY: 0,
               filter: "brightness(1) drop-shadow(0 0 0px transparent)",
             }}
@@ -101,11 +101,11 @@ export function LoadingScreen() {
                 ? {
                     opacity: { duration: 0.3 },
                     scale: {
-                      duration: 1.3,
-                      ease: [0.16, 1, 0.3, 1], // fast start, eases into full size
+                      duration: 2.4,
+                      ease: [0.08, 0.5, 0.3, 1], // fast start, eases into full size
                     },
                     rotateY: {
-                      duration: 1.3,
+                      duration: 2.4,
                       ease: "easeInOut",
                       times: [0, 0.25, 0.5, 0.75, 1],
                     },
