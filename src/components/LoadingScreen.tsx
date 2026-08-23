@@ -30,35 +30,7 @@ export function LoadingScreen() {
           animate={{ opacity: phase === "exit" ? 0 : 1 }}
           transition={{ duration: 0.7, ease: "easeInOut" }}
         >
-          {/* Shine sweep over logo during glow */}
-          <motion.div
-            className="pointer-events-none absolute z-30"
-            style={{
-              width: 300,
-              height: 300,
-              overflow: "hidden",
-            }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: phase === "glow" ? 1 : 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            <motion.div
-              style={{
-                position: "absolute",
-                top: "-50%",
-                left: 0,
-                width: "55%",
-                height: "200%",
-                background:
-                  "linear-gradient(105deg, transparent 20%, rgba(255,255,255,0.4) 50%, transparent 80%)",
-                transform: "skewX(-15deg)",
-              }}
-              initial={{ x: "-100%" }}
-              animate={phase === "glow" ? { x: "400%" } : { x: "-100%" }}
-              transition={{ duration: 0.7, ease: "easeInOut", delay: 0.05 }}
-            />
-          </motion.div>
-
+          
           {/* Logo */}
           <motion.img
             src={`${BASE}Animation_logo.png`}
@@ -85,7 +57,7 @@ export function LoadingScreen() {
                     scale: 1.1,
                     rotateY: 720,
                     filter:
-                      "brightness(2) drop-shadow(0 0 25px rgba(255,255,255,0.9)) drop-shadow(0 0 50px rgba(255,255,255,0.5))",
+                      "brightness(1) drop-shadow(0 0 25px rgba(255,255,255,0.9)) drop-shadow(0 0 50px rgba(255,255,255,0.5))",
                     width: 300,
                   }
                 : {
