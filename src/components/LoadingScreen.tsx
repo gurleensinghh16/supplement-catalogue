@@ -104,11 +104,7 @@ export function LoadingScreen() {
   }, [COLS, ROWS, TILE_SIZE]);
 
   useEffect(() => {
-    // Generate tiles ahead of time, during glow2, so they're already sitting
-    // in state by the time we switch to "shatter" — otherwise the canvas
-    // work (144/64 tiles) takes a beat and you get a blank flash between
-    // glow2 ending and the shatter tiles actually appearing.
-    if (phase === "glow2") generateTiles();
+    if (phase === "shatter") generateTiles();
   }, [phase, generateTiles]);
 
   if (!visible) return null;
