@@ -7,7 +7,7 @@ type Phase = "flip" | "glow1" | "glowoff" | "glow2" | "shatter" | "exit";
 
 type Tile = {
   id: number;
-  dataUrl: string;
+  canvas: HTMLCanvasElement;
   startX: number;
   startY: number;
   endX: number;
@@ -22,6 +22,7 @@ export function LoadingScreen() {
   const [phase, setPhase] = useState<Phase>("flip");
   const [tiles, setTiles] = useState<Tile[]>([]);
   const imgRef = useRef<HTMLImageElement>(null);
+  const generatedRef = useRef(false);
 
   const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
   const COLS = isMobile ? 8 : 12;
@@ -45,9 +46,11 @@ export function LoadingScreen() {
 
   const generateTiles = useCallback(() => {
     const img = imgRef.current;
-    if (!img) return;
+    if (!img || generatedRef.current) return;
 
     const generate = () => {
+      if (generatedRef.current) return;
+      generatedRef.current = true;
       const generated: Tile[] = [];
       const natW = img.naturalWidth;
       const natH = img.naturalHeight;
@@ -86,7 +89,7 @@ export function LoadingScreen() {
 
           generated.push({
             id: row * COLS + col,
-            dataUrl: tileCanvas.toDataURL("image/webp", 0.8),
+            canvas: tileCanvas,
             startX, startY,
             endX: (cx / dist) * speed * (0.8 + Math.random() * 0.4),
             endY: (cy / dist) * speed * (0.8 + Math.random() * 0.4),
@@ -104,8 +107,13 @@ export function LoadingScreen() {
   }, [COLS, ROWS, TILE_SIZE]);
 
   useEffect(() => {
-    if (phase === "shatter") generateTiles();
-  }, [phase, generateTiles]);
+    // Generate tiles as early as possible — right at mount, as soon as the
+    // hidden source image is available — instead of waiting for glow2/shatter.
+    // The flip phase alone gives ~2.8s of idle time, which is much more
+    // margin than doing this work in the 400ms glow2 window (which was
+    // blocking the main thread mid-animation and causing a stutter).
+    generateTiles();
+  }, [generateTiles]);
 
   if (!visible) return null;
 
@@ -148,7 +156,17 @@ export function LoadingScreen() {
                   }}
                   transition={{ duration: 0.7, delay: tile.delay, ease: [0.2, 0, 0.6, 1] }}
                 >
-                  <img src={tile.dataUrl} alt="" style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover", display: "block" }} />
+                  <div
+                    style={{ width: "100%", height: "100%", borderRadius: "50%", overflow: "hidden", display: "block" }}
+                    ref={(el) => {
+                      if (el && tile.canvas.parentElement !== el) {
+                        tile.canvas.style.width = "100%";
+                        tile.canvas.style.height = "100%";
+                        tile.canvas.style.display = "block";
+                        el.appendChild(tile.canvas);
+                      }
+                    }}
+                  />
                 </motion.div>
               ))}
             </div>
