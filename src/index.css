@@ -91,10 +91,10 @@
     font-weight: 400;
     letter-spacing: 0.15em;
   }
-  html, body {
-    overflow-x: clip;
-    max-width: 100vw;
-  }
+  html, body, #root {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
   #root {
     overflow-x: clip;
     max-width: 100vw;

@@ -149,7 +149,7 @@ export default function Landing() {
 
 
   return (
-    <div className="min-h-screen bg-black text-white w-full" style={{ overflowX: 'hidden', maxWidth: '100vw' }}>
+    <div className="min-h-screen bg-black text-white w-full max-w-full" style={{ overflowX: 'hidden', maxWidth: '100vw' }}>
       {/* Product Detail Modal */}
       {selectedProduct && (
         <ProductDetail
