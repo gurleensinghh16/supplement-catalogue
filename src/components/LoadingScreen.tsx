@@ -33,12 +33,12 @@ export function LoadingScreen() {
     if (!visible) return;
     let t: ReturnType<typeof setTimeout>;
 
-    if (phase === "flip") t = setTimeout(() => setPhase("glow1"), 2800);
-    if (phase === "glow1") t = setTimeout(() => setPhase("glowoff"), 300);
-    if (phase === "glowoff") t = setTimeout(() => setPhase("glow2"), 250);
-    if (phase === "glow2") t = setTimeout(() => setPhase("shatter"), 400);
-    if (phase === "shatter") t = setTimeout(() => setPhase("exit"), 900);
-    if (phase === "exit") t = setTimeout(() => setVisible(false), 700);
+    if (phase === "flip") t = setTimeout(() => setPhase("glow1"), 350);
+    if (phase === "glow1") t = setTimeout(() => setPhase("glowoff"), 80);
+    if (phase === "glowoff") t = setTimeout(() => setPhase("glow2"), 80);
+    if (phase === "glow2") t = setTimeout(() => setPhase("shatter"), 100);
+    if (phase === "shatter") t = setTimeout(() => setPhase("exit"), 500);
+    if (phase === "exit") t = setTimeout(() => setVisible(false), 400);
 
     return () => clearTimeout(t!);
   }, [phase, visible]);
@@ -118,7 +118,7 @@ export function LoadingScreen() {
         <motion.div
           className="fixed inset-0 z-[9999] bg-black flex items-center justify-center overflow-hidden"
           animate={{ opacity: phase === "exit" ? 0 : 1 }}
-          transition={{ duration: 0.7, ease: "easeInOut" }}
+          transition={{ duration: 0.4, ease: "easeInOut" }}
         >
           {/* ─── Shatter Tiles ─── */}
           {isShattering && tiles.length > 0 && (
@@ -146,7 +146,7 @@ export function LoadingScreen() {
                     scale: tile.scaleEnd,
                     rotate: tile.rotate,
                   }}
-                  transition={{ duration: 0.7, delay: tile.delay, ease: [0.2, 0, 0.6, 1] }}
+                  transition={{ duration: 0.45, delay: tile.delay, ease: [0.2, 0, 0.6, 1] }}
                 >
                   <img src={tile.dataUrl} alt="" style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover", display: "block" }} />
                 </motion.div>
@@ -166,7 +166,7 @@ export function LoadingScreen() {
                 src={`${BASE}logo_1.png`}
                 alt="TheDietStore"
                 className="max-w-[70vw]"
-                style={{ position: "relative", zIndex: 20, width: LOGO_SIZE }}
+                style={{ position: "relative", zIndex: 20, width: LOGO_SIZE, backfaceVisibility: "hidden" }}
                 initial={{ opacity: 0, scale: 0.05, rotateY: 0, filter: "brightness(1) drop-shadow(0 0 0px transparent)" }}
                 animate={
                   phase === "flip"
@@ -182,9 +182,9 @@ export function LoadingScreen() {
                 transition={
                   phase === "flip"
                     ? {
-                        opacity: { duration: 0.5, ease: "easeOut" },
-                        scale: { duration: 2.6, ease: [0.16, 1, 0.3, 1] },
-                        rotateY: { duration: 2.6, ease: [0.25, 0.1, 0.25, 1] },
+                        opacity: { duration: 0.3, ease: "easeOut" },
+                        scale: { duration: 0.32, ease: [0.16, 1, 0.3, 1] },
+                        rotateY: { duration: 0.32, ease: [0.25, 0.1, 0.25, 1] },
                       }
                     : { duration: 0.25, ease: "easeOut" }
                 }
@@ -202,7 +202,7 @@ export function LoadingScreen() {
               y: phase === "flip" || isGlowing ? 0 : 8,
               color: isGlowing ? "rgba(255,255,255,1)" : "rgba(255,255,255,0.4)",
             }}
-            transition={{ duration: 0.3, delay: phase === "flip" ? 0.6 : 0 }}
+            transition={{ duration: 0.2, delay: phase === "flip" ? 0.3 : 0 }}
           >
             Premium Supplements
           </motion.p>
