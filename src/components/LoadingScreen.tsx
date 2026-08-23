@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const BASE = import.meta.env.BASE_URL || "/";
 
-type Phase = "flip" | "glow" | "shatter" | "exit";
+type Phase = "flip" | "glow1" | "glowoff" | "glow2" | "shatter" | "exit";
 
 type Tile = {
   id: number;
@@ -33,13 +33,11 @@ export function LoadingScreen() {
     if (!visible) return;
     let t: ReturnType<typeof setTimeout>;
 
-    // flip: logo enters + rotates once (2.8s)
-    if (phase === "flip") t = setTimeout(() => setPhase("glow"), 2800);
-    // glow: single brightness pulse (500ms)
-    if (phase === "glow") t = setTimeout(() => setPhase("shatter"), 500);
-    // shatter: splits into tiles and flies apart (900ms)
+    if (phase === "flip") t = setTimeout(() => setPhase("glow1"), 2800);
+    if (phase === "glow1") t = setTimeout(() => setPhase("glowoff"), 300);
+    if (phase === "glowoff") t = setTimeout(() => setPhase("glow2"), 250);
+    if (phase === "glow2") t = setTimeout(() => setPhase("shatter"), 400);
     if (phase === "shatter") t = setTimeout(() => setPhase("exit"), 900);
-    // exit: screen fades out (700ms)
     if (phase === "exit") t = setTimeout(() => setVisible(false), 700);
 
     return () => clearTimeout(t!);
@@ -111,7 +109,7 @@ export function LoadingScreen() {
 
   if (!visible) return null;
 
-  const isGlowing = phase === "glow";
+  const isGlowing = phase === "glow1" || phase === "glow2";
   const isShattering = phase === "shatter" || phase === "exit";
 
   return (
@@ -161,7 +159,7 @@ export function LoadingScreen() {
             style={{ position: "absolute", opacity: 0, pointerEvents: "none", width: LOGO_SIZE, height: LOGO_SIZE }}
           />
 
-          {/* ─── Logo — flips 360° once while growing, then a single glow pulse, then shatters ─── */}
+          {/* ─── Logo — flips 360° once while growing, then glows twice, then shatters ─── */}
           {!isShattering && (
             <div style={{ perspective: 800 }}>
               <motion.img
@@ -173,7 +171,13 @@ export function LoadingScreen() {
                 animate={
                   phase === "flip"
                     ? { opacity: 1, scale: 1, rotateY: 360, filter: "brightness(1) drop-shadow(0 0 0px transparent)" }
-                    : { opacity: 1, scale: 1.15, rotateY: 360, filter: "brightness(2) drop-shadow(0 0 50px rgba(255,255,255,0.9)) drop-shadow(0 0 80px rgba(255,255,255,0.5))" }
+                    : phase === "glow1"
+                    ? { opacity: 1, scale: 1.08, rotateY: 360, filter: "brightness(1.5) drop-shadow(0 0 20px rgba(255,255,255,0.6)) drop-shadow(0 0 40px rgba(255,255,255,0.3))" }
+                    : phase === "glowoff"
+                    ? { opacity: 1, scale: 1, rotateY: 360, filter: "brightness(1) drop-shadow(0 0 0px transparent)" }
+                    : phase === "glow2"
+                    ? { opacity: 1, scale: 1.15, rotateY: 360, filter: "brightness(2) drop-shadow(0 0 50px rgba(255,255,255,0.9)) drop-shadow(0 0 80px rgba(255,255,255,0.5))" }
+                    : { opacity: 0, scale: 1.3, rotateY: 360, filter: "brightness(1)" }
                 }
                 transition={
                   phase === "flip"
@@ -182,7 +186,7 @@ export function LoadingScreen() {
                         scale: { duration: 2.6, ease: [0.16, 1, 0.3, 1] },
                         rotateY: { duration: 2.6, ease: [0.25, 0.1, 0.25, 1] },
                       }
-                    : { duration: 0.35, ease: "easeOut" }
+                    : { duration: 0.25, ease: "easeOut" }
                 }
               />
             </div>
