@@ -304,8 +304,114 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         </div>
       </nav>
 
-      {/* Page content */}
+            {/* Page content */}
       {children}
+
+      {/* ── Footer ── */}
+      <footer className="border-t border-[#2b2a27] bg-black">
+        {/* Main footer */}
+        <div className="mx-auto max-w-[1440px] px-6 lg:px-10 py-12 lg:py-20">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
+            {/* Brand */}
+            <div className="lg:col-span-1">
+              <button onClick={() => navigate("/")} className="cursor-pointer mb-5">
+                <img src={`${BASE}logoo.png`} alt="TheDietStore" className="h-10 lg:h-12 w-auto object-contain" />
+              </button>
+              <p className="text-[15px] text-[#999999] leading-relaxed font-['Barlow'] max-w-xs">
+                Your trusted source for genuine international supplement brands at the best prices.
+              </p>
+              <div className="flex items-center gap-4 mt-6">
+                <a href="https://wa.me/918295158184" target="_blank" rel="noopener noreferrer"
+                  className="w-10 h-10 border border-[#2b2a27] bg-[#111111] flex items-center justify-center hover:border-[#25D366] hover:bg-[#25D366]/10 transition-all">
+                  <MessageCircle className="h-4.5 w-4.5 text-[#25D366]" />
+                </a>
+              </div>
+            </div>
+
+            {/* Quick Links */}
+            <div>
+              <h4 className="font-['Orbitron'] text-sm font-normal tracking-[0.15em] uppercase text-white mb-5">Quick Links</h4>
+              <ul className="space-y-3">
+                {[
+                  { label: "Home", path: "/" },
+                  { label: "Catalogue", path: "/catalogue" },
+                  { label: "Admin", path: "/admin" },
+                ].map((link) => (
+                  <li key={link.label}>
+                    <button
+                      onClick={() => navigate(link.path)}
+                      className="text-[15px] text-[#999999] hover:text-[#c2202f] transition-colors font-['Barlow'] cursor-pointer"
+                    >
+                      {link.label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Categories */}
+            <div>
+              <h4 className="font-['Orbitron'] text-sm font-normal tracking-[0.15em] uppercase text-white mb-5">Categories</h4>
+              <ul className="space-y-3">
+                {["Protein", "Pre-Workout", "Creatine", "BCAA", "Mass Gainer", "Fat Burner"].map((cat) => (
+                  <li key={cat}>
+                    <button
+                      onClick={() => navigate("/catalogue")}
+                      className="text-[15px] text-[#999999] hover:text-[#c2202f] transition-colors font-['Barlow'] cursor-pointer"
+                    >
+                      {cat}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Contact */}
+            <div>
+              <h4 className="font-['Orbitron'] text-sm font-normal tracking-[0.15em] uppercase text-white mb-5">Get in Touch</h4>
+              <ul className="space-y-3">
+                <li className="text-[15px] text-[#999999] font-['Barlow']">
+                  <span className="text-[#999999]/60 text-sm block mb-1">WhatsApp</span>
+                  <a href="https://wa.me/918295158184" target="_blank" rel="noopener noreferrer" className="hover:text-[#25D366] transition-colors">
+                    +91 82951 58184
+                  </a>
+                </li>
+                <li className="text-[15px] text-[#999999] font-['Barlow']">
+                  <span className="text-[#999999]/60 text-sm block mb-1">Email</span>
+                  <a href="mailto:info@thedietstore.in" className="hover:text-[#c2202f] transition-colors">
+                    info@thedietstore.in
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://wa.me/918295158184?text=Hi%20TheDietStore%20%F0%9F%91%8B%0A%0AI%27m%20interested%20in%20your%20supplements.%20Please%20share%20details%20about%20availability%20and%20pricing."
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 mt-2 px-5 py-2.5 border border-[#25D366]/30 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-white transition-all duration-300 text-xs font-medium tracking-wider font-['Orbitron'] uppercase"
+                  >
+                    <MessageCircle className="h-3.5 w-3.5" />
+                    Chat on WhatsApp
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom bar */}
+        <div className="border-t border-[#2b2a27]">
+          <div className="mx-auto max-w-[1440px] px-6 lg:px-10 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p className="text-[13px] text-[#999999] font-['Barlow'] tracking-wide">
+              © 2026 TheDietStore. All rights reserved.
+            </p>
+            <div className="flex items-center gap-6">
+              <span className="text-[13px] text-[#999999]/50 font-['Barlow']">100% Authentic Products</span>
+              <span className="text-[13px] text-[#999999]/50 font-['Barlow']">|</span>
+              <span className="text-[13px] text-[#999999]/50 font-['Barlow']">Pan-India Delivery</span>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

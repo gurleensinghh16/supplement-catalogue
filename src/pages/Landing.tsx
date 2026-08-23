@@ -380,16 +380,6 @@ export default function Landing() {
           </motion.div>
         </div>
       </section>
-
-      {/* ── Footer ── */}
-      <footer className="border-t border-[#2b2a27] py-12 px-4 sm:px-6">
-        <div className="mx-auto max-w-[1440px] flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <img src={`${BASE}logoo.png`} alt="TheDietStore" className="h-8 w-auto object-contain" />
-          </div>
-          <p className="text-sm text-[#999999] tracking-wide">© 2026 TheDietStore. All rights reserved.</p>
-        </div>
-      </footer>
     </div>
   );
 }
