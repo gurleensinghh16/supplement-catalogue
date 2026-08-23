@@ -226,7 +226,7 @@ export default function Landing() {
       </section>
 
       {/* ── Featured Products — from database ── */}
-      <section id="featured" className="py-16 sm:py-24 px-4 sm:px-6">
+      <section id="featured" className="pt-8 pb-16 sm:pt-12 sm:pb-24 px-4 sm:px-6">
         <div className="mx-auto max-w-[1440px]">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeUp} custom={0}
             className="flex items-end justify-between mb-12">
