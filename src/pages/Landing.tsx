@@ -159,7 +159,7 @@ export default function Landing() {
       )}
 
       {/* ── Hero Carousel — Full clickable images, no text overlay ── */}
-      <section ref={heroRef} className="relative w-full aspect-[4/3] sm:aspect-[16/9] lg:aspect-[21/9] lg:max-h-[850px] mt-32 lg:mt-28" style={{ overflow: 'hidden', clipPath: 'inset(0)' }}>
+      <section ref={heroRef} className="relative w-full h-[50vw] max-h-[700px] min-h-[280px] mt-16 lg:mt-28" style={{ overflow: 'hidden' }}>
         <AnimatePresence mode="wait">
           <motion.div
             key={currentSlide}
@@ -169,24 +169,16 @@ export default function Landing() {
             transition={{ duration: 0.5 }}
             className="absolute inset-0 overflow-hidden"
           >
-            <button
-              onClick={() => navigate("/catalogue")}
-              className="relative w-full h-full cursor-pointer block overflow-hidden"
-            >
-              {/* Blurred backdrop — fills the frame, kills empty side-bars, never shown sharp */}
-              <img
-                src={heroSlides[currentSlide].image}
-                alt=""
-                aria-hidden="true"
-                className="absolute inset-0 w-full h-full object-cover object-center block scale-110 blur-2xl opacity-60"
-              />
-              {/* Real image — always shown in full via object-contain, so nothing is ever cropped */}
-              <img
-                src={heroSlides[currentSlide].image}
-                alt="Hero banner"
-                className="relative w-full h-full object-contain object-center block"
-              />
-            </button>
+<button
+  onClick={() => navigate("/catalogue")}
+  className="relative w-full h-full cursor-pointer block"
+>
+  <img
+    src={heroSlides[currentSlide].image}
+    alt="Hero banner"
+    className="absolute inset-0 w-full h-full object-cover object-center block"
+  />
+</button>
           </motion.div>
         </AnimatePresence>
 
