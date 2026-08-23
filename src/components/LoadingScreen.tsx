@@ -173,65 +173,35 @@ export function LoadingScreen() {
 
           {/* ─── Logo — flips to 180° (card-flip trick, no mirrored text), then glows twice, then shatters ─── */}
           {!isShattering && (
-            <div style={{ perspective: 800, width: LOGO_SIZE, height: LOGO_SIZE, position: "relative" }}>
-              <motion.div
+            <div style={{ width: LOGO_SIZE, height: LOGO_SIZE, position: "relative" }}>
+              <motion.img
+                src={`${BASE}logo_1.png`}
+                alt="TheDietStore"
+                className="max-w-[70vw]"
                 style={{
-                  position: "relative", width: "100%", height: "100%",
-                  transformStyle: "preserve-3d",
+                  position: "absolute", inset: 0, width: "100%", height: "100%",
+                  objectFit: "contain",
                 }}
-                initial={{ opacity: 0, scale: 0.05, rotateY: 0 }}
+                initial={{ opacity: 0, scale: 0.05, scaleX: 1, filter: "brightness(1) drop-shadow(0 0 0px transparent)" }}
                 animate={
                   phase === "flip"
-                    ? { opacity: 1, scale: 1, rotateY: 180 }
+                    ? { opacity: 1, scale: 1, scaleX: [1, 0.02, 1], filter: "brightness(1) drop-shadow(0 0 0px transparent)" }
                     : phase === "glow1"
-                    ? { opacity: 1, scale: 1.08, rotateY: 180 }
+                    ? { opacity: 1, scale: 1.08, scaleX: 1, filter: "brightness(1.5) drop-shadow(0 0 20px rgba(255,255,255,0.6)) drop-shadow(0 0 40px rgba(255,255,255,0.3))" }
                     : phase === "glowoff"
-                    ? { opacity: 1, scale: 1, rotateY: 180 }
-                    : { opacity: 1, scale: 1.15, rotateY: 180 } // glow2
+                    ? { opacity: 1, scale: 1, scaleX: 1, filter: "brightness(1) drop-shadow(0 0 0px transparent)" }
+                    : { opacity: 1, scale: 1.15, scaleX: 1, filter: "brightness(2) drop-shadow(0 0 50px rgba(255,255,255,0.9)) drop-shadow(0 0 80px rgba(255,255,255,0.5))" } // glow2
                 }
                 transition={
                   phase === "flip"
                     ? {
                         opacity: { duration: 0.3, ease: "easeOut" },
                         scale: { duration: 2.0, ease: [0.16, 1, 0.3, 1] },
-                        rotateY: { duration: 2.0, ease: [0.25, 0.1, 0.25, 1] },
+                        scaleX: { duration: 2.0, times: [0, 0.5, 1], ease: "easeInOut" },
                       }
                     : { duration: 0.25, ease: "easeOut" }
                 }
-              >
-                {/* Front face — visible for the first half of the flip, then hidden as it rotates past 90deg */}
-                <img
-                  src={`${BASE}logo_1.png`}
-                  alt="TheDietStore"
-                  className="max-w-[70vw]"
-                  style={{
-                    position: "absolute", inset: 0, width: "100%", height: "100%",
-                    objectFit: "contain", backfaceVisibility: "hidden",
-                  }}
-                />
-                {/* Back face — pre-rotated 180deg relative to the container, so once the container
-                    finishes its 180deg flip, this face is facing forward normally (no mirroring) */}
-                <motion.img
-                  src={`${BASE}logo_1.png`}
-                  alt="TheDietStore"
-                  className="max-w-[70vw]"
-                  style={{
-                    position: "absolute", inset: 0, width: "100%", height: "100%",
-                    objectFit: "contain", backfaceVisibility: "hidden",
-                    transform: "rotateY(180deg)",
-                  }}
-                  animate={
-                    phase === "glow1"
-                      ? { filter: "brightness(1.5) drop-shadow(0 0 20px rgba(255,255,255,0.6)) drop-shadow(0 0 40px rgba(255,255,255,0.3))" }
-                      : phase === "glowoff"
-                      ? { filter: "brightness(1) drop-shadow(0 0 0px transparent)" }
-                      : phase === "glow2"
-                      ? { filter: "brightness(2) drop-shadow(0 0 50px rgba(255,255,255,0.9)) drop-shadow(0 0 80px rgba(255,255,255,0.5))" }
-                      : { filter: "brightness(1) drop-shadow(0 0 0px transparent)" }
-                  }
-                  transition={{ duration: 0.25, ease: "easeOut" }}
-                />
-              </motion.div>
+              />
             </div>
           )}
 
