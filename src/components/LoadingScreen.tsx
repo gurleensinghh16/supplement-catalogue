@@ -25,8 +25,8 @@ export function LoadingScreen() {
   const generatedRef = useRef(false);
 
   const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
-  const COLS = isMobile ? 8 : 12;
-  const ROWS = isMobile ? 8 : 12;
+  const COLS = isMobile ? 14 : 22;
+  const ROWS = isMobile ? 14 : 22;
   const LOGO_SIZE = isMobile ? 180 : 280;
   const TILE_SIZE = LOGO_SIZE / COLS;
 
@@ -37,7 +37,7 @@ export function LoadingScreen() {
     if (phase === "flip") t = setTimeout(() => setPhase("glow1"), 2800);
     if (phase === "glow1") t = setTimeout(() => setPhase("glowoff"), 300);
     if (phase === "glowoff") t = setTimeout(() => setPhase("glow2"), 250);
-    if (phase === "glow2") t = setTimeout(() => setPhase("shatter"), 400);
+    if (phase === "glow2") t = setTimeout(() => setPhase("shatter"), 80);
     if (phase === "shatter") t = setTimeout(() => setPhase("exit"), 900);
     if (phase === "exit") t = setTimeout(() => setVisible(false), 700);
 
@@ -56,7 +56,7 @@ export function LoadingScreen() {
       const natH = img.naturalHeight;
       const srcTileW = natW / COLS;
       const srcTileH = natH / ROWS;
-      const circleRadius = TILE_SIZE * 0.9;
+            const circleRadius = TILE_SIZE * 0.32;
 
       for (let row = 0; row < ROWS; row++) {
         for (let col = 0; col < COLS; col++) {
@@ -128,8 +128,8 @@ export function LoadingScreen() {
           animate={{ opacity: phase === "exit" ? 0 : 1 }}
           transition={{ duration: 0.7, ease: "easeInOut" }}
         >
-          {/* ─── Shatter Tiles ─── */}
-          {isShattering && tiles.length > 0 && (
+                    {/* ─── Shatter Tiles ─── */}
+          {tiles.length > 0 && (
             <div
               style={{
                 position: "absolute",
@@ -137,27 +137,27 @@ export function LoadingScreen() {
                 width: LOGO_SIZE, height: LOGO_SIZE,
                 marginLeft: -LOGO_SIZE / 2,
                 marginTop: -LOGO_SIZE / 2,
+                opacity: isShattering ? 1 : 0,
+                pointerEvents: "none",
               }}
             >
               {tiles.map((tile) => (
-                <motion.div
+                                <div
                   key={tile.id}
                   style={{
                     position: "absolute",
                     left: tile.startX, top: tile.startY,
                     width: TILE_SIZE, height: TILE_SIZE,
+                    willChange: "transform, opacity",
+                    transform: isShattering
+                      ? `translate(${tile.endX}px, ${tile.endY}px) scale(${tile.scaleEnd}) rotate(${tile.rotate}deg)`
+                      : "translate(0px, 0px) scale(1) rotate(0deg)",
+                    opacity: isShattering ? 0 : 1,
+                    transition: `transform 0.7s cubic-bezier(0.2,0,0.6,1) ${tile.delay}s, opacity 0.7s ease-out ${tile.delay}s`,
                   }}
-                  initial={{ x: 0, y: 0, opacity: 1, scale: 1, rotate: 0 }}
-                  animate={{
-                    x: tile.endX, y: tile.endY,
-                    opacity: [1, 0.8, 0],
-                    scale: tile.scaleEnd,
-                    rotate: tile.rotate,
-                  }}
-                  transition={{ duration: 0.7, delay: tile.delay, ease: [0.2, 0, 0.6, 1] }}
                 >
-                  <div
-                    style={{ width: "100%", height: "100%", borderRadius: "50%", overflow: "hidden", display: "block" }}
+                                    <div
+                    style={{ width: "100%", height: "100%", display: "block" }}
                     ref={(el) => {
                       if (el && tile.canvas.parentElement !== el) {
                         tile.canvas.style.width = "100%";
@@ -167,7 +167,7 @@ export function LoadingScreen() {
                       }
                     }}
                   />
-                </motion.div>
+                </div>
               ))}
             </div>
           )}
@@ -224,12 +224,12 @@ export function LoadingScreen() {
                     backfaceVisibility: "hidden", transform: "rotateY(180deg)",
                   }}
                   animate={
-                    phase === "glow1"
-                      ? { filter: "brightness(1.5) drop-shadow(0 0 20px rgba(255,255,255,0.6)) drop-shadow(0 0 40px rgba(255,255,255,0.3))" }
+                                       phase === "glow1"
+                      ? { filter: "brightness(1.15) drop-shadow(0 0 15px rgba(255,255,255,0.4)) drop-shadow(0 0 25px rgba(255,255,255,0.2))" }
                       : phase === "glowoff"
                       ? { filter: "brightness(1) drop-shadow(0 0 0px transparent)" }
-                      : phase === "glow2"
-                      ? { filter: "brightness(2) drop-shadow(0 0 50px rgba(255,255,255,0.9)) drop-shadow(0 0 80px rgba(255,255,255,0.5))" }
+                                                   : phase === "glow2"
+                      ? { filter: "brightness(1.15) drop-shadow(0 0 35px rgba(255,255,255,0.55)) drop-shadow(0 0 55px rgba(255,255,255,0.3))" }
                       : { filter: "brightness(1) drop-shadow(0 0 0px transparent)" }
                   }
                   transition={{ duration: 0.25, ease: "easeOut" }}
