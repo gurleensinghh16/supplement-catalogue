@@ -39,7 +39,7 @@ const BASE = import.meta.env.BASE_URL || "/";
 const heroSlides = [
   { image: `${BASE}hero-1.jpg` },
   { image: `${BASE}hero-2.jpg` },
-  { image: `${BASE}hero-3.jpg` },
+  { image: `${BASE}gym_3.png` },
 ];
 
 const features = [
@@ -159,7 +159,7 @@ export default function Landing() {
       )}
 
       {/* ── Hero Carousel — Full clickable images, no text overlay ── */}
-      <section ref={heroRef} className="relative w-full h-[45vw] min-h-[150px] max-h-[220px] sm:h-[60vw] sm:min-h-[300px] sm:max-h-[500px] lg:h-[50vw] lg:min-h-[400px] lg:max-h-[700px] mt-[80px] sm:mt-[72px] lg:mt-28">
+      <section ref={heroRef} className="relative w-full h-[280px] sm:h-[420px] lg:h-[600px] mt-[120px] sm:mt-[72px] lg:mt-28" style={{ overflow: 'hidden' }}>
         <AnimatePresence mode="wait">
           <motion.div
             key={currentSlide}
@@ -167,7 +167,7 @@ export default function Landing() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
-            className="absolute inset-0 overflow-hidden"
+            className="absolute inset-0"
           >
 <button
   onClick={() => navigate("/catalogue")}
@@ -176,7 +176,8 @@ export default function Landing() {
   <img
   src={heroSlides[currentSlide].image}
   alt="Hero banner"
-  className="w-full h-full object-contain object-center block"
+  className="w-full h-full object-cover block"
+  style={{ objectPosition: "center 15%" }}
 />
 </button>
           </motion.div>

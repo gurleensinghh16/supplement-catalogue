@@ -33,7 +33,7 @@ export function LoadingScreen() {
           
           {/* Logo */}
           <motion.img
-            src={`${BASE}Animation_logo.png`}
+            src={`${BASE}logo_1.png`}
             alt="TheDietStore"
             style={{ position: "relative", zIndex: 20 }}
             initial={{
