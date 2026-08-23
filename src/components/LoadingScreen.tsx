@@ -33,12 +33,12 @@ export function LoadingScreen() {
     if (!visible) return;
     let t: ReturnType<typeof setTimeout>;
 
-    if (phase === "flip") t = setTimeout(() => setPhase("glow1"), 350);
-    if (phase === "glow1") t = setTimeout(() => setPhase("glowoff"), 80);
-    if (phase === "glowoff") t = setTimeout(() => setPhase("glow2"), 80);
-    if (phase === "glow2") t = setTimeout(() => setPhase("shatter"), 100);
-    if (phase === "shatter") t = setTimeout(() => setPhase("exit"), 500);
-    if (phase === "exit") t = setTimeout(() => setVisible(false), 400);
+    if (phase === "flip") t = setTimeout(() => setPhase("glow1"), 900);
+    if (phase === "glow1") t = setTimeout(() => setPhase("glowoff"), 200);
+    if (phase === "glowoff") t = setTimeout(() => setPhase("glow2"), 200);
+    if (phase === "glow2") t = setTimeout(() => setPhase("shatter"), 300);
+    if (phase === "shatter") t = setTimeout(() => setPhase("exit"), 800);
+    if (phase === "exit") t = setTimeout(() => setVisible(false), 600);
 
     return () => clearTimeout(t!);
   }, [phase, visible]);
@@ -185,8 +185,8 @@ export function LoadingScreen() {
                   phase === "flip"
                     ? {
                         opacity: { duration: 0.3, ease: "easeOut" },
-                        scale: { duration: 0.32, ease: [0.16, 1, 0.3, 1] },
-                        rotateY: { duration: 0.32, ease: [0.25, 0.1, 0.25, 1] },
+                        scale: { duration: 0.85, ease: [0.16, 1, 0.3, 1] },
+                        rotateY: { duration: 0.85, ease: [0.25, 0.1, 0.25, 1] },
                       }
                     : { duration: 0.25, ease: "easeOut" }
                 }
