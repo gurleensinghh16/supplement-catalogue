@@ -25,8 +25,8 @@ export function LoadingScreen() {
   const generatedRef = useRef(false);
 
   const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
-  const COLS = isMobile ? 14 : 22;
-  const ROWS = isMobile ? 14 : 22;
+  const COLS = isMobile ? 9 : 22;
+  const ROWS = isMobile ? 9 : 22;
   const LOGO_SIZE = isMobile ? 180 : 280;
   const TILE_SIZE = LOGO_SIZE / COLS;
 
@@ -149,7 +149,7 @@ export function LoadingScreen() {
                     position: "absolute",
                     left: tile.startX, top: tile.startY,
                     width: TILE_SIZE, height: TILE_SIZE,
-                    willChange: "transform, opacity",
+                    willChange: isShattering ? "transform, opacity" : "auto",
                     transform: isShattering
                       ? `translate(${tile.endX}px, ${tile.endY}px) scale(${tile.scaleEnd}) rotate(${tile.rotate}deg)`
                       : "translate(0px, 0px) scale(1) rotate(0deg)",
