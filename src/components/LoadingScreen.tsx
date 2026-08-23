@@ -35,9 +35,9 @@ export function LoadingScreen() {
 
     if (phase === "flip") t = setTimeout(() => setPhase("glow1"), 2000);
     if (phase === "glow1") t = setTimeout(() => setPhase("glowoff"), 300);
-    if (phase === "glowoff") t = setTimeout(() => setPhase("glow2"), 200);
-    if (phase === "glow2") t = setTimeout(() => setPhase("shatter"), 300);
-    if (phase === "shatter") t = setTimeout(() => setPhase("exit"), 900);
+    if (phase === "glowoff") t = setTimeout(() => setPhase("glow2"), 450);
+    if (phase === "glow2") t = setTimeout(() => setPhase("shatter"), 550);
+    if (phase === "shatter") t = setTimeout(() => setPhase("exit"), 1300);
     if (phase === "exit") t = setTimeout(() => setVisible(false), 700);
 
     return () => clearTimeout(t!);
@@ -148,7 +148,7 @@ export function LoadingScreen() {
                     scale: tile.scaleEnd,
                     rotate: tile.rotate,
                   }}
-                  transition={{ duration: 0.45, delay: tile.delay, ease: [0.2, 0, 0.6, 1] }}
+                  transition={{ duration: 0.8, delay: tile.delay, ease: [0.2, 0, 0.6, 1] }}
                 >
                   <img src={tile.dataUrl} alt="" style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover", display: "block" }} />
                 </motion.div>
