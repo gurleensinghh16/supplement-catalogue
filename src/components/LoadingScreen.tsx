@@ -7,16 +7,16 @@ type Phase = "grow" | "glow1" | "glowoff" | "glow2" | "shatter" | "exit";
 
 type Tile = {
   id: number;
-  canvas: HTMLCanvasElement;
-  x: number;      // grid position x
-  y: number;      // grid position y
-  vx: number;     // velocity x (fly direction)
-  vy: number;     // velocity y (fly direction)
-  rotate: number; // random spin
+  dataUrl: string;  // ← use dataUrl instead of canvas
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  rotate: number;
 };
 
-const COLS = 18;
-const ROWS = 18;
+const COLS = 14;
+const ROWS = 14;
 const LOGO_SIZE = 300;
 const TILE_W = LOGO_SIZE / COLS;
 const TILE_H = LOGO_SIZE / ROWS;
@@ -82,8 +82,8 @@ console.log("img complete:", img.complete, "naturalWidth:", img.naturalWidth); /
         const dist = Math.sqrt(cx * cx + cy * cy) || 1;
 
         generated.push({
-          id: row * COLS + col,
-          canvas: tileCanvas,
+  id: row * COLS + col,
+  dataUrl: tileCanvas.toDataURL(),  // ← convert to dataUrl
           x: col * TILE_W,
           y: row * TILE_H,
           vx: (cx / dist) * (300 + Math.random() * 600),
@@ -120,69 +120,36 @@ vy: (cy / dist) * (300 + Math.random() * 600),
         >
           {/* Canvas tiles — shatter effect */}
           {isShattering && tiles.map((tile) => (
-            <motion.canvas
+            <motion.img
   key={tile.id}
-  ref={(el) => {
-    if (el) {
-      const ctx = el.getContext("2d");
-      if (ctx) {
-        el.width = TILE_W;
-        el.height = TILE_H;
-        // Draw circle clip so tile appears as circle
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(TILE_W / 2, TILE_H / 2, Math.min(TILE_W, TILE_H) / 2, 0, Math.PI * 2);
-        ctx.clip();
-        ctx.drawImage(tile.canvas, 0, 0);
-        ctx.restore();
-      }
-    }
-  }}
+  src={tile.dataUrl}
   style={{
     position: "absolute",
     left: `calc(50% - ${LOGO_SIZE / 2}px + ${tile.x}px)`,
     top: `calc(50% - ${LOGO_SIZE / 2}px + ${tile.y}px)`,
     width: TILE_W,
     height: TILE_H,
-    borderRadius: "50%",   // makes canvas element circular
-    imageRendering: "pixelated",
+    borderRadius: "50%",
   }}
-  initial={{
-    x: 0,
-    y: 0,
-    opacity: 1,
-    scale: 1,
-    rotate: 0,
-  }}
-  animate={{
-    x: tile.vx,
-    y: tile.vy,
-    opacity: 0,
-    scale: 1.5,            // less scale so circles stay small
-    rotate: tile.rotate,
-  }}
-  transition={{
-    duration: 0.4,         // fast — was 0.8
-    delay: Math.random() * 0.05,  // tiny delay variation
-    ease: [0.2, 0, 1, 0.8],      // fast start, eases at end
-  }}
+  initial={{ x: 0, y: 0, opacity: 1, scale: 1, rotate: 0 }}
+  animate={{ x: tile.vx, y: tile.vy, opacity: 0, scale: 1.5, rotate: tile.rotate }}
+  transition={{ duration: 0.4, delay: Math.random() * 0.05, ease: [0.2, 0, 1, 0.8] }}
 />
           ))}
 
           {/* Hidden img used as canvas source */}
           <img
-            ref={imgRef}
-            src={`${BASE}logo_1.png`}
-            alt=""
-            crossOrigin="anonymous"
-            style={{
-              position: "absolute",
-              opacity: 0,
-              pointerEvents: "none",
-              width: LOGO_SIZE,
-              height: LOGO_SIZE,
-            }}
-          />
+  ref={imgRef}
+  src={`${BASE}logo_1.png`}
+  alt=""
+  style={{
+    position: "absolute",
+    opacity: 0,
+    pointerEvents: "none",
+    width: LOGO_SIZE,
+    height: LOGO_SIZE,
+  }}
+/>
 
           {/* Visible logo — hidden during shatter (tiles take over) */}
           {!isShattering && (
