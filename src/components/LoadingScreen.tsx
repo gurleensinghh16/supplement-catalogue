@@ -170,14 +170,14 @@ export function LoadingScreen() {
                 initial={{ opacity: 0, scale: 0.05, rotateY: 0, filter: "brightness(1) drop-shadow(0 0 0px transparent)" }}
                 animate={
                   phase === "flip"
-                    ? { opacity: 1, scale: 1, rotateY: 360, filter: "brightness(1) drop-shadow(0 0 0px transparent)" }
+                    ? { opacity: 1, scale: 1, rotateY: 180, filter: "brightness(1) drop-shadow(0 0 0px transparent)" }
                     : phase === "glow1"
-                    ? { opacity: 1, scale: 1.08, rotateY: 360, filter: "brightness(1.5) drop-shadow(0 0 20px rgba(255,255,255,0.6)) drop-shadow(0 0 40px rgba(255,255,255,0.3))" }
+                    ? { opacity: 1, scale: 1.08, rotateY: 180, filter: "brightness(1.5) drop-shadow(0 0 20px rgba(255,255,255,0.6)) drop-shadow(0 0 40px rgba(255,255,255,0.3))" }
                     : phase === "glowoff"
-                    ? { opacity: 1, scale: 1, rotateY: 360, filter: "brightness(1) drop-shadow(0 0 0px transparent)" }
+                    ? { opacity: 1, scale: 1, rotateY: 180, filter: "brightness(1) drop-shadow(0 0 0px transparent)" }
                     : phase === "glow2"
-                    ? { opacity: 1, scale: 1.15, rotateY: 360, filter: "brightness(2) drop-shadow(0 0 50px rgba(255,255,255,0.9)) drop-shadow(0 0 80px rgba(255,255,255,0.5))" }
-                    : { opacity: 0, scale: 1.3, rotateY: 360, filter: "brightness(1)" }
+                    ? { opacity: 1, scale: 1.15, rotateY: 180, filter: "brightness(2) drop-shadow(0 0 50px rgba(255,255,255,0.9)) drop-shadow(0 0 80px rgba(255,255,255,0.5))" }
+                    : { opacity: 0, scale: 1.3, rotateY: 180, filter: "brightness(1)" }
                 }
                 transition={
                   phase === "flip"
