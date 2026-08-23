@@ -33,12 +33,12 @@ export function LoadingScreen() {
     if (!visible) return;
     let t: ReturnType<typeof setTimeout>;
 
-    if (phase === "flip") t = setTimeout(() => setPhase("glow1"), 900);
-    if (phase === "glow1") t = setTimeout(() => setPhase("glowoff"), 200);
+    if (phase === "flip") t = setTimeout(() => setPhase("glow1"), 2000);
+    if (phase === "glow1") t = setTimeout(() => setPhase("glowoff"), 300);
     if (phase === "glowoff") t = setTimeout(() => setPhase("glow2"), 200);
     if (phase === "glow2") t = setTimeout(() => setPhase("shatter"), 300);
-    if (phase === "shatter") t = setTimeout(() => setPhase("exit"), 800);
-    if (phase === "exit") t = setTimeout(() => setVisible(false), 600);
+    if (phase === "shatter") t = setTimeout(() => setPhase("exit"), 900);
+    if (phase === "exit") t = setTimeout(() => setVisible(false), 700);
 
     return () => clearTimeout(t!);
   }, [phase, visible]);
@@ -161,32 +161,62 @@ export function LoadingScreen() {
             style={{ position: "absolute", opacity: 0, pointerEvents: "none", width: LOGO_SIZE, height: LOGO_SIZE }}
           />
 
-          {/* ─── Logo — flips 360° once while growing, then glows twice, then shatters ─── */}
+          {/* ─── Logo — flips to 180° (card-flip trick, no mirrored text), then glows twice, then shatters ─── */}
           {!isShattering && (
-            <div style={{ perspective: 800 }}>
+            <div style={{ perspective: 800, position: "relative", width: LOGO_SIZE, height: LOGO_SIZE }}>
+              {/* Front face: visible for the first half of the flip (0deg -> 90deg), then edge-on/hidden */}
               <motion.img
                 src={`${BASE}logo_1.png`}
                 alt="TheDietStore"
                 className="max-w-[70vw]"
-                style={{ position: "relative", zIndex: 20, width: LOGO_SIZE, backfaceVisibility: "hidden" }}
-                initial={{ opacity: 0, scale: 0.05, rotateY: 0, filter: "brightness(1) drop-shadow(0 0 0px transparent)" }}
+                style={{
+                  position: "absolute", top: 0, left: 0, zIndex: 20, width: LOGO_SIZE,
+                  backfaceVisibility: "hidden",
+                }}
+                initial={{ opacity: 0, scale: 0.05, rotateY: 0 }}
                 animate={
                   phase === "flip"
-                    ? { opacity: 1, scale: 1, rotateY: 180, filter: "brightness(1) drop-shadow(0 0 0px transparent)" }
-                    : phase === "glow1"
-                    ? { opacity: 1, scale: 1.08, rotateY: 180, filter: "brightness(1.5) drop-shadow(0 0 20px rgba(255,255,255,0.6)) drop-shadow(0 0 40px rgba(255,255,255,0.3))" }
-                    : phase === "glowoff"
-                    ? { opacity: 1, scale: 1, rotateY: 180, filter: "brightness(1) drop-shadow(0 0 0px transparent)" }
-                    : phase === "glow2"
-                    ? { opacity: 1, scale: 1.15, rotateY: 180, filter: "brightness(2) drop-shadow(0 0 50px rgba(255,255,255,0.9)) drop-shadow(0 0 80px rgba(255,255,255,0.5))" }
-                    : { opacity: 0, scale: 1.3, rotateY: 180, filter: "brightness(1)" }
+                    ? { opacity: 1, scale: 1, rotateY: 180 }
+                    : { opacity: 0, scale: 1, rotateY: 180 } // fully rotated away / hidden once flip is done
                 }
                 transition={
                   phase === "flip"
                     ? {
                         opacity: { duration: 0.3, ease: "easeOut" },
-                        scale: { duration: 0.85, ease: [0.16, 1, 0.3, 1] },
-                        rotateY: { duration: 0.85, ease: [0.25, 0.1, 0.25, 1] },
+                        scale: { duration: 2.0, ease: [0.16, 1, 0.3, 1] },
+                        rotateY: { duration: 2.0, ease: [0.25, 0.1, 0.25, 1] },
+                      }
+                    : { duration: 0 }
+                }
+              />
+              {/* Back face: same logo, rotated in from the opposite side so it lands right-side-up
+                  (not mirrored) once the flip completes — then handles glow/shatter phases */}
+              <motion.img
+                src={`${BASE}logo_1.png`}
+                alt="TheDietStore"
+                className="max-w-[70vw]"
+                style={{
+                  position: "absolute", top: 0, left: 0, zIndex: 20, width: LOGO_SIZE,
+                  backfaceVisibility: "hidden",
+                }}
+                initial={{ opacity: 0, scale: 0.05, rotateY: -180 }}
+                animate={
+                  phase === "flip"
+                    ? { opacity: 1, scale: 1, rotateY: 0, filter: "brightness(1) drop-shadow(0 0 0px transparent)" }
+                    : phase === "glow1"
+                    ? { opacity: 1, scale: 1.08, rotateY: 0, filter: "brightness(1.5) drop-shadow(0 0 20px rgba(255,255,255,0.6)) drop-shadow(0 0 40px rgba(255,255,255,0.3))" }
+                    : phase === "glowoff"
+                    ? { opacity: 1, scale: 1, rotateY: 0, filter: "brightness(1) drop-shadow(0 0 0px transparent)" }
+                    : phase === "glow2"
+                    ? { opacity: 1, scale: 1.15, rotateY: 0, filter: "brightness(2) drop-shadow(0 0 50px rgba(255,255,255,0.9)) drop-shadow(0 0 80px rgba(255,255,255,0.5))" }
+                    : { opacity: 0, scale: 1.3, rotateY: 0, filter: "brightness(1)" }
+                }
+                transition={
+                  phase === "flip"
+                    ? {
+                        opacity: { duration: 0.3, ease: "easeOut" },
+                        scale: { duration: 2.0, ease: [0.16, 1, 0.3, 1] },
+                        rotateY: { duration: 2.0, ease: [0.25, 0.1, 0.25, 1] },
                       }
                     : { duration: 0.25, ease: "easeOut" }
                 }
