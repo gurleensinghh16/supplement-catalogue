@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { motion, useScroll,AnimatePresence } from "framer-motion";
 import {
   ArrowRight,
   ChevronLeft,
@@ -7,7 +7,6 @@ import {
   Shield,
   Award,
   Zap,
-  Star,
   MessageCircle,
 } from "lucide-react";
 import { useNavigate } from "react-router";
@@ -85,7 +84,7 @@ type Product = {
 export default function Landing() {
   const navigate = useNavigate();
   const heroRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
+  useScroll({
     target: heroRef,
     offset: ["start start", "end start"],
   });
@@ -96,13 +95,6 @@ export default function Landing() {
 
   // Selected product for detail modal
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-
-
-
-  
-
-  
-
 
   // Product carousel
   const carouselRef = useRef<HTMLDivElement>(null);

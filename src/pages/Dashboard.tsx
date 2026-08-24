@@ -3,18 +3,15 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   Search,
   Package,
   X,
   ChevronLeft,
   ChevronRight,
-  Star,
   MessageCircle,
 } from "lucide-react";
 import { useNavigate } from "react-router";
-import { cn } from "@/lib/utils";
 import ProductDetail from "@/components/ProductDetail";
 
 const BASE = import.meta.env.BASE_URL || "/";
@@ -49,24 +46,6 @@ const sectionCategories = [
 
 function formatINR(price: number) {
   return `₹${price.toLocaleString("en-IN")}`;
-}
-
-function StarRating({ rating, reviews }: { rating: number; reviews: number }) {
-  return (
-    <div className="flex items-center gap-1.5 mb-2">
-      <div className="flex gap-0.5">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <Star
-            key={i}
-            className={`h-3 w-3 ${
-              i < Math.floor(rating) ? "fill-[#c2202f] text-[#c2202f]" : "text-[#333]"
-            }`}
-          />
-        ))}
-      </div>
-      <span className="text-[11px] text-[#999999]">{reviews} reviews</span>
-    </div>
-  );
 }
 
 type Product = {
@@ -237,7 +216,6 @@ export default function Dashboard() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [search, setSearch] = useState("");
 
-  const categories = useQuery(api.products.categories);
   const products = useQuery(api.products.list, {
     search: search || undefined,
   });
