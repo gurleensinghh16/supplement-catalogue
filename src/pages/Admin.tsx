@@ -1,6 +1,5 @@
-import { useState } from "react";
-import { useQuery, useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
+import { useState, useEffect, useCallback } from "react";
+import { supabase } from "@/lib/supabase";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -25,12 +24,35 @@ function formatINR(price: number) {
   return `₹${price.toLocaleString("en-IN")}`;
 }
 
+// Matches the Supabase `products` table columns (snake_case).
+type Product = {
+  id: string;
+  name: string;
+  brand: string;
+  category: string;
+  description: string | null;
+  price: number;
+  compare_at_price: number | null;
+  sku: string | null;
+  image_url: string | null;
+  weight: string | null;
+  servings: string | null;
+  stock_quantity: number | null;
+  in_stock: boolean;
+  featured: boolean;
+  tags: string[] | null;
+  created_at?: string;
+};
+
 export default function Admin() {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
+
+  const [products, setProducts] = useState<Product[] | undefined>(undefined);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editPrice, setEditPrice] = useState("");
@@ -56,10 +78,33 @@ export default function Admin() {
   const [newFeatured, setNewFeatured] = useState(false);
   const [newTags, setNewTags] = useState("");
 
-  const products = useQuery(api.products.list, {});
-  const updateProduct = useMutation(api.products.updateProduct);
-  const createProduct = useMutation(api.products.createProduct);
-  const deleteProduct = useMutation(api.products.deleteProduct);
+  // Fetch products from Supabase (re-runs whenever refreshKey changes)
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchProducts = async () => {
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (!isMounted) return;
+
+      if (error) {
+        console.error("Error fetching products:", error);
+        setProducts([]);
+        return;
+      }
+      setProducts(data as Product[]);
+    };
+
+    fetchProducts();
+    return () => {
+      isMounted = false;
+    };
+  }, [refreshKey]);
+
+  const refetch = useCallback(() => setRefreshKey((k) => k + 1), []);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,25 +116,35 @@ export default function Admin() {
     }
   };
 
-  const startEditing = (product: (typeof products extends (infer T)[] | undefined ? T : never)) => {
-    setEditingId(product._id);
+  const startEditing = (product: Product) => {
+    setEditingId(product.id);
     setEditPrice(String(product.price));
-    setEditCompareAtPrice(String(product.compareAtPrice ?? ""));
-    setEditImage(product.imageUrl || "");
-    setEditStock(String(product.stockQuantity ?? ""));
-    setEditInStock(product.inStock);
+    setEditCompareAtPrice(String(product.compare_at_price ?? ""));
+    setEditImage(product.image_url || "");
+    setEditStock(String(product.stock_quantity ?? ""));
+    setEditInStock(product.in_stock);
   };
 
   const saveEdit = async (productId: string) => {
-    await updateProduct({
-      productId: productId as any,
-      price: Number(editPrice),
-      compareAtPrice: editCompareAtPrice ? Number(editCompareAtPrice) : undefined,
-      imageUrl: editImage || undefined,
-      stockQuantity: editStock ? Number(editStock) : undefined,
-      inStock: editInStock,
-    });
+    const { error } = await supabase
+      .from("products")
+      .update({
+        price: Number(editPrice),
+        compare_at_price: editCompareAtPrice ? Number(editCompareAtPrice) : null,
+        image_url: editImage || null,
+        stock_quantity: editStock ? Number(editStock) : null,
+        in_stock: editInStock,
+      })
+      .eq("id", productId);
+
+    if (error) {
+      console.error("Error updating product:", error);
+      alert(`Failed to update product: ${error.message}`);
+      return;
+    }
+
     setEditingId(null);
+    refetch();
   };
 
   const resetAddForm = () => {
@@ -103,29 +158,46 @@ export default function Admin() {
   const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newName || !newBrand || !newCategory || !newPrice) return;
-    await createProduct({
+
+    const { error } = await supabase.from("products").insert({
       name: newName,
       brand: newBrand,
       category: newCategory,
-      description: newDescription,
+      description: newDescription || null,
       price: Number(newPrice),
-      compareAtPrice: newCompareAtPrice ? Number(newCompareAtPrice) : undefined,
-      sku: newSku,
-      imageUrl: newImageUrl || undefined,
-      weight: newWeight || undefined,
-      servings: newServings || undefined,
-      stockQuantity: Number(newStock),
-      inStock: newInStock,
+      compare_at_price: newCompareAtPrice ? Number(newCompareAtPrice) : null,
+      sku: newSku || null,
+      image_url: newImageUrl || null,
+      weight: newWeight || null,
+      servings: newServings || null,
+      stock_quantity: Number(newStock),
+      in_stock: newInStock,
       featured: newFeatured,
       tags: newTags ? newTags.split(",").map((t) => t.trim()).filter(Boolean) : [],
     });
+
+    if (error) {
+      console.error("Error creating product:", error);
+      alert(`Failed to create product: ${error.message}`);
+      return;
+    }
+
     resetAddForm();
+    refetch();
   };
 
   const handleDeleteProduct = async (productId: string) => {
-    if (confirm("Delete this product?")) {
-      await deleteProduct({ productId: productId as any });
+    if (!confirm("Delete this product?")) return;
+
+    const { error } = await supabase.from("products").delete().eq("id", productId);
+
+    if (error) {
+      console.error("Error deleting product:", error);
+      alert(`Failed to delete product: ${error.message}`);
+      return;
     }
+
+    refetch();
   };
 
   if (!isLoggedIn) {
@@ -296,6 +368,10 @@ export default function Admin() {
 
         {products === undefined ? (
           <div className="text-center py-20 text-[#999999]">Loading products...</div>
+        ) : products.length === 0 ? (
+          <div className="text-center py-20 text-[#999999]">
+            No products yet. Add one above.
+          </div>
         ) : (
           <div className="border border-[#2b2a27] overflow-hidden">
             {/* Table Header */}
@@ -312,19 +388,19 @@ export default function Admin() {
             </div>
 
             {products.map((product) => {
-              const isEditing = editingId === product._id;
+              const isEditing = editingId === product.id;
               return (
                 <div
-                  key={product._id}
+                  key={product.id}
                   className={cn(
                     "grid grid-cols-1 md:grid-cols-[auto_1fr_90px_80px_80px_100px_70px_70px_70px] gap-2 px-3 py-3 border-t border-[#2b2a27] items-center transition-colors",
                     isEditing && "bg-[#c2202f]/[0.03]",
                   )}
                 >
                   <div className="h-10 w-10 overflow-hidden bg-[#0a0a0a] flex-shrink-0">
-                    {(isEditing ? editImage : product.imageUrl) ? (
+                    {(isEditing ? editImage : product.image_url) ? (
                       <img
-                        src={isEditing ? editImage : product.imageUrl}
+                        src={isEditing ? editImage : product.image_url ?? ""}
                         alt={product.name}
                         className="h-full w-full object-cover"
                       />
@@ -372,7 +448,7 @@ export default function Admin() {
                       />
                     ) : (
                       <span className="text-xs text-[#999999] line-through">
-                        {product.compareAtPrice ? formatINR(product.compareAtPrice) : "—"}
+                        {product.compare_at_price ? formatINR(product.compare_at_price) : "—"}
                       </span>
                     )}
                   </div>
@@ -387,7 +463,7 @@ export default function Admin() {
                       />
                     ) : (
                       <span className="text-xs text-[#999999]/40 truncate block max-w-[120px]">
-                        {product.imageUrl || "—"}
+                        {product.image_url || "—"}
                       </span>
                     )}
                   </div>
@@ -402,7 +478,7 @@ export default function Admin() {
                       />
                     ) : (
                       <span className="text-xs text-[#999999]">
-                        {product.stockQuantity ?? "—"}
+                        {product.stock_quantity ?? "—"}
                       </span>
                     )}
                   </div>
@@ -427,12 +503,12 @@ export default function Admin() {
                       <span
                         className={cn(
                           "text-[10px] font-bold px-2 py-1 uppercase tracking-wider",
-                          product.inStock
+                          product.in_stock
                             ? "bg-[#57a256]/10 text-[#57a256] border border-[#57a256]/20"
                             : "bg-[#c2202f]/10 text-[#c2202f] border border-[#c2202f]/20",
                         )}
                       >
-                        {product.inStock ? "In Stock" : "Out of Stock"}
+                        {product.in_stock ? "In Stock" : "Out of Stock"}
                       </span>
                     )}
                   </div>
@@ -441,7 +517,7 @@ export default function Admin() {
                     {isEditing ? (
                       <>
                         <button
-                          onClick={() => saveEdit(product._id)}
+                          onClick={() => saveEdit(product.id)}
                           className="h-7 w-7 bg-[#c2202f]/10 text-[#c2202f] flex items-center justify-center hover:bg-[#c2202f]/20 cursor-pointer transition-colors"
                         >
                           <Save className="h-3.5 w-3.5" />
@@ -462,7 +538,7 @@ export default function Admin() {
                           <Pencil className="h-3.5 w-3.5" />
                         </button>
                         <button
-                          onClick={() => handleDeleteProduct(product._id)}
+                          onClick={() => handleDeleteProduct(product.id)}
                           className="h-7 w-7 bg-[#111111] text-[#999999] flex items-center justify-center hover:bg-[#c2202f]/10 hover:text-[#c2202f] cursor-pointer transition-colors"
                         >
                           <Trash2 className="h-3.5 w-3.5" />

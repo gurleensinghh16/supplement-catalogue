@@ -19,11 +19,8 @@
 import { AppLayout } from "@/components/AppLayout";
 import '@vly-ai/integrations';
 import { Toaster } from "@/components/ui/sonner";
-import { SeedProducts } from "@/components/SeedProducts";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { VlyToolbar } from "../vly-toolbar-readonly.tsx";
-import { ConvexAuthProvider } from "@convex-dev/auth/react";
-import { ConvexReactClient } from "convex/react";
 import React, { StrictMode, useEffect, lazy, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router";
@@ -35,7 +32,6 @@ const Catalogue = lazy(() => import("./pages/Catalogue.tsx"));
 const Admin = lazy(() => import("./pages/Admin.tsx"));
 const NotFound = lazy(() => import("./pages/NotFound.tsx"));
 
-// Simple loading fallback for route transitions
 function RouteLoading() {
   return (
     <div className="min-h-screen flex items-center justify-center">
@@ -44,8 +40,6 @@ function RouteLoading() {
   );
 }
 
-/** Silent error boundary — if VlyToolbar crashes it renders nothing instead of
- *  crashing the whole app (e.g. hook errors in WebContainer environment). */
 class ToolbarErrorBoundary extends React.Component<
   { children: React.ReactNode },
   { hasError: boolean }
@@ -62,7 +56,6 @@ class ToolbarErrorBoundary extends React.Component<
   }
 }
 
-/** Hard guard so runtime errors never leave the preview as a blank page. */
 class RootErrorBoundary extends React.Component<
   { children: React.ReactNode },
   { hasError: boolean; message: string; stack: string }
@@ -100,10 +93,6 @@ class RootErrorBoundary extends React.Component<
   }
 }
 
-const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
-
-
-
 function RouteSyncer() {
   const location = useLocation();
   useEffect(() => {
@@ -127,7 +116,6 @@ function RouteSyncer() {
   return null;
 }
 
-
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <RootErrorBoundary>
@@ -135,22 +123,20 @@ createRoot(document.getElementById("root")!).render(
       <ToolbarErrorBoundary>
         <VlyToolbar />
       </ToolbarErrorBoundary>
-      <ConvexAuthProvider client={convex}>
-  <BrowserRouter basename="/supplement-catalogue">
-    <RouteSyncer />
-    <AppLayout>                          
-      <Suspense fallback={<RouteLoading />}>
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/catalogue" element={<SeedProducts><Catalogue /></SeedProducts>} />
-          <Route path="/admin" element={<SeedProducts><Admin /></SeedProducts>} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Suspense>
-    </AppLayout>                       
-  </BrowserRouter>
-  <Toaster />
-</ConvexAuthProvider>
+      <BrowserRouter basename="/supplement-catalogue">
+        <RouteSyncer />
+        <AppLayout>
+          <Suspense fallback={<RouteLoading />}>
+            <Routes>
+              <Route path="/" element={<Landing />} />
+              <Route path="/catalogue" element={<Catalogue />} />
+              <Route path="/admin" element={<Admin />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
+        </AppLayout>
+      </BrowserRouter>
+      <Toaster />
     </RootErrorBoundary>
   </StrictMode>,
 );

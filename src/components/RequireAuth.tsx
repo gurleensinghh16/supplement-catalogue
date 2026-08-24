@@ -1,29 +1,20 @@
-import { useAuth } from "@/hooks/use-auth";
-import { Loader2 } from "lucide-react";
 import type { ReactNode } from "react";
 import { Navigate, useLocation } from "react-router";
+import { useAuth } from "@/hooks/use-auth";
 
 export function RequireAuth({ children }: { children: ReactNode }) {
   const { isLoading, isAuthenticated } = useAuth();
   const location = useLocation();
 
   if (isLoading) {
-    return (
-      <main className="flex min-h-screen items-center justify-center bg-background">
-        <Loader2 className="size-6 animate-spin text-muted-foreground" />
-      </main>
-    );
+    return <div>Loading...</div>;
   }
 
   if (!isAuthenticated) {
-    const returnTo = `${location.pathname}${location.search}`;
-    return (
-      <Navigate
-        to={`/auth?returnTo=${encodeURIComponent(returnTo)}`}
-        replace
-      />
-    );
+    // Send them to /auth, but remember where they were headed so you
+    // can redirect back after a successful sign-in if you want that later.
+    return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
-  return children;
+  return <>{children}</>;
 }

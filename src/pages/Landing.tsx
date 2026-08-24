@@ -12,8 +12,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useRef, useState, useEffect, useCallback } from "react";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
+import { supabase } from "@/lib/supabase"; // adjust path to wherever your client lives
 import ProductDetail from "@/components/ProductDetail";
 
 const fadeUp = {
@@ -64,22 +63,24 @@ function formatINR(price: number) {
   return `₹${price.toLocaleString("en-IN")}`;
 }
 
+// NOTE: adjust these field names to match your actual Supabase "products" table columns.
+// Supabase uses "id" (uuid/int) as the primary key, not Convex's "_id".
 type Product = {
-  _id: string;
+  id: string;
   name: string;
   brand: string;
   category: string;
   description: string;
   price: number;
-  compareAtPrice?: number;
+  compare_at_price?: number;
   sku: string;
-  inStock: boolean;
-  imageUrl?: string;
+  in_stock: boolean;
+  image_url?: string;
   tags: string[];
   servings?: string;
   weight?: string;
   featured?: boolean;
-  stockQuantity?: number;
+  stock_quantity?: number;
 };
 
 export default function Landing() {
@@ -90,19 +91,37 @@ export default function Landing() {
     offset: ["start start", "end start"],
   });
 
-  // Fetch featured products from Convex database
-  const allProducts = useQuery(api.products.list, {}) as Product[] | undefined;
-  const featuredFromDB = (allProducts ?? []).filter((p) => p.featured);
+  // Fetch featured products from Supabase
+  const [allProducts, setAllProducts] = useState<Product[] | undefined>(undefined);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function fetchFeatured() {
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .eq("featured", true)
+        .eq("in_stock", true) // remove this line if you want to show out-of-stock featured items too
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Error fetching featured products:", error);
+        return;
+      }
+      if (isMounted) setAllProducts(data as Product[]);
+    }
+
+    fetchFeatured();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const featuredFromDB = allProducts ?? [];
 
   // Selected product for detail modal
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-
-
-
-  
-
-  
-
 
   // Product carousel
   const carouselRef = useRef<HTMLDivElement>(null);
@@ -123,8 +142,6 @@ export default function Landing() {
   // Carousel state
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-
-  // Dropdown state
 
   const nextSlide = useCallback(() => {
     setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
@@ -241,9 +258,13 @@ export default function Landing() {
             </Button>
           </motion.div>
 
-          {featuredFromDB.length === 0 ? (
+          {allProducts === undefined ? (
             <div className="text-center py-16">
               <p className="text-[#999999] text-lg">Loading products from catalogue...</p>
+            </div>
+          ) : featuredFromDB.length === 0 ? (
+            <div className="text-center py-16">
+              <p className="text-[#999999] text-lg">No featured products yet.</p>
             </div>
           ) : (
             <div className="relative">
@@ -266,20 +287,20 @@ export default function Landing() {
               {featuredFromDB.slice(0, 12).map((product, i) => {
                 const msg = encodeURIComponent(`Hi TheDietStore 👋\n\nI'm interested in:\n\n📦 *${product.name}*\n🏷️ Brand: ${product.brand}\n💰 Price: ${formatINR(product.price)}\n📋 SKU: ${product.sku}\n\nPlease share details about:\n• Availability & stock\n• Bulk/wholesale pricing\n• Delivery options\n\nThank you!`);
                 return (
-                <motion.div key={product._id} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
-                  variants={scaleIn} custom={i} className={`group flex-shrink-0 w-[42vw] xs:w-[180px] sm:w-[260px] md:w-[280px] lg:w-[280px] ${!product.inStock ? 'opacity-60 grayscale' : ''}`}>
+                <motion.div key={product.id} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
+                  variants={scaleIn} custom={i} className={`group flex-shrink-0 w-[42vw] xs:w-[180px] sm:w-[260px] md:w-[280px] lg:w-[280px] ${!product.in_stock ? 'opacity-60 grayscale' : ''}`}>
                   {/* Product card — clickable, opens detail modal */}
                   <div
                     onClick={() => setSelectedProduct(product)}
                     className="relative aspect-square overflow-hidden mb-4 cursor-pointer group-hover:scale-[1.02] transition-transform duration-500"
                   >
-                    {product.imageUrl ? (
-                      <img src={product.imageUrl} alt={product.name} className="w-full h-full object-contain p-2 product-img" />
+                    {product.image_url ? (
+                      <img src={product.image_url} alt={product.name} className="w-full h-full object-contain p-2 product-img" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-[#999999]">No Image</div>
                     )}
                     {/* Sold out badge */}
-                    {!product.inStock && (
+                    {!product.in_stock && (
                       <div className="absolute top-3 left-3">
                         <span className="bg-[#c2202f] text-white text-[10px] font-bold px-2 py-1 uppercase tracking-wider font-['Orbitron']">
                           Sold out
@@ -315,8 +336,8 @@ export default function Landing() {
                   {/* Price */}
                   <div className="flex items-center gap-2 mb-3">
                     <p className="text-base font-semibold text-white">{formatINR(product.price)}</p>
-                    {product.compareAtPrice && (
-                      <p className="text-sm text-[#999999] line-through">{formatINR(product.compareAtPrice)}</p>
+                    {product.compare_at_price && (
+                      <p className="text-sm text-[#999999] line-through">{formatINR(product.compare_at_price)}</p>
                     )}
                   </div>
 

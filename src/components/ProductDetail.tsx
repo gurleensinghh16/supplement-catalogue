@@ -2,22 +2,24 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { X, MessageCircle, Package, CheckCircle, XCircle } from "lucide-react";
 
+// Matches the Supabase `products` table columns (snake_case) — same shape
+// used by Landing.tsx and Dashboard.tsx.
 type Product = {
-  _id: string;
+  id: string;
   name: string;
   brand: string;
   category: string;
   description: string;
   price: number;
-  compareAtPrice?: number;
+  compare_at_price?: number;
   sku: string;
-  inStock: boolean;
-  imageUrl?: string;
+  in_stock: boolean;
+  image_url?: string;
   tags: string[];
   servings?: string;
   weight?: string;
   featured?: boolean;
-  stockQuantity?: number;
+  stock_quantity?: number;
 };
 
 function formatINR(price: number) {
@@ -31,8 +33,8 @@ function buildBulletPoints(product: Product): string[] {
   if (product.weight) points.push(`Weight: ${product.weight}`);
   if (product.servings) points.push(`Servings: ${product.servings}`);
   if (product.sku) points.push(`SKU: ${product.sku}`);
-  if (product.stockQuantity !== undefined && product.stockQuantity !== null)
-    points.push(`Availability: ${product.stockQuantity} units in stock`);
+  if (product.stock_quantity !== undefined && product.stock_quantity !== null)
+    points.push(`Availability: ${product.stock_quantity} units in stock`);
   if (product.tags.length > 0)
     points.push(`Tags: ${product.tags.join(", ")}`);
   return points;
@@ -75,9 +77,9 @@ export default function ProductDetail({ product, onClose }: ProductDetailProps) 
         <div className="grid md:grid-cols-2 gap-0">
           {/* Image */}
          <div className="relative aspect-[4/3] sm:aspect-square md:aspect-auto md:min-h-[400px] overflow-hidden bg-[#0a0a0a]">
-            {product.imageUrl ? (
+            {product.image_url ? (
               <img
-                src={product.imageUrl}
+                src={product.image_url}
                 alt={product.name}
                 className="w-full h-full object-cover product-img"
               />
@@ -115,15 +117,15 @@ export default function ProductDetail({ product, onClose }: ProductDetailProps) 
                 <p className="text-2xl font-medium text-white">
                   {formatINR(product.price)}
                 </p>
-                {product.compareAtPrice && (
+                {product.compare_at_price && (
                   <p className="text-base text-[#999999] line-through">
-                    {formatINR(product.compareAtPrice)}
+                    {formatINR(product.compare_at_price)}
                   </p>
                 )}
               </div>
-              {product.compareAtPrice && (
+              {product.compare_at_price && (
                 <p className="text-sm text-[#57a256] mt-1">
-                  You save {formatINR(product.compareAtPrice - product.price)}
+                  You save {formatINR(product.compare_at_price - product.price)}
                 </p>
               )}
             </div>
@@ -151,7 +153,7 @@ export default function ProductDetail({ product, onClose }: ProductDetailProps) 
             </div>
 
             <div className="flex items-center gap-2 mb-6">
-              {product.inStock ? (
+              {product.in_stock ? (
                 <>
                   <CheckCircle className="h-4 w-4 text-[#57a256]" />
                   <span className="text-sm text-[#57a256]">In Stock</span>

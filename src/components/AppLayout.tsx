@@ -8,8 +8,7 @@ import {
 } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
+import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 
 const BASE = import.meta.env.BASE_URL || "/";
@@ -44,7 +43,23 @@ type Product = {
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
-  const allProducts = useQuery(api.products.list, {}) as Product[] | undefined;
+
+  // Products (fetched from Supabase)
+  const [allProducts, setAllProducts] = useState<Product[] | undefined>(undefined);
+
+  useEffect(() => {
+    supabase
+      .from("products")
+      .select("*")
+      .then(({ data, error }) => {
+        if (error) {
+          console.error("Failed to fetch products:", error.message);
+          setAllProducts([]);
+        } else {
+          setAllProducts(data as Product[]);
+        }
+      });
+  }, []);
 
   // Search
   const [mobileSuppsOpen, setMobileSuppsOpen] = useState(false);

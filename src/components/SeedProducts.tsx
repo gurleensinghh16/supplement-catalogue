@@ -1,51 +1,16 @@
-import { useEffect, useState } from "react";
-import { useMutation, useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
+// NOTE: This project has migrated from Convex to Supabase.
+// The old version of this component wrapped the whole app and blocked
+// rendering until a Convex `products.list` query resolved, then ran a
+// Convex `products.seed` mutation if the table was empty. Since Convex
+// is no longer connected, that query never resolved — meaning this
+// component was stuck showing "Loading catalogue" forever, blocking
+// EVERY page behind it (not just the catalogue).
+//
+// This version is a plain pass-through. If you want automatic seeding
+// of demo products when your Supabase `products` table is empty, say so
+// and I'll wire up a Supabase-based version — but that's an opt-in
+// convenience, not something that should ever block rendering.
 
 export function SeedProducts({ children }: { children: React.ReactNode }) {
-  const seed = useMutation(api.products.seed);
-  const products = useQuery(api.products.list, {});
-  const [seeded, setSeeded] = useState(false);
-
-  useEffect(() => {
-    if (products === undefined) return; // still loading
-    if (products.length === 0) {
-      // DB is empty — seed default products
-      seed().then(() => setSeeded(true)).catch(() => setSeeded(true));
-    } else {
-      // DB already has products — use them as-is, do NOT delete/reseed
-      setSeeded(true);
-    }
-  }, [products, seed]);
-
-  // Expose seed/reseed globally for admin use
-  (window as any).__reseed = seed;
-
-  if (!seeded) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-center">
-          <div className="relative mx-auto mb-6 h-16 w-16">
-            <div className="absolute inset-0 border border-[#c2202f]/10" />
-            <div className="absolute inset-0 border border-transparent border-t-[#c2202f] animate-spin" />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="h-8 w-8 bg-[#c2202f]/10 flex items-center justify-center animate-pulse">
-                <div className="h-3 w-3 bg-[#c2202f]" />
-              </div>
-            </div>
-          </div>
-          <div className="text-[#999999] text-sm font-medium tracking-wider uppercase">
-            Loading catalogue
-          </div>
-          <div className="mt-2 flex items-center justify-center gap-1">
-            <span className="h-1.5 w-1.5 bg-[#c2202f] animate-bounce [animation-delay:-0.3s]" />
-            <span className="h-1.5 w-1.5 bg-[#c2202f] animate-bounce [animation-delay:-0.15s]" />
-            <span className="h-1.5 w-1.5 bg-[#c2202f] animate-bounce" />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return <>{children}</>;
 }

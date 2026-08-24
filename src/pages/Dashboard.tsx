@@ -1,6 +1,5 @@
-import { useState, useRef } from "react";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
+import { useState, useRef, useEffect, useMemo } from "react";
+import { supabase } from "@/lib/supabase"; // adjust path to wherever your client lives
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -69,22 +68,23 @@ function StarRating({ rating, reviews }: { rating: number; reviews: number }) {
   );
 }
 
+// NOTE: adjust these field names to match your actual Supabase "products" table columns.
 type Product = {
-  _id: string;
+  id: string;
   name: string;
   brand: string;
   category: string;
   description: string;
   price: number;
-  compareAtPrice?: number;
+  compare_at_price?: number;
   sku: string;
-  inStock: boolean;
-  imageUrl?: string;
+  in_stock: boolean;
+  image_url?: string;
   tags: string[];
   servings?: string;
   weight?: string;
   featured?: boolean;
-  stockQuantity?: number;
+  stock_quantity?: number;
 };
 
 function CategorySection({
@@ -146,17 +146,17 @@ function CategorySection({
         {products.map((product) => {              const msg = encodeURIComponent(`Hi TheDietStore 👋\n\nI'm interested in:\n\n📦 *${product.name}*\n🏷️ Brand: ${product.brand}\n💰 Price: ${formatINR(product.price)}\n📋 SKU: ${product.sku}\n\nPlease share details about:\n• Availability & stock\n• Bulk/wholesale pricing\n• Delivery options\n\nThank you!`);
           return (
           <div
-            key={product._id}
-            className={`flex-shrink-0 w-[220px] sm:w-[240px] group ${!product.inStock ? 'opacity-60 grayscale' : ''}`}
+            key={product.id}
+            className={`flex-shrink-0 w-[220px] sm:w-[240px] group ${!product.in_stock ? 'opacity-60 grayscale' : ''}`}
             style={{ scrollSnapAlign: "start" }}
           >            {/* Product Image */}
             <div
               onClick={() => onSelectProduct(product)}
               className="relative aspect-square overflow-hidden mb-3 cursor-pointer group-hover:scale-[1.02] transition-transform duration-500"
             >
-              {product.imageUrl ? (
+              {product.image_url ? (
                 <img
-                  src={product.imageUrl}
+                  src={product.image_url}
                   alt={product.name}
                   className="w-full h-full object-contain p-2 product-img"
                 />
@@ -167,7 +167,7 @@ function CategorySection({
               )}
 
               {/* Sold out badge */}
-              {!product.inStock && (
+              {!product.in_stock && (
                 <div className="absolute top-3 left-3">
                   <span className="bg-[#c2202f] text-white text-[10px] font-bold px-2 py-1 uppercase tracking-wider font-['Orbitron']">
                     Sold out
@@ -206,9 +206,9 @@ function CategorySection({
               <p className="text-sm font-semibold text-white">
                 {formatINR(product.price)}
               </p>
-              {product.compareAtPrice && (
+              {product.compare_at_price && (
                 <p className="text-xs text-[#999999] line-through">
-                  {formatINR(product.compareAtPrice)}
+                  {formatINR(product.compare_at_price)}
                 </p>
               )}
             </div>
@@ -237,18 +237,43 @@ export default function Dashboard() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [search, setSearch] = useState("");
 
-  const categories = useQuery(api.products.categories);
-  const products = useQuery(api.products.list, {
-    search: search || undefined,
-  });
+  const [products, setProducts] = useState<Product[] | undefined>(undefined);
 
-  const allProducts = (products ?? []) as Product[];
+  useEffect(() => {
+    let isMounted = true;
+
+    async function fetchProducts() {
+      let query = supabase.from("products").select("*").order("name", { ascending: true });
+
+      if (search) {
+        // Matches name, brand, or description containing the search term
+        query = query.or(
+          `name.ilike.%${search}%,brand.ilike.%${search}%,description.ilike.%${search}%`
+        );
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error("Error fetching products:", error);
+        return;
+      }
+      if (isMounted) setProducts(data as Product[]);
+    }
+
+    fetchProducts();
+    return () => {
+      isMounted = false;
+    };
+  }, [search]);
+
+  const allProducts = useMemo(() => products ?? [], [products]);
 
   // Group products by category
   const groupedProducts = sectionCategories.reduce(
     (acc, cat) => {
       acc[cat] = allProducts.filter(
-        (p) => p.category.toLowerCase() === cat.toLowerCase()
+        (p) => p.category?.toLowerCase() === cat.toLowerCase()
       );
       return acc;
     },
@@ -259,7 +284,7 @@ export default function Dashboard() {
   const uncategorized = allProducts.filter(
     (p) =>
       !sectionCategories.some(
-        (sc) => sc.toLowerCase() === p.category.toLowerCase()
+        (sc) => sc.toLowerCase() === p.category?.toLowerCase()
       )
   );
 
@@ -407,16 +432,16 @@ export default function Dashboard() {
               const msg = encodeURIComponent(`Hi TheDietStore 👋\n\nI'm interested in:\n\n📦 *${product.name}*\n🏷️ Brand: ${product.brand}\n💰 Price: ${formatINR(product.price)}\n📋 SKU: ${product.sku}\n\nPlease share details about:\n• Availability & stock\n• Bulk/wholesale pricing\n• Delivery options\n\nThank you!`);
               return (
               <div
-                key={product._id}
-                className={`group ${!product.inStock ? 'opacity-60 grayscale' : ''}`}
+                key={product.id}
+                className={`group ${!product.in_stock ? 'opacity-60 grayscale' : ''}`}
               >
                 <div
                   onClick={() => setSelectedProduct(product)}
                   className="relative aspect-square overflow-hidden mb-3 cursor-pointer group-hover:scale-[1.02] transition-transform duration-500"
                 >
-                  {product.imageUrl ? (
+                  {product.image_url ? (
                     <img
-                      src={product.imageUrl}
+                      src={product.image_url}
                       alt={product.name}
                       className="w-full h-full object-contain p-2"
 
@@ -426,7 +451,7 @@ export default function Dashboard() {
                       <Package className="h-14 w-14 text-[#333]" />
                     </div>
                   )}
-                  {!product.inStock && (
+                  {!product.in_stock && (
                     <div className="absolute top-3 left-3">
                       <span className="bg-[#c2202f] text-white text-[10px] font-bold px-2 py-1 uppercase tracking-wider font-['Orbitron']">
                         Sold out
@@ -455,9 +480,9 @@ export default function Dashboard() {
                   <p className="text-sm font-semibold text-white">
                     {formatINR(product.price)}
                   </p>
-                  {product.compareAtPrice && (
+                  {product.compare_at_price && (
                     <p className="text-xs text-[#999999] line-through">
-                      {formatINR(product.compareAtPrice)}
+                      {formatINR(product.compare_at_price)}
                     </p>
                   )}
                 </div>
