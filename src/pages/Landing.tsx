@@ -151,7 +151,7 @@ export default function Landing() {
       )}
 
       {/* ── Hero Carousel — Full clickable images, no text overlay ── */}
-            <section ref={heroRef} className="relative w-full h-[222px] sm:h-[420px] lg:h-[600px] overflow-hidden px-2 sm:px-0">
+      <section ref={heroRef} className="relative w-full h-[222px] sm:h-[420px] lg:h-[600px] mt-[120px] sm:mt-[80px] lg:mt-28 overflow-hidden px-2 sm:px-0">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentSlide}
