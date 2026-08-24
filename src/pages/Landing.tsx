@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { motion, useScroll,AnimatePresence } from "framer-motion";
 import {
   ArrowRight,
   ChevronLeft,
@@ -7,7 +7,6 @@ import {
   Shield,
   Award,
   Zap,
-  Star,
   MessageCircle,
 } from "lucide-react";
 import { useNavigate } from "react-router";
@@ -86,7 +85,7 @@ type Product = {
 export default function Landing() {
   const navigate = useNavigate();
   const heroRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
+  useScroll({
     target: heroRef,
     offset: ["start start", "end start"],
   });
@@ -176,7 +175,7 @@ export default function Landing() {
       )}
 
       {/* ── Hero Carousel — Full clickable images, no text overlay ── */}
-      <section ref={heroRef} className="relative w-full h-[222px] sm:h-[420px] lg:h-[600px] mt-[120px] sm:mt-[80px] lg:mt-28 overflow-hidden px-2 sm:px-0">
+      <section ref={heroRef} className="relative w-full h-[222px] sm:h-[420px] lg:h-[600px] mt-[120px] sm:mt-[20px] lg:mt-0 overflow-hidden px-2 sm:px-0">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentSlide}

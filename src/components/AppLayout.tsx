@@ -320,7 +320,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       </nav>
 
             {/* Page content */}
-      {children}
+      <div className="pt-14 lg:pt-28">{children}</div>
 
       {/* ── Footer ── */}
       <footer className="border-t border-[#2b2a27] bg-black">
