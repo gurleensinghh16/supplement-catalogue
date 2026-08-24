@@ -9,12 +9,11 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
+  
   MessageCircle,
 } from "lucide-react";
 import { useNavigate } from "react-router";
 import ProductDetail from "@/components/ProductDetail";
-
-const BASE = import.meta.env.BASE_URL || "/";
 
 const sectionCategories = [
   "Whey Protein",
@@ -255,19 +254,8 @@ export default function Dashboard() {
 
       {/* Top Bar */}
       <header className="sticky top-0 z-40 border-b border-[#2b2a27] bg-black/90 backdrop-blur-xl">
-        <div className="mx-auto max-w-[1440px] px-6 h-20 flex items-center justify-between">
-          <button
-            onClick={() => navigate("/")}
-            className="flex items-center gap-3 cursor-pointer"
-          >
-            <img
-              src={`${BASE}logoo.png`}
-              alt="TheDietStore"
-              className="h-12 w-auto object-contain"
-            />
-          </button>
-
-          <div className="flex items-center gap-6">
+  <div className="mx-auto max-w-[1440px] px-6 h-20 flex items-center justify-end">
+    <div className="flex items-center gap-6">
             <span className="hidden sm:inline text-sm text-[#999999] border-l border-[#2b2a27] pl-6 tracking-wider uppercase font-['Orbitron']">
               Product Catalogue
             </span>
