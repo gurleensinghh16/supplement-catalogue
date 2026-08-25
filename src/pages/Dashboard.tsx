@@ -68,7 +68,7 @@ function StarRating({ rating, reviews }: { rating: number; reviews: number }) {
   );
 }
 
-// NOTE: adjust these field names to match your actual Supabase "products" table columns.
+// Matches actual Supabase "products" table columns (camelCase).
 type Product = {
   id: string;
   name: string;
@@ -78,13 +78,13 @@ type Product = {
   price: number;
   compare_at_price?: number;
   sku: string;
-  in_stock: boolean;
-  image_url?: string;
+  inStock: boolean;
+  imageUrl?: string;
   tags: string[];
   servings?: string;
   weight?: string;
   featured?: boolean;
-  stock_quantity?: number;
+  stockQuantity?: number;
 };
 
 function CategorySection({
@@ -147,16 +147,16 @@ function CategorySection({
           return (
           <div
             key={product.id}
-            className={`flex-shrink-0 w-[220px] sm:w-[240px] group ${!product.in_stock ? 'opacity-60 grayscale' : ''}`}
+            className={`flex-shrink-0 w-[220px] sm:w-[240px] group ${!product.inStock ? 'opacity-60 grayscale' : ''}`}
             style={{ scrollSnapAlign: "start" }}
           >            {/* Product Image */}
             <div
               onClick={() => onSelectProduct(product)}
               className="relative aspect-square overflow-hidden mb-3 cursor-pointer group-hover:scale-[1.02] transition-transform duration-500"
             >
-              {product.image_url ? (
+              {product.imageUrl ? (
                 <img
-                  src={product.image_url}
+                  src={product.imageUrl}
                   alt={product.name}
                   className="w-full h-full object-contain p-2 product-img"
                 />
@@ -167,7 +167,7 @@ function CategorySection({
               )}
 
               {/* Sold out badge */}
-              {!product.in_stock && (
+              {!product.inStock && (
                 <div className="absolute top-3 left-3">
                   <span className="bg-[#c2202f] text-white text-[10px] font-bold px-2 py-1 uppercase tracking-wider font-['Orbitron']">
                     Sold out
@@ -433,15 +433,15 @@ export default function Dashboard() {
               return (
               <div
                 key={product.id}
-                className={`group ${!product.in_stock ? 'opacity-60 grayscale' : ''}`}
+                className={`group ${!product.inStock ? 'opacity-60 grayscale' : ''}`}
               >
                 <div
                   onClick={() => setSelectedProduct(product)}
                   className="relative aspect-square overflow-hidden mb-3 cursor-pointer group-hover:scale-[1.02] transition-transform duration-500"
                 >
-                  {product.image_url ? (
+                  {product.imageUrl ? (
                     <img
-                      src={product.image_url}
+                      src={product.imageUrl}
                       alt={product.name}
                       className="w-full h-full object-contain p-2"
 
@@ -451,7 +451,7 @@ export default function Dashboard() {
                       <Package className="h-14 w-14 text-[#333]" />
                     </div>
                   )}
-                  {!product.in_stock && (
+                  {!product.inStock && (
                     <div className="absolute top-3 left-3">
                       <span className="bg-[#c2202f] text-white text-[10px] font-bold px-2 py-1 uppercase tracking-wider font-['Orbitron']">
                         Sold out
