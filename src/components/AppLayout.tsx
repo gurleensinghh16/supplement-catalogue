@@ -7,9 +7,10 @@ import {
   Search,
 } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
+
 
 const BASE = import.meta.env.BASE_URL || "/";
 
@@ -43,7 +44,7 @@ type Product = {
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
-
+  const location = useLocation(); 
   // Products (fetched from Supabase)
   const [allProducts, setAllProducts] = useState<Product[] | undefined>(undefined);
 
@@ -306,21 +307,13 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       </motion.div>
     )}
   </AnimatePresence>
-
-  {/* Other links */}
-  <div className="flex items-center gap-6 py-1.5 border-t border-[#2b2a27] text-sm text-[#999999]">
-    <a href="#featured" className="hover:text-white transition-colors font-['Orbitron'] text-xs tracking-wider uppercase">Featured</a>
-    <a href="#features" className="hover:text-white transition-colors font-['Orbitron'] text-xs tracking-wider uppercase">Why Us</a>
-    <button onClick={() => navigate("/catalogue")} className="hover:text-white transition-colors font-['Orbitron'] text-xs tracking-wider uppercase cursor-pointer ml-auto text-[#c2202f]">
-      View Catalogue →
-    </button>
-  </div>
+  
 </div>
         </div>
       </nav>
 
             {/* Page content */}
-      <div className="pt-14 lg:pt-28">{children}</div>
+      <div className="pt-24 lg:pt-28">{children}</div>
 
       {/* ── Footer ── */}
       <footer className="border-t border-[#2b2a27] bg-black">
@@ -335,12 +328,38 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               <p className="text-[15px] text-[#999999] leading-relaxed font-['Barlow'] max-w-xs">
                 Your trusted source for genuine international supplement brands at the best prices.
               </p>
-              <div className="flex items-center gap-4 mt-6">
-                <a href="https://wa.me/918295158184" target="_blank" rel="noopener noreferrer"
-                  className="w-10 h-10 border border-[#2b2a27] bg-[#111111] flex items-center justify-center hover:border-[#25D366] hover:bg-[#25D366]/10 transition-all">
-                  <MessageCircle className="h-4.5 w-4.5 text-[#25D366]" />
-                </a>
-              </div>
+              <div className="flex items-center gap-4 py-1.5 border-t border-[#2b2a27] text-sm text-[#999999]">
+  <button
+    onClick={() => navigate("/")}
+    className="hover:text-white transition-colors font-['Orbitron'] text-xs tracking-wider uppercase cursor-pointer text-[#999999]"
+  >
+    Home
+  </button>
+
+  {location.pathname === "/" && (
+    <>
+      <a href="#featured" className="hover:text-white transition-colors font-['Orbitron'] text-xs tracking-wider uppercase">
+        Featured
+      </a>
+      <a href="#features" className="hover:text-white transition-colors font-['Orbitron'] text-xs tracking-wider uppercase">
+        Why Us
+      </a>
+    </>
+  )}
+
+  <button
+    onClick={() => navigate("/admin")}
+    className="hover:text-white transition-colors font-['Orbitron'] text-xs tracking-wider uppercase cursor-pointer text-[#c2202f]"
+  >
+    Admin →
+  </button>
+  <button
+    onClick={() => navigate("/catalogue")} 
+    className="hover:text-white transition-colors font-['Orbitron'] text-xs tracking-wider uppercase cursor-pointer ml-auto text-[#c2202f]"
+  >
+    Catalogue →
+  </button>
+</div>
             </div>
 
             {/* Quick Links */}

@@ -280,39 +280,39 @@ export default function Dashboard() {
       )}
 
       {/* Top Bar */}
-      <header className="sticky top-0 z-40 border-b border-[#2b2a27] bg-black/90 backdrop-blur-xl">
-        <div className="mx-auto max-w-[1440px] px-6 h-20 flex items-center justify-between">
-          <button
-            onClick={() => navigate("/")}
-            className="flex items-center gap-3 cursor-pointer"
-          >
-            <img
-              src={`${BASE}logoo.png`}
-              alt="TheDietStore"
-              className="h-12 w-auto object-contain"
-            />
-          </button>
+<header className="sticky top-0 z-40 border-b border-[#2b2a27] bg-black/90 backdrop-blur-xl">
+  <div className="mx-auto max-w-[1440px] px-4 sm:px-6 h-14 sm:h-20 flex items-center justify-between gap-2">
+    <button
+      onClick={() => navigate("/")}
+      className="flex items-center gap-3 cursor-pointer flex-shrink-0"
+    >
+      <img
+        src={`${BASE}logoo.png`}
+        alt="TheDietStore"
+        className="h-8 sm:h-12 w-auto object-contain"
+      />
+    </button>
 
-          <div className="flex items-center gap-6">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-[#c2202f] hover:text-[#de3746] hover:bg-[#c2202f]/5 cursor-pointer text-xs font-medium tracking-wider uppercase font-['Orbitron']"
-              onClick={() => navigate("/admin")}
-            >
-              Admin Panel
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-[#999999] hover:text-white cursor-pointer font-['Orbitron'] tracking-wider uppercase text-xs"
-              onClick={() => navigate("/")}
-            >
-              Home
-            </Button>
-          </div>
-        </div>
-      </header>
+    <div className="flex items-center gap-1 sm:gap-6">
+      <Button
+        variant="ghost"
+        size="sm"
+        className="text-[#c2202f] hover:text-[#de3746] hover:bg-[#c2202f]/5 cursor-pointer text-[10px] sm:text-xs font-medium tracking-wider uppercase font-['Orbitron'] px-2 sm:px-4"
+        onClick={() => navigate("/admin")}
+      >
+        Admin Panel
+      </Button>
+      <Button
+        variant="ghost"
+        size="sm"
+        className="text-[#999999] hover:text-white cursor-pointer font-['Orbitron'] tracking-wider uppercase text-[10px] sm:text-xs px-2 sm:px-4"
+        onClick={() => navigate("/")}
+      >
+        Home
+      </Button>
+    </div>
+  </div>
+</header>
 
       {/* Search Bar */}
       <div className="border-b border-[#2b2a27]">
