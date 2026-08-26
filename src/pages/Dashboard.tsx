@@ -2,18 +2,15 @@ import { useState, useRef, useEffect, useMemo } from "react";
 import { supabase } from "@/lib/supabase"; // adjust path to wherever your client lives
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   Search,
   Package,
   X,
   ChevronLeft,
   ChevronRight,
-  Star,
   MessageCircle,
 } from "lucide-react";
 import { useNavigate } from "react-router";
-import { cn } from "@/lib/utils";
 import ProductDetail from "@/components/ProductDetail";
 
 const BASE = import.meta.env.BASE_URL || "/";
@@ -48,24 +45,6 @@ const sectionCategories = [
 
 function formatINR(price: number) {
   return `₹${price.toLocaleString("en-IN")}`;
-}
-
-function StarRating({ rating, reviews }: { rating: number; reviews: number }) {
-  return (
-    <div className="flex items-center gap-1.5 mb-2">
-      <div className="flex gap-0.5">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <Star
-            key={i}
-            className={`h-3 w-3 ${
-              i < Math.floor(rating) ? "fill-[#c2202f] text-[#c2202f]" : "text-[#333]"
-            }`}
-          />
-        ))}
-      </div>
-      <span className="text-[11px] text-[#999999]">{reviews} reviews</span>
-    </div>
-  );
 }
 
 // Matches actual Supabase "products" table columns (camelCase).
@@ -315,9 +294,6 @@ export default function Dashboard() {
           </button>
 
           <div className="flex items-center gap-6">
-            <span className="hidden sm:inline text-sm text-[#999999] border-l border-[#2b2a27] pl-6 tracking-wider uppercase font-['Orbitron']">
-              Product Catalogue
-            </span>
             <Button
               variant="ghost"
               size="sm"
