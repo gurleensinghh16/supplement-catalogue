@@ -1,21 +1,4 @@
-// Redirect handling for GitHub Pages SPA (must run before router mounts)
-(function (l) {
-  if (l.search[1] === "/") {
-    var decoded = l.search
-      .slice(1)
-      .split("&")
-      .map(function (s) {
-        return s.replace(/~and~/g, "&");
-      })
-      .join("?");
-    window.history.replaceState(
-      null,
-      "",
-      l.pathname.slice(0, -1) + decoded + l.hash
-    );
-  }
-})(window.location);
-
+import "./redirect.js";
 import { AppLayout } from "@/components/AppLayout";
 import '@vly-ai/integrations';
 import { Toaster } from "@/components/ui/sonner";
@@ -114,6 +97,11 @@ function RouteSyncer() {
   }, []);
 
   return null;
+}
+
+const navEntry = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming;
+if (navEntry?.type === "reload" && window.location.pathname !== "/supplement-catalogue/") {
+  window.location.replace("/supplement-catalogue/");
 }
 
 createRoot(document.getElementById("root")!).render(
