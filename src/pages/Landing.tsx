@@ -62,8 +62,8 @@ function formatINR(price: number) {
   return `₹${price.toLocaleString("en-IN")}`;
 }
 
-// NOTE: adjust these field names to match your actual Supabase "products" table columns.
-// Supabase uses "id" (uuid/int) as the primary key, not Convex's "_id".
+// Matches the actual Supabase "products" table columns (camelCase) — same
+// shape used by ProductDetail.tsx. Supabase uses "id" (uuid) as the primary key.
 type Product = {
   id: string;
   name: string;
@@ -71,15 +71,15 @@ type Product = {
   category: string;
   description: string;
   price: number;
-  compare_at_price?: number;
+  compare_at_price?: number; // not currently a column in your table; kept optional so unused code doesn't break
   sku: string;
-  in_stock: boolean;
-  image_url?: string;
+  inStock: boolean;
+  imageUrl?: string;
   tags: string[];
   servings?: string;
   weight?: string;
   featured?: boolean;
-  stock_quantity?: number;
+  stockQuantity?: number;
 };
 
 export default function Landing() {
@@ -101,8 +101,8 @@ export default function Landing() {
         .from("products")
         .select("*")
         .eq("featured", true)
-        .eq("in_stock", true) // remove this line if you want to show out-of-stock featured items too
-        .order("created_at", { ascending: false });
+        .eq("inStock", true) // fixed: was "in_stock", which doesn't exist on the table
+        .order("name", { ascending: true }); // fixed: "created_at" isn't a column in this table
 
       if (error) {
         console.error("Error fetching featured products:", error);
@@ -287,19 +287,19 @@ export default function Landing() {
                 const msg = encodeURIComponent(`Hi TheDietStore 👋\n\nI'm interested in:\n\n📦 *${product.name}*\n🏷️ Brand: ${product.brand}\n💰 Price: ${formatINR(product.price)}\n📋 SKU: ${product.sku}\n\nPlease share details about:\n• Availability & stock\n• Bulk/wholesale pricing\n• Delivery options\n\nThank you!`);
                 return (
                 <motion.div key={product.id} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
-                  variants={scaleIn} custom={i} className={`group flex-shrink-0 w-[42vw] xs:w-[180px] sm:w-[260px] md:w-[280px] lg:w-[280px] ${!product.in_stock ? 'opacity-60 grayscale' : ''}`}>
+                  variants={scaleIn} custom={i} className={`group flex-shrink-0 w-[42vw] xs:w-[180px] sm:w-[260px] md:w-[280px] lg:w-[280px] ${!product.inStock ? 'opacity-60 grayscale' : ''}`}>
                   {/* Product card — clickable, opens detail modal */}
                   <div
                     onClick={() => setSelectedProduct(product)}
                     className="relative aspect-square overflow-hidden mb-4 cursor-pointer group-hover:scale-[1.02] transition-transform duration-500"
                   >
-                    {product.image_url ? (
-                      <img src={product.image_url} alt={product.name} className="w-full h-full object-contain p-2 product-img" />
+                    {product.imageUrl ? (
+                      <img src={product.imageUrl} alt={product.name} className="w-full h-full object-contain p-2 product-img" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-[#999999]">No Image</div>
                     )}
                     {/* Sold out badge */}
-                    {!product.in_stock && (
+                    {!product.inStock && (
                       <div className="absolute top-3 left-3">
                         <span className="bg-[#c2202f] text-white text-[10px] font-bold px-2 py-1 uppercase tracking-wider font-['Orbitron']">
                           Sold out

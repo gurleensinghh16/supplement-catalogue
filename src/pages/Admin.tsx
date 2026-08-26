@@ -58,7 +58,7 @@ export default function Admin() {
   const [editPrice, setEditPrice] = useState("");
   const [editImage, setEditImage] = useState("");
   const [editStock, setEditStock] = useState("");
-  const [editInStock, setEditInStock] = useState(true);
+  const [editFeatured, setEditFeatured] = useState(false);
 
   // Add product form state
   const [showAddForm, setShowAddForm] = useState(false);
@@ -72,7 +72,6 @@ export default function Admin() {
   const [newWeight, setNewWeight] = useState("");
   const [newServings, setNewServings] = useState("");
   const [newStock, setNewStock] = useState("0");
-  const [newInStock, setNewInStock] = useState(true);
   const [newFeatured, setNewFeatured] = useState(false);
   const [newTags, setNewTags] = useState("");
 
@@ -128,7 +127,7 @@ export default function Admin() {
     setEditPrice(String(product.price));
     setEditImage(product.imageUrl || "");
     setEditStock(String(product.stockQuantity ?? ""));
-    setEditInStock(product.inStock);
+    setEditFeatured(product.featured);
   };
 
   const saveEdit = async (productId: string) => {
@@ -138,7 +137,7 @@ export default function Admin() {
         price: Number(editPrice),
         imageUrl: editImage || null,
         stockQuantity: editStock ? Number(editStock) : null,
-        inStock: editInStock,
+        featured: editFeatured,
       })
       .eq("id", productId);
 
@@ -156,7 +155,7 @@ export default function Admin() {
     setNewName(""); setNewBrand(""); setNewCategory(""); setNewDescription("");
     setNewPrice(""); setNewSku("");
     setNewImageUrl(""); setNewWeight(""); setNewServings("");
-    setNewStock("0"); setNewInStock(true); setNewFeatured(false); setNewTags("");
+    setNewStock("0"); setNewFeatured(false); setNewTags("");
     setShowAddForm(false);
   };
 
@@ -175,7 +174,6 @@ export default function Admin() {
       weight: newWeight || null,
       servings: newServings || null,
       stockQuantity: Number(newStock),
-      inStock: newInStock,
       featured: newFeatured,
       tags: newTags ? newTags.split(",").map((t) => t.trim()).filter(Boolean) : [],
     });
@@ -187,6 +185,21 @@ export default function Admin() {
     }
 
     resetAddForm();
+    refetch();
+  };
+
+  const handleUnfeature = async (productId: string) => {
+    const { error } = await supabase
+      .from("products")
+      .update({ featured: false })
+      .eq("id", productId);
+
+    if (error) {
+      console.error("Error removing product from Hot Selling:", error);
+      alert(`Failed to remove from Hot Selling: ${error.message}`);
+      return;
+    }
+
     refetch();
   };
 
@@ -332,6 +345,66 @@ export default function Admin() {
           </Button>
         </div>
 
+        {/* Hot Selling Products panel */}
+        {products !== undefined && (
+          <div className="mb-8 border border-[#c2202f]/30 bg-[#0a0a0a]">
+            <div className="px-6 py-4 border-b border-[#2b2a27] flex items-center justify-between">
+              <h2 className="font-['Orbitron'] text-sm tracking-[0.15em] uppercase text-white">
+                Hot Selling Products
+              </h2>
+              <span className="text-[10px] text-[#999999] uppercase tracking-wider">
+                {products.filter((p) => p.featured).length} featured
+              </span>
+            </div>
+            {products.filter((p) => p.featured).length === 0 ? (
+              <p className="px-6 py-6 text-sm text-[#999999]">
+                No products marked as Hot Selling yet. Use the pencil icon below to feature one.
+              </p>
+            ) : (
+              <div>
+                {products
+                  .filter((p) => p.featured)
+                  .map((product) => (
+                    <div
+                      key={product.id}
+                      className="flex items-center justify-between gap-4 px-6 py-3 border-t border-[#2b2a27] first:border-t-0"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="h-9 w-9 overflow-hidden bg-[#111111] flex-shrink-0">
+                          {product.imageUrl ? (
+                            <img
+                              src={product.imageUrl}
+                              alt={product.name}
+                              className="h-full w-full object-cover"
+                            />
+                          ) : (
+                            <div className="h-full w-full flex items-center justify-center">
+                              <Package className="h-4 w-4 text-[#999999]/30" />
+                            </div>
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-white truncate">
+                            {product.name}
+                          </p>
+                          <p className="text-xs text-[#999999]/60">
+                            {product.brand} · {formatINR(product.price)}
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => handleUnfeature(product.id)}
+                        className="flex-shrink-0 h-8 px-3 bg-[#c2202f]/10 text-[#c2202f] border border-[#c2202f]/20 text-[10px] font-bold uppercase tracking-wider hover:bg-[#c2202f]/20 cursor-pointer transition-colors"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Add Product Form */}
         {showAddForm && (
           <form onSubmit={handleAddProduct} className="mb-8 border border-[#2b2a27] bg-[#0a0a0a] p-6">
@@ -355,12 +428,9 @@ export default function Admin() {
               <textarea placeholder="Description" value={newDescription} onChange={(e) => setNewDescription(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50 px-3 py-2 text-sm resize-none sm:col-span-2 lg:col-span-3" rows={2} />
             </div>
             <div className="flex items-center gap-4 mt-4">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <button type="button" onClick={() => setNewInStock(!newInStock)} className={cn("h-6 w-10 transition-colors cursor-pointer relative rounded-full", newInStock ? "bg-[#57a256]" : "bg-[#2b2a27]")}>
-                  <span className={cn("absolute top-0.5 h-5 w-5 bg-white transition-transform rounded-full shadow", newInStock ? "translate-x-[20px]" : "translate-x-0.5")} />
-                </button>
-                <span className="text-xs text-[#999999]">In Stock</span>
-              </label>
+              <span className="text-[11px] text-[#999999]/60 italic">
+                In Stock is set automatically from Stock Quantity
+              </span>
               <label className="flex items-center gap-2 cursor-pointer">
                 <button type="button" onClick={() => setNewFeatured(!newFeatured)} className={cn("h-6 w-10 transition-colors cursor-pointer relative rounded-full", newFeatured ? "bg-[#c2202f]" : "bg-[#2b2a27]")}>
                   <span className={cn("absolute top-0.5 h-5 w-5 bg-white transition-transform rounded-full shadow", newFeatured ? "translate-x-[20px]" : "translate-x-0.5")} />
@@ -383,7 +453,7 @@ export default function Admin() {
         ) : (
           <div className="border border-[#2b2a27] overflow-hidden">
             {/* Table Header */}
-            <div className="hidden md:grid grid-cols-[auto_1fr_90px_80px_100px_70px_70px_70px] gap-2 px-3 py-3 bg-[#111111] text-[10px] text-[#999999] uppercase tracking-wider font-medium border-b border-[#2b2a27]">
+            <div className="hidden md:grid grid-cols-[auto_1fr_90px_80px_100px_70px_70px_70px_70px] gap-2 px-3 py-3 bg-[#111111] text-[10px] text-[#999999] uppercase tracking-wider font-medium border-b border-[#2b2a27]">
               <span></span>
               <span>Product</span>
               <span>Category</span>
@@ -391,6 +461,7 @@ export default function Admin() {
               <span>Image URL</span>
               <span className="text-right">Stock</span>
               <span className="text-center">In Stock</span>
+              <span className="text-center">Featured</span>
               <span className="text-center">Actions</span>
             </div>
 
@@ -400,7 +471,7 @@ export default function Admin() {
                 <div
                   key={product.id}
                   className={cn(
-                    "grid grid-cols-1 md:grid-cols-[auto_1fr_90px_80px_100px_70px_70px_70px] gap-2 px-3 py-3 border-t border-[#2b2a27] items-center transition-colors",
+                    "grid grid-cols-1 md:grid-cols-[auto_1fr_90px_80px_100px_70px_70px_70px_70px] gap-2 px-3 py-3 border-t border-[#2b2a27] items-center transition-colors",
                     isEditing && "bg-[#c2202f]/[0.03]",
                   )}
                 >
@@ -475,32 +546,42 @@ export default function Admin() {
                   </div>
 
                   <div className="flex flex-col items-center gap-1">
+                    <span
+                      title="Derived automatically from Stock Quantity"
+                      className={cn(
+                        "text-[10px] font-bold px-2 py-1 uppercase tracking-wider",
+                        product.inStock
+                          ? "bg-[#57a256]/10 text-[#57a256] border border-[#57a256]/20"
+                          : "bg-[#c2202f]/10 text-[#c2202f] border border-[#c2202f]/20",
+                      )}
+                    >
+                      {product.inStock ? "In Stock" : "Out of Stock"}
+                    </span>
+                  </div>
+
+                  <div className="flex flex-col items-center gap-1">
                     {isEditing ? (
                       <button
-                        onClick={() => setEditInStock(!editInStock)}
+                        onClick={() => setEditFeatured(!editFeatured)}
+                        title="Toggle hot-selling / featured on home"
                         className={cn(
                           "h-7 w-12 transition-colors cursor-pointer relative rounded-full",
-                          editInStock ? "bg-[#57a256]" : "bg-[#2b2a27]",
+                          editFeatured ? "bg-[#c2202f]" : "bg-[#2b2a27]",
                         )}
                       >
                         <span
                           className={cn(
                             "absolute top-0.5 h-6 w-6 bg-white transition-transform rounded-full shadow",
-                            editInStock ? "translate-x-[25px]" : "translate-x-0.5",
+                            editFeatured ? "translate-x-[25px]" : "translate-x-0.5",
                           )}
                         />
                       </button>
-                    ) : (
-                      <span
-                        className={cn(
-                          "text-[10px] font-bold px-2 py-1 uppercase tracking-wider",
-                          product.inStock
-                            ? "bg-[#57a256]/10 text-[#57a256] border border-[#57a256]/20"
-                            : "bg-[#c2202f]/10 text-[#c2202f] border border-[#c2202f]/20",
-                        )}
-                      >
-                        {product.inStock ? "In Stock" : "Out of Stock"}
+                    ) : product.featured ? (
+                      <span className="text-[10px] font-bold px-2 py-1 uppercase tracking-wider bg-[#c2202f]/10 text-[#c2202f] border border-[#c2202f]/20">
+                        Hot
                       </span>
+                    ) : (
+                      <span className="text-xs text-[#999999]/40">—</span>
                     )}
                   </div>
 
