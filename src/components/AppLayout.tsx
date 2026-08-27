@@ -305,11 +305,19 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               />
             </button>
 
-            {/* Right */}
+                        {/* Right */}
             <div className="flex items-center justify-end gap-4 lg:gap-10">
-              {/* Invisible placeholder on mobile to balance the search icon */}
-              <a
-                href="#featured"
+              <button
+                onClick={() => navigate("/")}
+                className={`hidden lg:block relative font-['Orbitron'] text-[16px] font-normal tracking-[0.15em] uppercase transition-colors group/link py-8 cursor-pointer ${
+                  location.pathname === "/" ? "text-[#c2202f]" : "text-white hover:text-[#c2202f]"
+                }`}
+              >
+                HOME
+                <span className="absolute bottom-6 left-0 w-full h-[2px] bg-[#c2202f] scale-x-0 group-hover/link:scale-x-100 transition-transform duration-300 origin-left" />
+              </button>
+              
+                <a href="#featured"
                 className="hidden lg:block relative font-['Orbitron'] text-[16px] font-normal tracking-[0.15em] uppercase text-white hover:text-[#c2202f] transition-colors group/link py-8"
               >
                 FEATURED
@@ -322,6 +330,15 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 WHY US
                 <span className="absolute bottom-6 left-0 w-full h-[2px] bg-[#c2202f] scale-x-0 group-hover/link:scale-x-100 transition-transform duration-300 origin-left" />
               </a>
+              <button
+                onClick={() => navigate("/admin")}
+                className={`hidden lg:block relative font-['Orbitron'] text-[16px] font-normal tracking-[0.15em] uppercase transition-colors group/link py-8 cursor-pointer ${
+                  location.pathname === "/admin" ? "text-[#c2202f]" : "text-white hover:text-[#c2202f]"
+                }`}
+              >
+                ADMIN
+                <span className="absolute bottom-6 left-0 w-full h-[2px] bg-[#c2202f] scale-x-0 group-hover/link:scale-x-100 transition-transform duration-300 origin-left" />
+              </button>
               <Button
                 className="hidden lg:inline-flex bg-[#c2202f] text-white hover:bg-[#de3746] font-medium text-[14px] h-12 px-8 cursor-pointer tracking-wider font-['Orbitron'] uppercase"
                 onClick={() => navigate("/catalogue")}
@@ -541,9 +558,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               </span>
               <span className="text-[13px] text-[#999999]/50 font-['Barlow']">
                 |
-              </span>
-              <span className="text-[13px] text-[#999999]/50 font-['Barlow']">
-                Pan-India Delivery
               </span>
             </div>
           </div>

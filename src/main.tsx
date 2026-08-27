@@ -109,8 +109,10 @@ createRoot(document.getElementById("root")!).render(
     <RootErrorBoundary>
       <LoadingScreen />
       <ToolbarErrorBoundary>
-        <VlyToolbar />
-      </ToolbarErrorBoundary>
+  <div className="hidden lg:block">
+    <VlyToolbar />
+  </div>
+</ToolbarErrorBoundary>
       <BrowserRouter basename="/supplement-catalogue">
         <RouteSyncer />
         <AppLayout>
