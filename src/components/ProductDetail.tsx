@@ -106,7 +106,7 @@ export default function ProductDetail({
         <button
           onClick={handleClose}
           aria-label="Close"
-          className="absolute top-3 right-3 sm:top-4 sm:right-4 z-10 w-9 h-9 flex items-center justify-center rounded-full bg-black/60 border border-[#2b2a27] text-white hover:border-[#c2202f] hover:text-[#c2202f] transition-colors cursor-pointer"
+          className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 w-9 h-9 flex items-center justify-center rounded-full bg-black/90 border border-white/20 text-white hover:border-[#c2202f] hover:text-[#c2202f] transition-colors cursor-pointer"
         >
           <X className="h-4 w-4" />
         </button>
@@ -186,12 +186,6 @@ export default function ProductDetail({
                       <p className="text-white">{product.servings}</p>
                     </div>
                   )}
-                  <div className="border border-[#2b2a27] px-3 py-2">
-                    <p className="text-[#999999] uppercase tracking-wider mb-0.5">
-                      SKU
-                    </p>
-                    <p className="text-white">{product.sku}</p>
-                  </div>
                   <div className="border border-[#2b2a27] px-3 py-2">
                     <p className="text-[#999999] uppercase tracking-wider mb-0.5">
                       Availability

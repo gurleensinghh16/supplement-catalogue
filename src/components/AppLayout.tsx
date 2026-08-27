@@ -27,7 +27,7 @@ const navCategories = [
   "Longevity",
   "Recovery",
   "Amino Acids",
-  "Samples",
+  "Travel Pack",
 ];
 
 function formatINR(price: number) {
