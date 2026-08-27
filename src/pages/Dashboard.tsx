@@ -279,8 +279,6 @@ export default function Dashboard() {
         />
       )}
 
-      
-
       {/* Search Bar */}
       <div className="border-b border-[#2b2a27]">
         <div className="mx-auto max-w-[1440px] px-6 py-5">

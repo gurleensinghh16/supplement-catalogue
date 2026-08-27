@@ -1,9 +1,6 @@
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { X, MessageCircle, Package, CheckCircle, XCircle } from "lucide-react";
+import { useEffect, useState } from "react";
+import { X, Package, MessageCircle, Minus, Plus } from "lucide-react";
 
-// Matches the actual Supabase `products` table columns (camelCase) — same
-// shape used by Landing.tsx and Dashboard.tsx.
 type Product = {
   id: string;
   name: string;
@@ -26,161 +23,237 @@ function formatINR(price: number) {
   return `₹${price.toLocaleString("en-IN")}`;
 }
 
-function buildBulletPoints(product: Product): string[] {
-  const points: string[] = [];
-  if (product.brand) points.push(`Brand: ${product.brand}`);
-  if (product.category) points.push(`Category: ${product.category}`);
-  if (product.weight) points.push(`Weight: ${product.weight}`);
-  if (product.servings) points.push(`Servings: ${product.servings}`);
-  if (product.sku) points.push(`SKU: ${product.sku}`);
-  if (product.stockQuantity !== undefined && product.stockQuantity !== null)
-    points.push(`Availability: ${product.stockQuantity} units in stock`);
-  if (product.tags.length > 0)
-    points.push(`Tags: ${product.tags.join(", ")}`);
-  return points;
-}
-
-function buildWhatsAppMessage(product: Product): string {
-  const msg = `Hi TheDietStore 👋\n\nI'm interested in:\n\n📦 *${product.name}*\n🏷️ Brand: ${product.brand}\n💰 Price: ${formatINR(product.price)}\n📋 SKU: ${product.sku}\n\nPlease share details about:\n• Availability & stock\n• Bulk/wholesale pricing\n• Delivery options\n\nThank you!`;
-  return `https://wa.me/918295158184?text=${encodeURIComponent(msg)}`;
-}
-
-interface ProductDetailProps {
+export default function ProductDetail({
+  product,
+  onClose,
+}: {
   product: Product;
   onClose: () => void;
-}
+}) {
+  const [visible, setVisible] = useState(false);
+  const [qty, setQty] = useState(1);
 
-export default function ProductDetail({ product, onClose }: ProductDetailProps) {
-  const bulletPoints = buildBulletPoints(product);
-  const whatsappUrl = buildWhatsAppMessage(product);
+  // Animate out, then actually unmount via onClose
+  const handleClose = () => {
+    setVisible(false);
+    setTimeout(onClose, 220);
+  };
+
+  // Mount animation
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => setVisible(true));
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  // Escape key closes
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") handleClose();
+    };
+    window.addEventListener("keydown", onKey);
+    // lock background scroll
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const discount =
+    product.compare_at_price && product.compare_at_price > product.price
+      ? Math.round(
+          ((product.compare_at_price - product.price) /
+            product.compare_at_price) *
+            100
+        )
+      : null;
+
+  const msg = encodeURIComponent(
+    `Hi TheDietStore 👋\n\nI'm interested in:\n\n📦 *${product.name}*\n🏷️ Brand: ${product.brand}\n💰 Price: ${formatINR(
+      product.price
+    )}\n📋 SKU: ${product.sku}\n🔢 Quantity: ${qty}\n\nPlease share details about:\n• Availability & stock\n• Bulk/wholesale pricing\n• Delivery options\n\nThank you!`
+  );
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-6"
-      onClick={onClose}
+      className={`fixed inset-0 z-[100] flex items-end sm:items-center justify-center transition-opacity duration-200 ease-out ${
+        visible ? "opacity-100" : "opacity-0"
+      }`}
+      onClick={handleClose}
     >
+      {/* Backdrop */}
       <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
 
-            {/* Close button — fixed to the viewport, not the scroll container, so it never scrolls away */}
-      <button
-        onClick={onClose}
-        className="fixed top-4 right-4 z-[60] h-9 w-9 bg-[#111111] border border-[#2b2a27] text-[#999999] hover:text-white flex items-center justify-center transition-colors cursor-pointer shadow-lg"
-      >
-        <X className="h-4 w-4" />
-      </button>
-
+      {/* Panel */}
       <div
-        className="relative w-full h-full sm:h-auto sm:max-w-3xl sm:max-h-[90vh] overflow-y-auto border-0 sm:border border-[#2b2a27] bg-[#0a0a0a] shadow-[0_15px_45px_rgba(0,0,0,0.3)]"
         onClick={(e) => e.stopPropagation()}
+        className={`relative w-full sm:w-[90vw] sm:max-w-3xl max-h-[92vh] sm:max-h-[85vh] bg-[#0a0a0a] border border-[#2b2a27] sm:rounded-lg overflow-hidden flex flex-col
+          transition-all duration-300 ease-out
+          ${
+            visible
+              ? "translate-y-0 sm:translate-y-0 sm:scale-100 opacity-100"
+              : "translate-y-full sm:translate-y-4 sm:scale-95 opacity-0"
+          }`}
       >
+        {/* Drag handle (mobile only) */}
+        <div className="sm:hidden flex justify-center pt-2.5 pb-1 shrink-0">
+          <div className="w-10 h-1 rounded-full bg-[#333]" />
+        </div>
 
-        <div className="grid md:grid-cols-2 gap-0">
-          {/* Image */}
-         <div className="relative aspect-[4/3] sm:aspect-square md:aspect-auto md:min-h-[400px] overflow-hidden bg-[#0a0a0a]">
-            {product.imageUrl ? (
-              <img
-                src={product.imageUrl}
-                alt={product.name}
-                className="w-full h-full object-cover product-img"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center">
-                <Package className="h-16 w-16 text-[#999999]/30" />
-              </div>
-            )}
-            <div className="absolute top-4 left-4 flex gap-2">
-              <Badge
-                variant="outline"
-                className="border-[#2b2a27] bg-black/80 text-[#999999] text-xs font-medium"
-              >
-                {product.category}
-              </Badge>
-              {product.featured && (
-                <Badge className="bg-[#c2202f] text-white border-0 text-xs font-bold">
-                  ★ Featured
-                </Badge>
+        {/* Close button */}
+        <button
+          onClick={handleClose}
+          aria-label="Close"
+          className="absolute top-3 right-3 sm:top-4 sm:right-4 z-10 w-9 h-9 flex items-center justify-center rounded-full bg-black/60 border border-[#2b2a27] text-white hover:border-[#c2202f] hover:text-[#c2202f] transition-colors cursor-pointer"
+        >
+          <X className="h-4 w-4" />
+        </button>
+
+        {/* Scrollable content */}
+        <div className="overflow-y-auto flex-1">
+          <div className="flex flex-col sm:flex-row">
+            {/* Image */}
+            <div className="relative sm:w-1/2 aspect-square sm:aspect-auto sm:min-h-[380px] bg-[#111111] flex items-center justify-center shrink-0">
+              {product.imageUrl ? (
+                <img
+                  src={product.imageUrl}
+                  alt={product.name}
+                  className="w-full h-full object-contain p-6"
+                />
+              ) : (
+                <Package className="h-20 w-20 text-[#333]" />
+              )}
+
+              {!product.inStock && (
+                <div className="absolute top-4 left-4">
+                  <span className="bg-[#c2202f] text-white text-[10px] font-bold px-2.5 py-1 uppercase tracking-wider font-['Orbitron']">
+                    Sold out
+                  </span>
+                </div>
+              )}
+              {discount && (
+                <div className="absolute top-4 left-4" style={{ marginTop: !product.inStock ? "2rem" : 0 }}>
+                  <span className="bg-white text-black text-[10px] font-bold px-2.5 py-1 uppercase tracking-wider font-['Orbitron']">
+                    {discount}% off
+                  </span>
+                </div>
               )}
             </div>
-          </div>
 
-          {/* Details */}
-          <div className="p-6 sm:p-8 flex flex-col">
-            <p className="text-xs text-[#c2202f] font-medium uppercase tracking-wider mb-2">
-              {product.brand}
-            </p>
-            <h2 className="font-['Orbitron'] text-xl sm:text-2xl font-normal tracking-[0.15em] uppercase text-white leading-tight mb-3">
-              {product.name}
-            </h2>
+            {/* Info */}
+            <div className="sm:w-1/2 p-5 sm:p-7 flex flex-col">
+              <p className="text-[11px] text-[#c2202f] font-medium uppercase tracking-wider mb-1.5">
+                {product.brand} · {product.category}
+              </p>
 
-            <div className="mb-5">
-              <div className="flex items-center gap-3">
-                <p className="text-2xl font-medium text-white">
+              <h2 className="font-['Orbitron'] text-lg sm:text-xl font-normal tracking-[0.1em] uppercase text-white mb-3 leading-snug">
+                {product.name}
+              </h2>
+
+              <div className="flex items-center gap-3 mb-4">
+                <p className="text-2xl font-semibold text-white">
                   {formatINR(product.price)}
                 </p>
                 {product.compare_at_price && (
-                  <p className="text-base text-[#999999] line-through">
+                  <p className="text-sm text-[#999999] line-through">
                     {formatINR(product.compare_at_price)}
                   </p>
                 )}
               </div>
-              {product.compare_at_price && (
-                <p className="text-sm text-[#57a256] mt-1">
-                  You save {formatINR(product.compare_at_price - product.price)}
-                </p>
+
+              <p className="text-sm text-[#999999] leading-relaxed mb-5">
+                {product.description}
+              </p>
+
+              {/* Meta grid */}
+              {(product.servings || product.weight || product.sku) && (
+                <div className="grid grid-cols-2 gap-3 mb-5 text-xs">
+                  {product.weight && (
+                    <div className="border border-[#2b2a27] px-3 py-2">
+                      <p className="text-[#999999] uppercase tracking-wider mb-0.5">
+                        Weight
+                      </p>
+                      <p className="text-white">{product.weight}</p>
+                    </div>
+                  )}
+                  {product.servings && (
+                    <div className="border border-[#2b2a27] px-3 py-2">
+                      <p className="text-[#999999] uppercase tracking-wider mb-0.5">
+                        Servings
+                      </p>
+                      <p className="text-white">{product.servings}</p>
+                    </div>
+                  )}
+                  <div className="border border-[#2b2a27] px-3 py-2">
+                    <p className="text-[#999999] uppercase tracking-wider mb-0.5">
+                      SKU
+                    </p>
+                    <p className="text-white">{product.sku}</p>
+                  </div>
+                  <div className="border border-[#2b2a27] px-3 py-2">
+                    <p className="text-[#999999] uppercase tracking-wider mb-0.5">
+                      Availability
+                    </p>
+                    <p className={product.inStock ? "text-[#25D366]" : "text-[#c2202f]"}>
+                      {product.inStock ? "In stock" : "Sold out"}
+                    </p>
+                  </div>
+                </div>
               )}
-            </div>
 
-            <div className="mb-6">
-              {product.description.split(/(?<=[.!?])\s+/).filter(Boolean).map((sentence, i) => (
-                <p key={i} className="text-sm text-[#999999] leading-relaxed mb-2">
-                  {sentence.trim()}
-                </p>
-              ))}
-            </div>
-
-            <div className="mb-6">
-              <h4 className="text-xs font-medium text-[#999999] uppercase tracking-wider mb-3">
-                Product Details
-              </h4>
-              <ul className="space-y-2">
-                {bulletPoints.map((point, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-[#999999]">
-                    <span className="mt-1 h-1.5 w-1.5 bg-[#c2202f] flex-shrink-0" />
-                    {point}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="flex items-center gap-2 mb-6">
-              {product.inStock ? (
-                <>
-                  <CheckCircle className="h-4 w-4 text-[#57a256]" />
-                  <span className="text-sm text-[#57a256]">In Stock</span>
-                </>
-              ) : (
-                <>
-                  <XCircle className="h-4 w-4 text-[#c2202f]" />
-                  <span className="text-sm text-[#c2202f]">Out of Stock</span>
-                </>
+              {/* Tags */}
+              {Array.isArray(product.tags) && product.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {product.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="text-[10px] uppercase tracking-wider text-[#999999] border border-[#2b2a27] px-2.5 py-1"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
               )}
+
+              <div className="mt-auto flex flex-col gap-3">
+                {/* Quantity selector */}
+                <div className="flex items-center gap-3">
+                  <span className="text-xs text-[#999999] uppercase tracking-wider">
+                    Qty
+                  </span>
+                  <div className="flex items-center border border-[#2b2a27]">
+                    <button
+                      onClick={() => setQty((q) => Math.max(1, q - 1))}
+                      className="w-8 h-8 flex items-center justify-center text-white hover:text-[#c2202f] transition-colors cursor-pointer"
+                    >
+                      <Minus className="h-3.5 w-3.5" />
+                    </button>
+                    <span className="w-8 text-center text-sm text-white">
+                      {qty}
+                    </span>
+                    <button
+                      onClick={() => setQty((q) => q + 1)}
+                      className="w-8 h-8 flex items-center justify-center text-white hover:text-[#c2202f] transition-colors cursor-pointer"
+                    >
+                      <Plus className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* WhatsApp CTA */}
+                <a
+                  href={`https://wa.me/918295158184?text=${msg}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 w-full py-3 border border-[#25D366]/30 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-white transition-all duration-300 text-sm font-medium tracking-wider"
+                >
+                  <MessageCircle className="h-4 w-4" />
+                  Enquire on WhatsApp
+                </a>
+              </div>
             </div>
-
-            <div className="flex-1" />
-
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block"
-            >
-              <Button
-                className="w-full h-12 bg-[#25D366] hover:bg-[#20bd5a] text-white font-medium text-sm cursor-pointer gap-2"
-              >
-                <MessageCircle className="h-5 w-5" />
-                Send Enquiry on WhatsApp
-              </Button>
-            </a>
           </div>
         </div>
       </div>
