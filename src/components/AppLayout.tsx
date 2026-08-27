@@ -11,13 +11,23 @@ import { useNavigate, useLocation } from "react-router";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 
-
 const BASE = import.meta.env.BASE_URL || "/";
 
 const navCategories = [
-  "Stacks", "Protein", "Pre-Workout", "Creatine", "Muscle Building",
-  "Hydration", "Post-Workout", "Immunity & Wellness", "Weight Management",
-  "Digestion & Gut Health", "Longevity", "Recovery", "Amino Acids", "Samples",
+  "Stacks",
+  "Protein",
+  "Pre-Workout",
+  "Creatine",
+  "Muscle Building",
+  "Hydration",
+  "Post-Workout",
+  "Immunity & Wellness",
+  "Weight Management",
+  "Digestion & Gut Health",
+  "Longevity",
+  "Recovery",
+  "Amino Acids",
+  "Samples",
 ];
 
 function formatINR(price: number) {
@@ -44,9 +54,11 @@ type Product = {
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
-  const location = useLocation(); 
+  const location = useLocation();
   // Products (fetched from Supabase)
-  const [allProducts, setAllProducts] = useState<Product[] | undefined>(undefined);
+  const [allProducts, setAllProducts] = useState<Product[] | undefined>(
+    undefined,
+  );
 
   useEffect(() => {
     supabase
@@ -74,7 +86,11 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "/" && !searchOpen && !(e.target instanceof HTMLInputElement)) {
+      if (
+        e.key === "/" &&
+        !searchOpen &&
+        !(e.target instanceof HTMLInputElement)
+      ) {
         e.preventDefault();
         setSearchOpen(true);
       }
@@ -84,15 +100,17 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener("keydown", handleKey);
   }, [searchOpen]);
 
-  const searchSuggestions = (allProducts ?? []).filter((p) => {
-    if (!searchQuery.trim()) return false;
-    const q = searchQuery.toLowerCase();
-    return (
-      p.name.toLowerCase().includes(q) ||
-      p.brand.toLowerCase().includes(q) ||
-      p.category.toLowerCase().includes(q)
-    );
-  }).slice(0, 6);
+  const searchSuggestions = (allProducts ?? [])
+    .filter((p) => {
+      if (!searchQuery.trim()) return false;
+      const q = searchQuery.toLowerCase();
+      return (
+        p.name.toLowerCase().includes(q) ||
+        p.brand.toLowerCase().includes(q) ||
+        p.category.toLowerCase().includes(q)
+      );
+    })
+    .slice(0, 6);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -171,15 +189,23 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                       className="w-full flex items-center gap-3 px-5 py-3 hover:bg-white/5 transition-colors text-left cursor-pointer border-b border-[#2b2a27] last:border-0"
                     >
                       {product.imageUrl ? (
-                        <img src={product.imageUrl} alt="" className="h-10 w-10 object-contain flex-shrink-0" />
+                        <img
+                          src={product.imageUrl}
+                          alt=""
+                          className="h-10 w-10 object-contain flex-shrink-0"
+                        />
                       ) : (
                         <div className="h-10 w-10 bg-[#2b2a27] flex items-center justify-center flex-shrink-0">
                           <Package className="h-4 w-4 text-[#999999]/30" />
                         </div>
                       )}
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm text-white truncate">{product.name}</p>
-                        <p className="text-xs text-[#999999]">{product.brand} · {formatINR(product.price)}</p>
+                        <p className="text-sm text-white truncate">
+                          {product.name}
+                        </p>
+                        <p className="text-xs text-[#999999]">
+                          {product.brand} · {formatINR(product.price)}
+                        </p>
                       </div>
                       <Package className="h-4 w-4 text-[#999999]/30 flex-shrink-0" />
                     </button>
@@ -187,11 +213,17 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 </div>
               )}
               {searchQuery.trim() && searchSuggestions.length === 0 && (
-                <p className="text-xs text-[#999999] mt-2 text-center">No products found for "{searchQuery}"</p>
+                <p className="text-xs text-[#999999] mt-2 text-center">
+                  No products found for "{searchQuery}"
+                </p>
               )}
               {!searchQuery.trim() && (
                 <p className="text-xs text-[#999999] mt-3 text-center">
-                  Press <kbd className="px-1.5 py-0.5 bg-[#111111] border border-[#2b2a27] text-[#999999]">ESC</kbd> to close
+                  Press{" "}
+                  <kbd className="px-1.5 py-0.5 bg-[#111111] border border-[#2b2a27] text-[#999999]">
+                    ESC
+                  </kbd>{" "}
+                  to close
                 </p>
               )}
             </motion.form>
@@ -205,7 +237,10 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           <div className="h-14 lg:h-28 grid grid-cols-[1fr_auto_1fr] items-center">
             {/* Left */}
             <div className="flex items-center gap-4 lg:gap-8">
-              <button onClick={() => setSearchOpen(true)} className="w-10 h-10 flex items-center justify-center hover:text-[#c2202f] transition-colors cursor-pointer">
+              <button
+                onClick={() => setSearchOpen(true)}
+                className="w-10 h-10 flex items-center justify-center hover:text-[#c2202f] transition-colors cursor-pointer"
+              >
                 <Search className="h-5 w-5" />
               </button>
 
@@ -216,7 +251,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               >
                 <button className="group flex items-center gap-2 font-['Orbitron'] text-[16px] font-normal tracking-[0.15em] uppercase text-white hover:text-[#c2202f] transition-colors cursor-pointer py-8">
                   SUPPLEMENTS
-                  <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${supplementsOpen ? "rotate-180" : ""}`} />
+                  <ChevronDown
+                    className={`h-4 w-4 transition-transform duration-200 ${supplementsOpen ? "rotate-180" : ""}`}
+                  />
                   <span className="absolute bottom-6 left-0 w-full h-[2px] bg-[#c2202f] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
                 </button>
 
@@ -232,12 +269,17 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                       onMouseLeave={handleDropdownLeave}
                     >
                       <div className="px-6 pb-3 mb-2 border-b border-[#2b2a27]">
-                        <span className="font-['Orbitron'] text-xs tracking-[0.2em] uppercase text-[#c2202f]">Browse All</span>
+                        <span className="font-['Orbitron'] text-xs tracking-[0.2em] uppercase text-[#c2202f]">
+                          Browse All
+                        </span>
                       </div>
                       {navCategories.map((cat) => (
                         <button
                           key={cat}
-                          onClick={() => { setSupplementsOpen(false); navigate("/catalogue"); }}
+                          onClick={() => {
+                            setSupplementsOpen(false);
+                            navigate("/catalogue");
+                          }}
                           className="w-full text-left px-6 py-3 text-[15px] text-[#999999] hover:text-white hover:bg-white/5 transition-all duration-200 tracking-wide cursor-pointer flex items-center justify-between group/item"
                         >
                           <span>{cat}</span>
@@ -251,68 +293,122 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             </div>
 
             {/* Center — logo */}
-            <button onClick={() => navigate("/")} className="flex items-center cursor-pointer">
-              <img id="site-logo" src={`${BASE}logoo.png`} alt="TheDietStore" className="h-12 lg:h-16 w-auto object-contain" />
+            <button
+              onClick={() => navigate("/")}
+              className="flex items-center cursor-pointer"
+            >
+              <img
+                id="site-logo"
+                src={`${BASE}logoo.png`}
+                alt="TheDietStore"
+                className="h-12 lg:h-16 w-auto object-contain"
+              />
             </button>
 
             {/* Right */}
             <div className="flex items-center justify-end gap-4 lg:gap-10">
-                {/* Invisible placeholder on mobile to balance the search icon */}
-              <a href="#featured" className="hidden lg:block relative font-['Orbitron'] text-[16px] font-normal tracking-[0.15em] uppercase text-white hover:text-[#c2202f] transition-colors group/link py-8">
+              {/* Invisible placeholder on mobile to balance the search icon */}
+              <a
+                href="#featured"
+                className="hidden lg:block relative font-['Orbitron'] text-[16px] font-normal tracking-[0.15em] uppercase text-white hover:text-[#c2202f] transition-colors group/link py-8"
+              >
                 FEATURED
                 <span className="absolute bottom-6 left-0 w-full h-[2px] bg-[#c2202f] scale-x-0 group-hover/link:scale-x-100 transition-transform duration-300 origin-left" />
               </a>
-              <a href="#features" className="hidden lg:block relative font-['Orbitron'] text-[16px] font-normal tracking-[0.15em] uppercase text-white hover:text-[#c2202f] transition-colors group/link py-8">
+              <a
+                href="#features"
+                className="hidden lg:block relative font-['Orbitron'] text-[16px] font-normal tracking-[0.15em] uppercase text-white hover:text-[#c2202f] transition-colors group/link py-8"
+              >
                 WHY US
                 <span className="absolute bottom-6 left-0 w-full h-[2px] bg-[#c2202f] scale-x-0 group-hover/link:scale-x-100 transition-transform duration-300 origin-left" />
               </a>
-              <Button className="hidden lg:inline-flex bg-[#c2202f] text-white hover:bg-[#de3746] font-medium text-[14px] h-12 px-8 cursor-pointer tracking-wider font-['Orbitron'] uppercase" onClick={() => navigate("/catalogue")}>
+              <Button
+                className="hidden lg:inline-flex bg-[#c2202f] text-white hover:bg-[#de3746] font-medium text-[14px] h-12 px-8 cursor-pointer tracking-wider font-['Orbitron'] uppercase"
+                onClick={() => navigate("/catalogue")}
+              >
                 View Catalogue
               </Button>
             </div>
           </div>
 
           {/* Mobile menu */}
-<div className="lg:hidden border-t border-[#2b2a27]">
-  {/* Supplements expandable row */}
-  <button
-    onClick={() => setMobileSuppsOpen((p) => !p)}
-    className="w-full flex items-center justify-between px-1 py-1.5 text-sm text-[#999999] hover:text-white transition-colors cursor-pointer"
-  >
-    <span className="font-['Orbitron'] tracking-[0.15em] uppercase text-xs">Supplements</span>
-    <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${mobileSuppsOpen ? "rotate-180" : ""}`} />
-  </button>
-
-  {/* Category list */}
-  <AnimatePresence>
-    {mobileSuppsOpen && (
-      <motion.div
-        initial={{ height: 0, opacity: 0 }}
-        animate={{ height: "auto", opacity: 1 }}
-        exit={{ height: 0, opacity: 0 }}
-        transition={{ duration: 0.25 }}
-        className="overflow-hidden"
-      >
-        <div className="grid grid-cols-2 gap-1 pb-3">
-          {navCategories.map((cat) => (
+          <div className="lg:hidden border-t border-[#2b2a27]">
+            {/* Supplements expandable row */}
             <button
-              key={cat}
-              onClick={() => { setMobileSuppsOpen(false); navigate("/catalogue"); }}
-              className="text-left px-2 py-2 text-xs text-[#999999] hover:text-white hover:bg-white/5 transition-all rounded tracking-wide cursor-pointer"
+              onClick={() => setMobileSuppsOpen((p) => !p)}
+              className="w-full flex items-center justify-between px-1 py-1.5 text-sm text-[#999999] hover:text-white transition-colors cursor-pointer"
             >
-              {cat}
+              <span className="font-['Orbitron'] tracking-[0.15em] uppercase text-xs">
+                Supplements
+              </span>
+              <ChevronDown
+                className={`h-4 w-4 transition-transform duration-200 ${mobileSuppsOpen ? "rotate-180" : ""}`}
+              />
             </button>
-          ))}
-        </div>
-      </motion.div>
-    )}
-  </AnimatePresence>
-  
-</div>
+
+                        {/* Category list */}
+            <AnimatePresence>
+              {mobileSuppsOpen && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.25 }}
+                  className="overflow-hidden"
+                >
+                  <div className="grid grid-cols-2 gap-1 pb-3">
+                    {navCategories.map((cat) => (
+                      <button
+                        key={cat}
+                        onClick={() => {
+                          setMobileSuppsOpen(false);
+                          navigate("/catalogue");
+                        }}
+                        className="text-left px-2 py-2 text-xs text-[#999999] hover:text-white hover:bg-white/5 transition-all rounded tracking-wide cursor-pointer"
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+                        {/* Mobile primary links — with floating active-page indicator */}
+            <div className="flex items-center justify-between gap-2 py-2.5 border-t border-[#2b2a27] mt-1">
+              {[
+                { label: "Home", path: "/" },
+                { label: "Catalogue", path: "/catalogue" },
+                { label: "Admin", path: "/admin" },
+              ].map((link) => {
+                const isActive = location.pathname === link.path;
+                return (
+                  <button
+                    key={link.path}
+                    onClick={() => navigate(link.path)}
+                    className={`relative pb-1.5 font-['Orbitron'] text-[10px] tracking-wider uppercase transition-colors cursor-pointer ${
+                      isActive
+                        ? "text-[#c2202f]"
+                        : "text-[#999999] hover:text-white"
+                    }`}
+                  >
+                    {link.label}
+                    {isActive && (
+                      <motion.span
+                        layoutId="mobileNavIndicator"
+                        className="absolute left-0 right-0 -bottom-0 h-[2px] bg-[#c2202f]"
+                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                      />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </nav>
 
-            {/* Page content */}
+      {/* Page content */}
       <div className="pt-24 lg:pt-28">{children}</div>
 
       {/* ── Footer ── */}
@@ -322,49 +418,27 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
             {/* Brand */}
             <div className="lg:col-span-1">
-              <button onClick={() => navigate("/")} className="cursor-pointer mb-5">
-                <img src={`${BASE}logoo.png`} alt="TheDietStore" className="h-10 lg:h-12 w-auto object-contain" />
+              <button
+                onClick={() => navigate("/")}
+                className="cursor-pointer mb-5"
+              >
+                <img
+                  src={`${BASE}logoo.png`}
+                  alt="TheDietStore"
+                  className="h-10 lg:h-12 w-auto object-contain"
+                />
               </button>
               <p className="text-[15px] text-[#999999] leading-relaxed font-['Barlow'] max-w-xs">
-                Your trusted source for genuine international supplement brands at the best prices.
+                Your trusted source for genuine international supplement brands
+                at the best prices.
               </p>
-              <div className="flex items-center gap-4 py-1.5 border-t border-[#2b2a27] text-sm text-[#999999]">
-  <button
-    onClick={() => navigate("/")}
-    className="hover:text-white transition-colors font-['Orbitron'] text-xs tracking-wider uppercase cursor-pointer text-[#999999]"
-  >
-    Home
-  </button>
-
-  {location.pathname === "/" && (
-    <>
-      <a href="#featured" className="hover:text-white transition-colors font-['Orbitron'] text-xs tracking-wider uppercase">
-        Featured
-      </a>
-      <a href="#features" className="hover:text-white transition-colors font-['Orbitron'] text-xs tracking-wider uppercase">
-        Why Us
-      </a>
-    </>
-  )}
-
-  <button
-    onClick={() => navigate("/admin")}
-    className="hover:text-white transition-colors font-['Orbitron'] text-xs tracking-wider uppercase cursor-pointer text-[#c2202f]"
-  >
-    Admin →
-  </button>
-  <button
-    onClick={() => navigate("/catalogue")} 
-    className="hover:text-white transition-colors font-['Orbitron'] text-xs tracking-wider uppercase cursor-pointer ml-auto text-[#c2202f]"
-  >
-    Catalogue →
-  </button>
-</div>
             </div>
 
             {/* Quick Links */}
             <div>
-              <h4 className="font-['Orbitron'] text-sm font-normal tracking-[0.15em] uppercase text-white mb-5">Quick Links</h4>
+              <h4 className="font-['Orbitron'] text-sm font-normal tracking-[0.15em] uppercase text-white mb-5">
+                Quick Links
+              </h4>
               <ul className="space-y-3">
                 {[
                   { label: "Home", path: "/" },
@@ -385,9 +459,18 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
             {/* Categories */}
             <div>
-              <h4 className="font-['Orbitron'] text-sm font-normal tracking-[0.15em] uppercase text-white mb-5">Categories</h4>
+              <h4 className="font-['Orbitron'] text-sm font-normal tracking-[0.15em] uppercase text-white mb-5">
+                Categories
+              </h4>
               <ul className="space-y-3">
-                {["Protein", "Pre-Workout", "Creatine", "BCAA", "Mass Gainer", "Fat Burner"].map((cat) => (
+                {[
+                  "Protein",
+                  "Pre-Workout",
+                  "Creatine",
+                  "BCAA",
+                  "Mass Gainer",
+                  "Fat Burner",
+                ].map((cat) => (
                   <li key={cat}>
                     <button
                       onClick={() => navigate("/catalogue")}
@@ -402,17 +485,31 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
             {/* Contact */}
             <div>
-              <h4 className="font-['Orbitron'] text-sm font-normal tracking-[0.15em] uppercase text-white mb-5">Get in Touch</h4>
+              <h4 className="font-['Orbitron'] text-sm font-normal tracking-[0.15em] uppercase text-white mb-5">
+                Get in Touch
+              </h4>
               <ul className="space-y-3">
                 <li className="text-[15px] text-[#999999] font-['Barlow']">
-                  <span className="text-[#999999]/60 text-sm block mb-1">WhatsApp</span>
-                  <a href="https://wa.me/918295158184" target="_blank" rel="noopener noreferrer" className="hover:text-[#25D366] transition-colors">
+                  <span className="text-[#999999]/60 text-sm block mb-1">
+                    WhatsApp
+                  </span>
+                  <a
+                    href="https://wa.me/918295158184"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-[#25D366] transition-colors"
+                  >
                     +91 82951 58184
                   </a>
                 </li>
                 <li className="text-[15px] text-[#999999] font-['Barlow']">
-                  <span className="text-[#999999]/60 text-sm block mb-1">Email</span>
-                  <a href="mailto:info@thedietstore.in" className="hover:text-[#c2202f] transition-colors">
+                  <span className="text-[#999999]/60 text-sm block mb-1">
+                    Email
+                  </span>
+                  <a
+                    href="mailto:info@thedietstore.in"
+                    className="hover:text-[#c2202f] transition-colors"
+                  >
                     info@thedietstore.in
                   </a>
                 </li>
@@ -439,9 +536,15 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               © 2026 TheDietStore. All rights reserved.
             </p>
             <div className="flex items-center gap-6">
-              <span className="text-[13px] text-[#999999]/50 font-['Barlow']">100% Authentic Products</span>
-              <span className="text-[13px] text-[#999999]/50 font-['Barlow']">|</span>
-              <span className="text-[13px] text-[#999999]/50 font-['Barlow']">Pan-India Delivery</span>
+              <span className="text-[13px] text-[#999999]/50 font-['Barlow']">
+                100% Authentic Products
+              </span>
+              <span className="text-[13px] text-[#999999]/50 font-['Barlow']">
+                |
+              </span>
+              <span className="text-[13px] text-[#999999]/50 font-['Barlow']">
+                Pan-India Delivery
+              </span>
             </div>
           </div>
         </div>

@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-  Dumbbell,
   Lock,
   LogOut,
   Package,
@@ -44,6 +43,7 @@ type Product = {
 };
 
 export default function Admin() {
+  const BASE = import.meta.env.BASE_URL || "logoo.png/";
   const navigate = useNavigate();
   const { isLoading: authLoading, isAuthenticated, signIn, signOut } = useAuth();
 
@@ -246,9 +246,11 @@ export default function Admin() {
       <div className="min-h-screen bg-black flex items-center justify-center px-6">
         <div className="w-full max-w-sm">
           <div className="text-center mb-8">
-            <div className="flex h-14 w-14 items-center justify-center bg-[#c2202f] mx-auto mb-4">
-              <Dumbbell className="h-7 w-7 text-white" />
-            </div>
+                        <img
+              src={`${BASE}logoo.png`}
+              alt="TheDietStore"
+              className="h-14 w-auto mx-auto mb-4 object-contain"
+            />
             <h1 className="font-['Orbitron'] text-2xl font-normal tracking-[0.15em] uppercase">
               Admin Panel
             </h1>
@@ -308,14 +310,15 @@ export default function Admin() {
     <div className="min-h-screen bg-black text-white">
       <header className="sticky top-0 z-40 border-b border-[#2b2a27] bg-black/90 backdrop-blur-xl">
         <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
-          <button
+                    <button
             onClick={() => navigate("/")}
             className="flex items-center gap-3 cursor-pointer"
           >
-            <Dumbbell className="h-5 w-5 text-[#c2202f]" />
-            <span className="font-['Orbitron'] text-base font-normal tracking-[0.15em] uppercase">
-              TheDietStore
-            </span>
+            <img
+              src={`${BASE}logoo.png`}
+              alt="TheDietStore"
+              className="h-8 w-auto object-contain"
+            />
             <Badge className="bg-[#c2202f]/10 text-[#c2202f] border border-[#c2202f]/20 text-[10px] ml-1">
               Admin
             </Badge>
