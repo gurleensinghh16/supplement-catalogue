@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/use-auth";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,7 @@ import {
   Pencil,
   Plus,
   Save,
+  Search,
   Trash2,
   X,
 } from "lucide-react";
@@ -75,6 +76,9 @@ export default function Admin() {
   const [newFeatured, setNewFeatured] = useState(false);
   const [newTags, setNewTags] = useState("");
 
+  // Search state
+  const [searchQuery, setSearchQuery] = useState("");
+
   // Fetch products from Supabase (re-runs whenever refreshKey changes)
   useEffect(() => {
     if (!isAuthenticated) return;
@@ -103,6 +107,18 @@ export default function Admin() {
   }, [refreshKey, isAuthenticated]);
 
   const refetch = useCallback(() => setRefreshKey((k) => k + 1), []);
+
+  // Filtered list for the table — searches name, brand, category, and SKU
+  const filteredProducts = useMemo(() => {
+    if (!products) return products;
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return products;
+    return products.filter((p) =>
+      [p.name, p.brand, p.category, p.sku ?? ""].some((field) =>
+        field.toLowerCase().includes(q),
+      ),
+    );
+  }, [products, searchQuery]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -345,6 +361,45 @@ export default function Admin() {
           </Button>
         </div>
 
+        {/* Add Product Form — renders right below the button, above Hot Selling */}
+        {showAddForm && (
+          <form onSubmit={handleAddProduct} className="mb-8 border border-[#2b2a27] bg-[#0a0a0a] p-6">
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="font-['Orbitron'] text-base tracking-[0.15em] uppercase text-white">New Product</h2>
+              <button type="button" onClick={resetAddForm} className="text-[#999999] hover:text-white cursor-pointer">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <Input placeholder="Product Name *" value={newName} onChange={(e) => setNewName(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" required />
+              <Input placeholder="Brand *" value={newBrand} onChange={(e) => setNewBrand(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" required />
+              <Input placeholder="Category *" value={newCategory} onChange={(e) => setNewCategory(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" required />
+              <Input placeholder="Price (₹) *" type="number" value={newPrice} onChange={(e) => setNewPrice(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" required />
+              <Input placeholder="SKU" value={newSku} onChange={(e) => setNewSku(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" />
+              <Input placeholder="Image URL" value={newImageUrl} onChange={(e) => setNewImageUrl(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" />
+              <Input placeholder="Weight" value={newWeight} onChange={(e) => setNewWeight(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" />
+              <Input placeholder="Servings" value={newServings} onChange={(e) => setNewServings(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" />
+              <Input placeholder="Stock Quantity" type="number" value={newStock} onChange={(e) => setNewStock(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" />
+              <Input placeholder="Tags (comma-separated)" value={newTags} onChange={(e) => setNewTags(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50 sm:col-span-2 lg:col-span-1" />
+              <textarea placeholder="Description" value={newDescription} onChange={(e) => setNewDescription(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50 px-3 py-2 text-sm resize-none sm:col-span-2 lg:col-span-3" rows={2} />
+            </div>
+            <div className="flex items-center gap-4 mt-4">
+              <span className="text-[11px] text-[#999999]/60 italic">
+                In Stock is set automatically from Stock Quantity
+              </span>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <button type="button" onClick={() => setNewFeatured(!newFeatured)} className={cn("h-6 w-10 transition-colors cursor-pointer relative rounded-full", newFeatured ? "bg-[#c2202f]" : "bg-[#2b2a27]")}>
+                  <span className={cn("absolute top-0.5 h-5 w-5 bg-white transition-transform rounded-full shadow", newFeatured ? "translate-x-[20px]" : "translate-x-0.5")} />
+                </button>
+                <span className="text-xs text-[#999999]">Featured on Home</span>
+              </label>
+              <Button type="submit" className="bg-[#c2202f] text-white hover:bg-[#de3746] cursor-pointer font-['Orbitron'] text-xs tracking-wider uppercase ml-auto">
+                <Save className="h-3.5 w-3.5 mr-2" /> Create Product
+              </Button>
+            </div>
+          </form>
+        )}
+
         {/* Hot Selling Products panel */}
         {products !== undefined && (
           <div className="mb-8 border border-[#c2202f]/30 bg-[#0a0a0a]">
@@ -405,43 +460,34 @@ export default function Admin() {
           </div>
         )}
 
-        {/* Add Product Form */}
-        {showAddForm && (
-          <form onSubmit={handleAddProduct} className="mb-8 border border-[#2b2a27] bg-[#0a0a0a] p-6">
-            <div className="flex items-center justify-between mb-5">
-              <h2 className="font-['Orbitron'] text-base tracking-[0.15em] uppercase text-white">New Product</h2>
-              <button type="button" onClick={resetAddForm} className="text-[#999999] hover:text-white cursor-pointer">
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              <Input placeholder="Product Name *" value={newName} onChange={(e) => setNewName(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" required />
-              <Input placeholder="Brand *" value={newBrand} onChange={(e) => setNewBrand(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" required />
-              <Input placeholder="Category *" value={newCategory} onChange={(e) => setNewCategory(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" required />
-              <Input placeholder="Price (₹) *" type="number" value={newPrice} onChange={(e) => setNewPrice(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" required />
-              <Input placeholder="SKU" value={newSku} onChange={(e) => setNewSku(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" />
-              <Input placeholder="Image URL" value={newImageUrl} onChange={(e) => setNewImageUrl(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" />
-              <Input placeholder="Weight" value={newWeight} onChange={(e) => setNewWeight(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" />
-              <Input placeholder="Servings" value={newServings} onChange={(e) => setNewServings(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" />
-              <Input placeholder="Stock Quantity" type="number" value={newStock} onChange={(e) => setNewStock(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" />
-              <Input placeholder="Tags (comma-separated)" value={newTags} onChange={(e) => setNewTags(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50 sm:col-span-2 lg:col-span-1" />
-              <textarea placeholder="Description" value={newDescription} onChange={(e) => setNewDescription(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50 px-3 py-2 text-sm resize-none sm:col-span-2 lg:col-span-3" rows={2} />
-            </div>
-            <div className="flex items-center gap-4 mt-4">
-              <span className="text-[11px] text-[#999999]/60 italic">
-                In Stock is set automatically from Stock Quantity
-              </span>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <button type="button" onClick={() => setNewFeatured(!newFeatured)} className={cn("h-6 w-10 transition-colors cursor-pointer relative rounded-full", newFeatured ? "bg-[#c2202f]" : "bg-[#2b2a27]")}>
-                  <span className={cn("absolute top-0.5 h-5 w-5 bg-white transition-transform rounded-full shadow", newFeatured ? "translate-x-[20px]" : "translate-x-0.5")} />
+        {/* Search bar for the product table */}
+        {products !== undefined && products.length > 0 && (
+          <div className="mb-4 flex items-center gap-3">
+            <div className="relative flex-1 max-w-sm">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#999999]" />
+              <Input
+                type="text"
+                placeholder="Search by name, brand, category, SKU..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="h-10 pl-9 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50 focus-visible:border-[#c2202f]/40"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#999999] hover:text-white cursor-pointer"
+                >
+                  <X className="h-3.5 w-3.5" />
                 </button>
-                <span className="text-xs text-[#999999]">Featured on Home</span>
-              </label>
-              <Button type="submit" className="bg-[#c2202f] text-white hover:bg-[#de3746] cursor-pointer font-['Orbitron'] text-xs tracking-wider uppercase ml-auto">
-                <Save className="h-3.5 w-3.5 mr-2" /> Create Product
-              </Button>
+              )}
             </div>
-          </form>
+            {searchQuery && (
+              <span className="text-xs text-[#999999] whitespace-nowrap">
+                {filteredProducts?.length ?? 0} of {products.length} products
+              </span>
+            )}
+          </div>
         )}
 
         {products === undefined ? (
@@ -449,6 +495,10 @@ export default function Admin() {
         ) : products.length === 0 ? (
           <div className="text-center py-20 text-[#999999]">
             No products yet. Add one above.
+          </div>
+        ) : filteredProducts && filteredProducts.length === 0 ? (
+          <div className="text-center py-20 text-[#999999]">
+            No products match "{searchQuery}".
           </div>
         ) : (
           <div className="border border-[#2b2a27] overflow-hidden">
@@ -465,7 +515,7 @@ export default function Admin() {
               <span className="text-center">Actions</span>
             </div>
 
-            {products.map((product) => {
+            {(filteredProducts ?? products).map((product) => {
               const isEditing = editingId === product.id;
               return (
                 <div
