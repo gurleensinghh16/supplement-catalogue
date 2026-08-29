@@ -177,7 +177,7 @@ export default function Landing() {
       )}
 
       {/* ── Hero Carousel — Full clickable images, no text overlay ── */}
-      <section ref={heroRef} className="relative w-full h-[222px] sm:h-[420px] lg:h-[600px] mt-[120px] sm:mt-[20px] lg:mt-0 overflow-hidden px-2 sm:px-0">
+      <section ref={heroRef} className="relative w-full h-[222px] sm:h-[420px] lg:h-[600px] mt-[60px] sm:mt-[20px] lg:mt-0 overflow-hidden ">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentSlide}
@@ -194,7 +194,7 @@ export default function Landing() {
   <img
   src={heroSlides[currentSlide].image}
   alt="Hero banner"
-  className="w-full h-full object-cover block"
+  className="w-full h-full object-contain block"
   style={{ objectPosition: "center 15%" }}
 />
 </button>
