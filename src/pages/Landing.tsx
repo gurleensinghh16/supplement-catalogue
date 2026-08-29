@@ -35,9 +35,11 @@ const scaleIn = {
 const BASE = import.meta.env.BASE_URL || "/";
 
 const heroSlides = [
-  { image: `${BASE}hero-1.jpg` },
-  { image: `${BASE}hero-2.jpg` },
-  { image: `${BASE}gym_3.png` },
+  { image: `${BASE}hero-1.webp` },
+  { image: `${BASE}hero-2.webp` },
+  { image: `${BASE}hero-3.webp` },
+  { image: `${BASE}hero-4.webp` },
+  { image: `${BASE}hero-5.webp` }
 ];
 
 const features = [
