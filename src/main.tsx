@@ -81,16 +81,11 @@ function RouteSyncer() {
   return null;
 }
 
-const navEntry = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming;
-if (navEntry?.type === "reload" && window.location.pathname !== "/supplement-catalogue/") {
-  window.location.replace("/supplement-catalogue/");
-}
-
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <RootErrorBoundary>
       <LoadingScreen />
-      <BrowserRouter basename="/supplement-catalogue">
+      <BrowserRouter>
         <RouteSyncer />
         <AppLayout>
           <Suspense fallback={<RouteLoading />}>
