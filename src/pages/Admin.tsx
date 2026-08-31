@@ -38,7 +38,7 @@ type Product = {
 };
 
 export default function Admin() {
-  const BASE = import.meta.env.BASE_URL || "logoo.png/";
+  const BASE = import.meta.env.BASE_URL || "/";
   const navigate = useNavigate();
   const { isLoading: authLoading, isAuthenticated, signIn, signOut } = useAuth();
 
@@ -236,7 +236,7 @@ export default function Admin() {
         <div className="w-full max-w-sm">
           <div className="text-center mb-8">
                         <img
-              src={`${BASE}logoo.png`}
+              src={`${BASE}/loogo.png`}
               alt="TheDietStore"
               className="h-14 w-auto mx-auto mb-4 object-contain"
             />
@@ -341,7 +341,7 @@ export default function Admin() {
               Product Management
             </h1>
             <p className="text-sm text-[#999999] mt-1">
-              Edit prices, images, stock quantities, and availability for all products.
+              Edit images, stock quantities, and availability for all products.
             </p>
           </div>
           <Button

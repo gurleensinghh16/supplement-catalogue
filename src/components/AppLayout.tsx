@@ -30,18 +30,12 @@ const navCategories = [
   "Travel Pack",
 ];
 
-function formatINR(price: number) {
-  return `₹${price.toLocaleString("en-IN")}`;
-}
-
 type Product = {
   _id: string;
   name: string;
   brand: string;
   category: string;
   description: string;
-  price: number;
-  compareAtPrice?: number;
   sku: string;
   inStock: boolean;
   imageUrl?: string;
@@ -204,7 +198,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                           {product.name}
                         </p>
                         <p className="text-xs text-[#999999]">
-                          {product.brand} · {formatINR(product.price)}
+                          {product.brand}
                         </p>
                       </div>
                       <Package className="h-4 w-4 text-[#999999]/30 flex-shrink-0" />
@@ -447,7 +441,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               </button>
               <p className="text-[15px] text-[#999999] leading-relaxed font-['Barlow'] max-w-xs">
                 Your trusted source for genuine international supplement brands
-                at the best prices.
+and premium nutrition products.
               </p>
             </div>
 

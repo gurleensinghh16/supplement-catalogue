@@ -43,10 +43,6 @@ const sectionCategories = [
   "Nitric Oxide",
 ];
 
-function formatINR(price: number) {
-  return `₹${price.toLocaleString("en-IN")}`;
-}
-
 // Matches actual Supabase "products" table columns (camelCase).
 type Product = {
   id: string;
@@ -54,8 +50,6 @@ type Product = {
   brand: string;
   category: string;
   description: string;
-  price: number;
-  compare_at_price?: number;
   sku: string;
   inStock: boolean;
   imageUrl?: string;
@@ -122,7 +116,7 @@ function CategorySection({
         className="flex gap-4 overflow-x-auto scrollbar-hide pb-2"
         style={{ scrollSnapType: "x mandatory" }}
       >
-        {products.map((product) => {              const msg = encodeURIComponent(`Hi TheDietStore 👋\n\nI'm interested in:\n\n📦 *${product.name}*\n🏷️ Brand: ${product.brand}\n💰 Price: ${formatINR(product.price)}\n📋 SKU: ${product.sku}\n\nPlease share details about:\n• Availability & stock\n• Bulk/wholesale pricing\n• Delivery options\n\nThank you!`);
+        {products.map((product) => {              const msg = encodeURIComponent(`Hi TheDietStore 👋\n\nI'm interested in:\n\n📦 *${product.name}*\n🏷️ Brand: ${product.brand}\n\n📋 SKU: ${product.sku}\n\nPlease share details about:\n• Availability & stock\n• Bulk/wholesale pricing\n• Delivery options\n\nThank you!`);
           return (
           <div
             key={product.id}
@@ -179,18 +173,6 @@ function CategorySection({
             <p className="text-[11px] text-[#999999] leading-relaxed mb-2 line-clamp-2">
               {product.description}
             </p>
-
-            {/* Price */}
-            <div className="flex items-center gap-2 mb-2">
-              <p className="text-sm font-semibold text-white">
-                {formatINR(product.price)}
-              </p>
-              {product.compare_at_price && (
-                <p className="text-xs text-[#999999] line-through">
-                  {formatINR(product.compare_at_price)}
-                </p>
-              )}
-            </div>
 
             {/* WhatsApp Enquiry Button */}
             <a
@@ -370,7 +352,7 @@ export default function Dashboard() {
           // Search results — flat grid
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
             {allProducts.map((product) => {
-              const msg = encodeURIComponent(`Hi TheDietStore 👋\n\nI'm interested in:\n\n📦 *${product.name}*\n🏷️ Brand: ${product.brand}\n💰 Price: ${formatINR(product.price)}\n📋 SKU: ${product.sku}\n\nPlease share details about:\n• Availability & stock\n• Bulk/wholesale pricing\n• Delivery options\n\nThank you!`);
+              const msg = encodeURIComponent(`Hi TheDietStore 👋\n\nI'm interested in:\n\n📦 *${product.name}*\n🏷️ Brand: ${product.brand}\n\n📋 SKU: ${product.sku}\n\nPlease share details about:\n• Availability & stock\n• Bulk/wholesale pricing\n• Delivery options\n\nThank you!`);
               return (
               <div
                 key={product.id}
@@ -417,16 +399,7 @@ export default function Dashboard() {
                 <p className="text-[11px] text-[#999999] leading-relaxed mb-2 line-clamp-2">
                   {product.description}
                 </p>
-                <div className="flex items-center gap-2 mb-2">
-                  <p className="text-sm font-semibold text-white">
-                    {formatINR(product.price)}
-                  </p>
-                  {product.compare_at_price && (
-                    <p className="text-xs text-[#999999] line-through">
-                      {formatINR(product.compare_at_price)}
-                    </p>
-                  )}
-                </div>
+                
                 <a
                   href={`https://wa.me/918295158184?text=${msg}`}
                   target="_blank"
