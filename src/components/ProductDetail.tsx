@@ -7,8 +7,6 @@ type Product = {
   brand: string;
   category: string;
   description: string;
-  price: number;
-  compare_at_price?: number;
   sku: string;
   inStock: boolean;
   imageUrl?: string;
@@ -18,10 +16,6 @@ type Product = {
   featured?: boolean;
   stockQuantity?: number;
 };
-
-function formatINR(price: number) {
-  return `₹${price.toLocaleString("en-IN")}`;
-}
 
 export default function ProductDetail({
   product,
@@ -61,20 +55,9 @@ export default function ProductDetail({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const discount =
-    product.compare_at_price && product.compare_at_price > product.price
-      ? Math.round(
-          ((product.compare_at_price - product.price) /
-            product.compare_at_price) *
-            100
-        )
-      : null;
-
   const msg = encodeURIComponent(
-    `Hi TheDietStore 👋\n\nI'm interested in:\n\n📦 *${product.name}*\n🏷️ Brand: ${product.brand}\n💰 Price: ${formatINR(
-      product.price
-    )}\n📋 SKU: ${product.sku}\n🔢 Quantity: ${qty}\n\nPlease share details about:\n• Availability & stock\n• Bulk/wholesale pricing\n• Delivery options\n\nThank you!`
-  );
+  `Hi TheDietStore 👋\n\nI'm interested in:\n\n📦 *${product.name}*\n🏷️ Brand: ${product.brand}\n📋 SKU: ${product.sku}\n🔢 Quantity: ${qty}\n\nPlease share details about:\n• Availability & stock\n• Bulk/wholesale pricing\n• Delivery options\n\nThank you!`
+);
 
   return (
     <div
@@ -133,13 +116,6 @@ export default function ProductDetail({
                   </span>
                 </div>
               )}
-              {discount && (
-                <div className="absolute top-4 left-4" style={{ marginTop: !product.inStock ? "2rem" : 0 }}>
-                  <span className="bg-white text-black text-[10px] font-bold px-2.5 py-1 uppercase tracking-wider font-['Orbitron']">
-                    {discount}% off
-                  </span>
-                </div>
-              )}
             </div>
 
             {/* Info */}
@@ -151,18 +127,6 @@ export default function ProductDetail({
               <h2 className="font-['Orbitron'] text-lg sm:text-xl font-normal tracking-[0.1em] uppercase text-white mb-3 leading-snug">
                 {product.name}
               </h2>
-
-              <div className="flex items-center gap-3 mb-4">
-                <p className="text-2xl font-semibold text-white">
-                  {formatINR(product.price)}
-                </p>
-                {product.compare_at_price && (
-                  <p className="text-sm text-[#999999] line-through">
-                    {formatINR(product.compare_at_price)}
-                  </p>
-                )}
-              </div>
-
               <p className="text-sm text-[#999999] leading-relaxed mb-5">
                 {product.description}
               </p>

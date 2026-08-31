@@ -18,10 +18,6 @@ import {
 import { useNavigate } from "react-router";
 import { cn } from "@/lib/utils";
 
-function formatINR(price: number) {
-  return `₹${price.toLocaleString("en-IN")}`;
-}
-
 // Matches the actual Supabase `products` table columns (camelCase).
 // NOTE: this table has no `created_at` and no `compare_at_price` column —
 // those were removed here since they don't exist in the schema.
@@ -31,7 +27,6 @@ type Product = {
   brand: string;
   category: string;
   description: string | null;
-  price: number;
   sku: string | null;
   imageUrl: string | null;
   weight: string | null;
@@ -56,7 +51,6 @@ export default function Admin() {
   const [refreshKey, setRefreshKey] = useState(0);
 
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [editPrice, setEditPrice] = useState("");
   const [editImage, setEditImage] = useState("");
   const [editStock, setEditStock] = useState("");
   const [editFeatured, setEditFeatured] = useState(false);
@@ -67,7 +61,6 @@ export default function Admin() {
   const [newBrand, setNewBrand] = useState("");
   const [newCategory, setNewCategory] = useState("");
   const [newDescription, setNewDescription] = useState("");
-  const [newPrice, setNewPrice] = useState("");
   const [newSku, setNewSku] = useState("");
   const [newImageUrl, setNewImageUrl] = useState("");
   const [newWeight, setNewWeight] = useState("");
@@ -140,7 +133,6 @@ export default function Admin() {
 
   const startEditing = (product: Product) => {
     setEditingId(product.id);
-    setEditPrice(String(product.price));
     setEditImage(product.imageUrl || "");
     setEditStock(String(product.stockQuantity ?? ""));
     setEditFeatured(product.featured);
@@ -150,7 +142,6 @@ export default function Admin() {
     const { error } = await supabase
       .from("products")
       .update({
-        price: Number(editPrice),
         imageUrl: editImage || null,
         stockQuantity: editStock ? Number(editStock) : null,
         featured: editFeatured,
@@ -169,7 +160,6 @@ export default function Admin() {
 
   const resetAddForm = () => {
     setNewName(""); setNewBrand(""); setNewCategory(""); setNewDescription("");
-    setNewPrice(""); setNewSku("");
     setNewImageUrl(""); setNewWeight(""); setNewServings("");
     setNewStock("0"); setNewFeatured(false); setNewTags("");
     setShowAddForm(false);
@@ -177,14 +167,13 @@ export default function Admin() {
 
   const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newName || !newBrand || !newCategory || !newPrice) return;
+    if (!newName || !newBrand || !newCategory) return;
 
     const { error } = await supabase.from("products").insert({
       name: newName,
       brand: newBrand,
       category: newCategory,
       description: newDescription || null,
-      price: Number(newPrice),
       sku: newSku || null,
       imageUrl: newImageUrl || null,
       weight: newWeight || null,
@@ -377,7 +366,6 @@ export default function Admin() {
               <Input placeholder="Product Name *" value={newName} onChange={(e) => setNewName(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" required />
               <Input placeholder="Brand *" value={newBrand} onChange={(e) => setNewBrand(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" required />
               <Input placeholder="Category *" value={newCategory} onChange={(e) => setNewCategory(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" required />
-              <Input placeholder="Price (₹) *" type="number" value={newPrice} onChange={(e) => setNewPrice(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" required />
               <Input placeholder="SKU" value={newSku} onChange={(e) => setNewSku(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" />
               <Input placeholder="Image URL" value={newImageUrl} onChange={(e) => setNewImageUrl(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" />
               <Input placeholder="Weight" value={newWeight} onChange={(e) => setNewWeight(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" />
@@ -446,7 +434,7 @@ export default function Admin() {
                             {product.name}
                           </p>
                           <p className="text-xs text-[#999999]/60">
-                            {product.brand} · {formatINR(product.price)}
+                            {product.brand}
                           </p>
                         </div>
                       </div>
@@ -506,11 +494,10 @@ export default function Admin() {
         ) : (
           <div className="border border-[#2b2a27] overflow-hidden">
             {/* Table Header */}
-            <div className="hidden md:grid grid-cols-[auto_1fr_90px_80px_100px_70px_70px_70px_70px] gap-2 px-3 py-3 bg-[#111111] text-[10px] text-[#999999] uppercase tracking-wider font-medium border-b border-[#2b2a27]">
+            <div className="hidden md:grid grid-cols-[auto_1fr_90px_100px_70px_70px_70px_70px] gap-2 px-3 py-3 bg-[#111111] text-[10px] text-[#999999] uppercase tracking-wider font-medium border-b border-[#2b2a27]">
               <span></span>
               <span>Product</span>
               <span>Category</span>
-              <span className="text-right">Price</span>
               <span>Image URL</span>
               <span className="text-right">Stock</span>
               <span className="text-center">In Stock</span>
@@ -524,7 +511,7 @@ export default function Admin() {
                 <div
                   key={product.id}
                   className={cn(
-                    "grid grid-cols-1 md:grid-cols-[auto_1fr_90px_80px_100px_70px_70px_70px_70px] gap-2 px-3 py-3 border-t border-[#2b2a27] items-center transition-colors",
+                    "grid grid-cols-1 md:grid-cols-[auto_1fr_90px_100px_70px_70px_70px_70px] gap-2 px-3 py-3 border-t border-[#2b2a27] items-center transition-colors",
                     isEditing && "bg-[#c2202f]/[0.03]",
                   )}
                 >
@@ -552,21 +539,6 @@ export default function Admin() {
                   <span className="text-xs text-[#999999] hidden md:block">
                     {product.category}
                   </span>
-
-                  <div className="text-right">
-                    {isEditing ? (
-                      <Input
-                        value={editPrice}
-                        onChange={(e) => setEditPrice(e.target.value)}
-                        type="number"
-                        className="h-8 text-xs bg-[#111111] border-[#2b2a27] text-white w-full text-right"
-                      />
-                    ) : (
-                      <span className="text-sm font-medium text-white">
-                        {formatINR(product.price)}
-                      </span>
-                    )}
-                  </div>
 
                   <div className="hidden md:block">
                     {isEditing ? (

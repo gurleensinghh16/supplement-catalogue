@@ -60,10 +60,6 @@ const features = [
   },
 ];
 
-function formatINR(price: number) {
-  return `₹${price.toLocaleString("en-IN")}`;
-}
-
 // Matches the actual Supabase "products" table columns (camelCase) — same
 // shape used by ProductDetail.tsx. Supabase uses "id" (uuid) as the primary key.
 type Product = {
@@ -72,8 +68,6 @@ type Product = {
   brand: string;
   category: string;
   description: string;
-  price: number;
-  compare_at_price?: number; // not currently a column in your table; kept optional so unused code doesn't break
   sku: string;
   inStock: boolean;
   imageUrl?: string;
@@ -286,7 +280,7 @@ export default function Landing() {
                 onTouchEnd={handleTouchEnd}
               >
               {featuredFromDB.slice(0, 12).map((product, i) => {
-                const msg = encodeURIComponent(`Hi TheDietStore 👋\n\nI'm interested in:\n\n📦 *${product.name}*\n🏷️ Brand: ${product.brand}\n💰 Price: ${formatINR(product.price)}\n📋 SKU: ${product.sku}\n\nPlease share details about:\n• Availability & stock\n• Bulk/wholesale pricing\n• Delivery options\n\nThank you!`);
+              const msg = encodeURIComponent(`Hi TheDietStore 👋\n\nI'm interested in:\n\n📦 *${product.name}*\n🏷️ Brand: ${product.brand}\n📋 SKU: ${product.sku}\n\nPlease share details about:\n• Availability & stock\n• Bulk/wholesale pricing\n• Delivery options\n\nThank you!`);
                 return (
                 <motion.div key={product.id} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
                   variants={scaleIn} custom={i} className={`group flex-shrink-0 w-[42vw] xs:w-[180px] sm:w-[260px] md:w-[280px] lg:w-[280px] ${!product.inStock ? 'opacity-60 grayscale' : ''}`}>
@@ -333,14 +327,6 @@ export default function Landing() {
                   <p className="text-xs text-[#999999] leading-relaxed mb-2 line-clamp-2">
                     {product.description}
                   </p>
-
-                  {/* Price */}
-                  <div className="flex items-center gap-2 mb-3">
-                    <p className="text-base font-semibold text-white">{formatINR(product.price)}</p>
-                    {product.compare_at_price && (
-                      <p className="text-sm text-[#999999] line-through">{formatINR(product.compare_at_price)}</p>
-                    )}
-                  </div>
 
                   {/* WhatsApp Enquiry Button */}
                   <a
