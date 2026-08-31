@@ -236,7 +236,7 @@ export default function Admin() {
         <div className="w-full max-w-sm">
           <div className="text-center mb-8">
                         <img
-              src={`${BASE}/loogo.png`}
+              src={`${BASE}loogo.png/`}
               alt="TheDietStore"
               className="h-14 w-auto mx-auto mb-4 object-contain"
             />
@@ -304,7 +304,7 @@ export default function Admin() {
             className="flex items-center gap-3 cursor-pointer"
           >
             <img
-              src={`${BASE}logoo.png`}
+              src={`${BASE}logoo.png/`}
               alt="TheDietStore"
               className="h-8 w-auto object-contain"
             />
