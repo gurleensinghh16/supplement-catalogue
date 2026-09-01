@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
+  Dumbbell,
   Lock,
   LogOut,
   Package,
@@ -13,14 +14,12 @@ import {
   Save,
   Search,
   Trash2,
+  Upload,
   X,
 } from "lucide-react";
 import { useNavigate } from "react-router";
 import { cn } from "@/lib/utils";
 
-// Matches the actual Supabase `products` table columns (camelCase).
-// NOTE: this table has no `created_at` and no `compare_at_price` column —
-// those were removed here since they don't exist in the schema.
 type Product = {
   id: string;
   name: string;
@@ -38,7 +37,6 @@ type Product = {
 };
 
 export default function Admin() {
-  const BASE = import.meta.env.BASE_URL || "/";
   const navigate = useNavigate();
   const { isLoading: authLoading, isAuthenticated, signIn, signOut } = useAuth();
 
@@ -68,11 +66,13 @@ export default function Admin() {
   const [newStock, setNewStock] = useState("0");
   const [newFeatured, setNewFeatured] = useState(false);
   const [newTags, setNewTags] = useState("");
+  const [newImageFile, setNewImageFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   // Search state
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Fetch products from Supabase (re-runs whenever refreshKey changes)
+  // Fetch products from Supabase
   useEffect(() => {
     if (!isAuthenticated) return;
     let isMounted = true;
@@ -101,7 +101,6 @@ export default function Admin() {
 
   const refetch = useCallback(() => setRefreshKey((k) => k + 1), []);
 
-  // Filtered list for the table — searches name, brand, category, and SKU
   const filteredProducts = useMemo(() => {
     if (!products) return products;
     const q = searchQuery.trim().toLowerCase();
@@ -160,14 +159,50 @@ export default function Admin() {
 
   const resetAddForm = () => {
     setNewName(""); setNewBrand(""); setNewCategory(""); setNewDescription("");
+    setNewSku("");
     setNewImageUrl(""); setNewWeight(""); setNewServings("");
     setNewStock("0"); setNewFeatured(false); setNewTags("");
+    setNewImageFile(null);
+    setIsUploading(false);
     setShowAddForm(false);
+  };
+
+  const uploadImage = async (file: File): Promise<string | null> => {
+    const fileExt = file.name.split(".").pop();
+    const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${fileExt}`;
+    const filePath = `products/${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("product")
+      .upload(filePath, file, { contentType: file.type, upsert: true });
+
+    if (uploadError) {
+      console.error("Upload error:", uploadError);
+      alert(`Failed to upload image: ${uploadError.message}`);
+      return null;
+    }
+
+    const { data } = supabase.storage.from("product").getPublicUrl(filePath);
+    return data?.publicUrl ?? null;
   };
 
   const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newName || !newBrand || !newCategory) return;
+
+    setIsUploading(true);
+
+    let imageUrl = newImageUrl || null;
+
+    if (newImageFile) {
+      const uploadedUrl = await uploadImage(newImageFile);
+      if (uploadedUrl) {
+        imageUrl = uploadedUrl;
+      } else {
+        setIsUploading(false);
+        return;
+      }
+    }
 
     const { error } = await supabase.from("products").insert({
       name: newName,
@@ -175,13 +210,15 @@ export default function Admin() {
       category: newCategory,
       description: newDescription || null,
       sku: newSku || null,
-      imageUrl: newImageUrl || null,
+      imageUrl: imageUrl,
       weight: newWeight || null,
       servings: newServings || null,
       stockQuantity: Number(newStock),
       featured: newFeatured,
       tags: newTags ? newTags.split(",").map((t) => t.trim()).filter(Boolean) : [],
     });
+
+    setIsUploading(false);
 
     if (error) {
       console.error("Error creating product:", error);
@@ -235,11 +272,9 @@ export default function Admin() {
       <div className="min-h-screen bg-black flex items-center justify-center px-6">
         <div className="w-full max-w-sm">
           <div className="text-center mb-8">
-                        <img
-              src={`${BASE}logoo.png`}
-              alt="TheDietStore"
-              className="h-14 w-auto mx-auto mb-4 object-contain"
-            />
+            <div className="flex h-14 w-14 items-center justify-center bg-[#c2202f] mx-auto mb-4">
+              <Dumbbell className="h-7 w-7 text-white" />
+            </div>
             <h1 className="font-['Orbitron'] text-2xl font-normal tracking-[0.15em] uppercase">
               Admin Panel
             </h1>
@@ -299,15 +334,14 @@ export default function Admin() {
     <div className="min-h-screen bg-black text-white">
       <header className="sticky top-0 z-40 border-b border-[#2b2a27] bg-black/90 backdrop-blur-xl">
         <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
-                    <button
+          <button
             onClick={() => navigate("/")}
             className="flex items-center gap-3 cursor-pointer"
           >
-            <img
-              src={`${BASE}logoo.png`}
-              alt="TheDietStore"
-              className="h-8 w-auto object-contain"
-            />
+            <Dumbbell className="h-5 w-5 text-[#c2202f]" />
+            <span className="font-['Orbitron'] text-base font-normal tracking-[0.15em] uppercase">
+              TheDietStore
+            </span>
             <Badge className="bg-[#c2202f]/10 text-[#c2202f] border border-[#c2202f]/20 text-[10px] ml-1">
               Admin
             </Badge>
@@ -353,7 +387,7 @@ export default function Admin() {
           </Button>
         </div>
 
-        {/* Add Product Form — renders right below the button, above Hot Selling */}
+        {/* Add Product Form */}
         {showAddForm && (
           <form onSubmit={handleAddProduct} className="mb-8 border border-[#2b2a27] bg-[#0a0a0a] p-6">
             <div className="flex items-center justify-between mb-5">
@@ -365,9 +399,94 @@ export default function Admin() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <Input placeholder="Product Name *" value={newName} onChange={(e) => setNewName(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" required />
               <Input placeholder="Brand *" value={newBrand} onChange={(e) => setNewBrand(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" required />
-              <Input placeholder="Category *" value={newCategory} onChange={(e) => setNewCategory(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" required />
+              <select
+  value={newCategory}
+  onChange={(e) => setNewCategory(e.target.value)}
+  className="h-10 bg-[#111111] border border-[#2b2a27] text-white text-sm px-3 focus:outline-none focus:border-[#c2202f]/40 cursor-pointer"
+  required
+>
+  <option value="" disabled>Select Category *</option>
+  <optgroup label="Protein">
+    <option value="Whey Protein">Whey Protein</option>
+    <option value="Isolate Protein">Isolate Protein</option>
+    <option value="Hydrolysed Protein">Hydrolysed Protein</option>
+    <option value="Casein">Casein</option>
+    <option value="Plant Protein">Plant Protein</option>
+  </optgroup>
+  <optgroup label="Pre & Post Workout">
+    <option value="Pre-Workout">Pre-Workout</option>
+    <option value="Post-Workout">Post-Workout</option>
+    <option value="Intra-Workout">Intra-Workout</option>
+  </optgroup>
+  <optgroup label="Aminos & Recovery">
+    <option value="BCAA">BCAA</option>
+    <option value="EAA">EAA</option>
+    <option value="Amino Acids">Amino Acids</option>
+    <option value="Glutamine">Glutamine</option>
+    <option value="Recovery">Recovery</option>
+  </optgroup>
+  <optgroup label="Muscle & Strength">
+    <option value="Creatine">Creatine</option>
+    <option value="Gainer">Gainer</option>
+    <option value="Mass Gainer">Mass Gainer</option>
+    <option value="Muscle Building">Muscle Building</option>
+  </optgroup>
+  <optgroup label="Weight Management">
+    <option value="Fat Burner">Fat Burner</option>
+    <option value="L-Carnitine">L-Carnitine</option>
+    <option value="L-Arginine">L-Arginine</option>
+  </optgroup>
+  <optgroup label="Health & Wellness">
+    <option value="Greens">Greens</option>
+    <option value="Collagen">Collagen</option>
+    <option value="Multivitamin">Multivitamin</option>
+    <option value="Omega 3">Omega 3</option>
+    <option value="Vitamin D3">Vitamin D3</option>
+    <option value="Immunity & Wellness">Immunity & Wellness</option>
+  </optgroup>
+  <optgroup label="Speciality">
+    <option value="Sleep">Sleep</option>
+    <option value="Test Booster">Test Booster</option>
+    <option value="Growth Hormone">Growth Hormone</option>
+    <option value="Nitric Oxide">Nitric Oxide</option>
+    <option value="Hydration">Hydration</option>
+    <option value="Digestion & Gut Health">Digestion & Gut Health</option>
+    <option value="Kidney">Kidney</option>
+    <option value="Liver Support">Liver Support</option>
+    <option value="Joint Support">Joint Support</option>
+    <option value="Skin Care">Skin Care</option>
+    <option value="Brain & Focus">Brain & Focus</option>
+    <option value="Heart">Heart</option>
+    <option value="Protein Bar">Protein Bar</option>
+    <option value="Samples">Samples</option>
+  </optgroup>
+</select>
               <Input placeholder="SKU" value={newSku} onChange={(e) => setNewSku(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" />
-              <Input placeholder="Image URL" value={newImageUrl} onChange={(e) => setNewImageUrl(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" />
+              <div className="flex flex-col gap-2">
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0] ?? null;
+                    setNewImageFile(file);
+                    if (file) setNewImageUrl("");
+                  }}
+                  className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50 file:mr-3 file:py-1 file:px-3 file:border-0 file:bg-[#c2202f] file:text-white file:text-xs file:font-medium file:cursor-pointer"
+                />
+                <span className="text-[10px] text-[#999999]/50">— or paste URL below —</span>
+                <Input placeholder="Image URL" value={newImageUrl} onChange={(e) => { setNewImageUrl(e.target.value); setNewImageFile(null); }} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" />
+                {(newImageFile || newImageUrl) && (
+                  <div className="mt-1">
+                    <p className="text-[10px] text-[#999999]/50 mb-1">Preview:</p>
+                    <img
+                      src={newImageFile ? URL.createObjectURL(newImageFile) : newImageUrl}
+                      alt="Preview"
+                      className="h-20 w-20 object-contain border border-[#2b2a27]"
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                    />
+                  </div>
+                )}
+              </div>
               <Input placeholder="Weight" value={newWeight} onChange={(e) => setNewWeight(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" />
               <Input placeholder="Servings" value={newServings} onChange={(e) => setNewServings(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" />
               <Input placeholder="Stock Quantity" type="number" value={newStock} onChange={(e) => setNewStock(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" />
@@ -384,8 +503,12 @@ export default function Admin() {
                 </button>
                 <span className="text-xs text-[#999999]">Featured on Home</span>
               </label>
-              <Button type="submit" className="bg-[#c2202f] text-white hover:bg-[#de3746] cursor-pointer font-['Orbitron'] text-xs tracking-wider uppercase ml-auto">
-                <Save className="h-3.5 w-3.5 mr-2" /> Create Product
+              <Button type="submit" className="bg-[#c2202f] text-white hover:bg-[#de3746] cursor-pointer font-['Orbitron'] text-xs tracking-wider uppercase ml-auto" disabled={isUploading}>
+                {isUploading ? (
+                  <><Upload className="h-3.5 w-3.5 mr-2 animate-spin" /> Uploading...</>
+                ) : (
+                  <><Save className="h-3.5 w-3.5 mr-2" /> Create Product</>
+                )}
               </Button>
             </div>
           </form>
@@ -451,7 +574,7 @@ export default function Admin() {
           </div>
         )}
 
-        {/* Search bar for the product table */}
+        {/* Search bar */}
         {products !== undefined && products.length > 0 && (
           <div className="mb-4 flex items-center gap-3">
             <div className="relative flex-1 max-w-sm">
