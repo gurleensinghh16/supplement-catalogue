@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-  Dumbbell,
   Lock,
   LogOut,
   Package,
@@ -37,7 +36,8 @@ type Product = {
 };
 
 export default function Admin() {
-  const navigate = useNavigate();
+  const BASE = import.meta.env.BASE_URL || "/";
+const navigate = useNavigate();
   const { isLoading: authLoading, isAuthenticated, signIn, signOut } = useAuth();
 
   const [email, setEmail] = useState("");
@@ -272,9 +272,11 @@ export default function Admin() {
       <div className="min-h-screen bg-black flex items-center justify-center px-6">
         <div className="w-full max-w-sm">
           <div className="text-center mb-8">
-            <div className="flex h-14 w-14 items-center justify-center bg-[#c2202f] mx-auto mb-4">
-              <Dumbbell className="h-7 w-7 text-white" />
-            </div>
+            <img
+  src={`${BASE}logoo.png`}
+  alt="TheDietStore"
+  className="h-14 w-auto mx-auto mb-4 object-contain"
+/>
             <h1 className="font-['Orbitron'] text-2xl font-normal tracking-[0.15em] uppercase">
               Admin Panel
             </h1>
@@ -338,7 +340,11 @@ export default function Admin() {
             onClick={() => navigate("/")}
             className="flex items-center gap-3 cursor-pointer"
           >
-            <Dumbbell className="h-5 w-5 text-[#c2202f]" />
+            <img
+  src={`${BASE}logoo.png`}
+  alt="TheDietStore"
+  className="h-8 w-auto object-contain"
+/>
             <span className="font-['Orbitron'] text-base font-normal tracking-[0.15em] uppercase">
               TheDietStore
             </span>
