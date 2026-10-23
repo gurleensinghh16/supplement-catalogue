@@ -74,9 +74,49 @@ type Product = {
   tags: string[];
   servings?: string;
   weight?: string;
-  featured?: boolean;
+    featured?: boolean;
   stockQuantity?: number;
+  price?: string;
+  mrp?: string;
+  longDescription?: string;
 };
+
+// Raw row shape of the Supabase "keep_products" table.
+type KeepProductRow = {
+  productID: string;
+  productName: string | null;
+  categoryName: string | null;
+  brandName: string | null;
+  shortDescription: string | null;
+  longDescription: string | null;
+  description: string | null;
+  all_images_url: string | null;
+  in_stock: boolean | null;
+  stock_quantity: number | null;
+  sku: string | null;
+  featured: boolean | null;
+  "100475-The Diet Store-Price": string | null;
+  "100475-The Diet Store-MRP": string | null;
+};
+
+function toProduct(row: KeepProductRow): Product {
+  return {
+    id: row.productID,
+    name: row.productName ?? "",
+    brand: row.brandName ?? "",
+    category: row.categoryName ?? "",
+    description: row.description ?? row.shortDescription ?? "",
+    longDescription: row.longDescription ?? "",
+    sku: row.sku ?? "",
+    inStock: row.in_stock ?? true,
+    imageUrl: row.all_images_url?.match(/https?:\/\/[^\s,|;"'[\]]+/)?.[0],
+    tags: [],
+    stockQuantity: row.stock_quantity ?? 0,
+    featured: row.featured ?? false,
+    price: row["100475-The Diet Store-Price"] ?? undefined,
+    mrp: row["100475-The Diet Store-MRP"] ?? undefined,
+  };
+}
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -93,18 +133,18 @@ export default function Landing() {
     let isMounted = true;
 
     async function fetchFeatured() {
-      const { data, error } = await supabase
-        .from("products")
+            const { data, error } = await supabase
+        .from("keep_products")
         .select("*")
         .eq("featured", true)
-        .eq("inStock", true) // fixed: was "in_stock", which doesn't exist on the table
-        .order("name", { ascending: true }); // fixed: "created_at" isn't a column in this table
+        .eq("in_stock", true)
+        .order("productName", { ascending: true });
 
       if (error) {
         console.error("Error fetching featured products:", error);
         return;
       }
-      if (isMounted) setAllProducts(data as Product[]);
+        if (isMounted) setAllProducts((data ?? []).map(toProduct));
     }
 
     fetchFeatured();
