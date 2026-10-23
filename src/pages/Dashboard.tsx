@@ -453,7 +453,14 @@ export default function Dashboard() {
                     {product.description}
                   </p>
 
-                  <PriceAndBuy product={product} />
+                  ```tsx
+                  <PriceAndBuy
+                    product={{
+                      ...product,
+                      productId: product.id,
+                    }}
+                  />
+                  ```
 
                   <a
                     href={`https://wa.me/918295158184?text=${msg}`}

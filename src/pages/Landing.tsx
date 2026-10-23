@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { motion, useScroll,AnimatePresence } from "framer-motion";
+import { motion, useScroll, AnimatePresence } from "framer-motion";
 import {
   ArrowRight,
   ChevronLeft,
@@ -75,7 +75,7 @@ type Product = {
   tags: string[];
   servings?: string;
   weight?: string;
-    featured?: boolean;
+  featured?: boolean;
   stockQuantity?: number;
   price?: string;
   mrp?: string;
@@ -134,7 +134,7 @@ export default function Landing() {
     let isMounted = true;
 
     async function fetchFeatured() {
-            const { data, error } = await supabase
+      const { data, error } = await supabase
         .from("keep_products")
         .select("*")
         .eq("featured", true)
@@ -145,7 +145,7 @@ export default function Landing() {
         console.error("Error fetching featured products:", error);
         return;
       }
-        if (isMounted) setAllProducts((data ?? []).map(toProduct));
+      if (isMounted) setAllProducts((data ?? []).map(toProduct));
     }
 
     fetchFeatured();
@@ -222,17 +222,17 @@ export default function Landing() {
             transition={{ duration: 0.5 }}
             className="absolute inset-0"
           >
-<button
-  onClick={() => navigate("/catalogue")}
-  className="relative w-full h-full cursor-pointer block"
->
-  <img
-  src={heroSlides[currentSlide].image}
-  alt="Hero banner"
-  className="w-full h-full object-cover block"
-  style={{ objectPosition: "center 15%" }}
-/>
-</button>
+            <button
+              onClick={() => navigate("/catalogue")}
+              className="relative w-full h-full cursor-pointer block"
+            >
+              <img
+                src={heroSlides[currentSlide].image}
+                alt="Hero banner"
+                className="w-full h-full object-cover block"
+                style={{ objectPosition: "center 15%" }}
+              />
+            </button>
           </motion.div>
         </AnimatePresence>
 
@@ -258,11 +258,10 @@ export default function Landing() {
             <button
               key={i}
               onClick={() => { goToSlide(i); setIsAutoPlaying(false); }}
-              className={`h-1 transition-all duration-500 cursor-pointer ${
-                i === currentSlide
-                  ? "w-10 bg-[#c2202f]"
-                  : "w-5 bg-white/30 hover:bg-white/50"
-              }`}
+              className={`h-1 transition-all duration-500 cursor-pointer ${i === currentSlide
+                ? "w-10 bg-[#c2202f]"
+                : "w-5 bg-white/30 hover:bg-white/50"
+                }`}
             />
           ))}
         </div>
@@ -320,71 +319,78 @@ export default function Landing() {
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
               >
-              {featuredFromDB.slice(0, 12).map((product, i) => {
-              const msg = encodeURIComponent(`Hi TheDietStore 👋\n\nI'm interested in:\n\n📦 *${product.name}*\n🏷️ Brand: ${product.brand}\n📋 SKU: ${product.sku}\n\nPlease share details about:\n• Availability & stock\n• Bulk/wholesale pricing\n• Delivery options\n\nThank you!`);
-                return (
-                <motion.div key={product.id} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
-                  variants={scaleIn} custom={i} className={`group flex-shrink-0 w-[42vw] xs:w-[180px] sm:w-[260px] md:w-[280px] lg:w-[280px] ${!product.inStock ? 'opacity-60 grayscale' : ''}`}>
-                  {/* Product card — clickable, opens detail modal */}
-                  <div
-                    onClick={() => setSelectedProduct(product)}
-                    className="relative aspect-square overflow-hidden mb-4 cursor-pointer group-hover:scale-[1.02] transition-transform duration-500"
-                  >
-                    {product.imageUrl ? (
-                      <img src={product.imageUrl} alt={product.name} className="w-full h-full object-contain p-2 product-img" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-[#999999]">No Image</div>
-                    )}
-                    {/* Sold out badge */}
-                    {!product.inStock && (
-                      <div className="absolute top-3 left-3">
-                        <span className="bg-[#c2202f] text-white text-[10px] font-bold px-2 py-1 uppercase tracking-wider font-['Orbitron']">
-                          Sold out
-                        </span>
+                {featuredFromDB.slice(0, 12).map((product, i) => {
+                  const msg = encodeURIComponent(`Hi TheDietStore 👋\n\nI'm interested in:\n\n📦 *${product.name}*\n🏷️ Brand: ${product.brand}\n📋 SKU: ${product.sku}\n\nPlease share details about:\n• Availability & stock\n• Bulk/wholesale pricing\n• Delivery options\n\nThank you!`);
+                  return (
+                    <motion.div key={product.id} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
+                      variants={scaleIn} custom={i} className={`group flex-shrink-0 w-[42vw] xs:w-[180px] sm:w-[260px] md:w-[280px] lg:w-[280px] ${!product.inStock ? 'opacity-60 grayscale' : ''}`}>
+                      {/* Product card — clickable, opens detail modal */}
+                      <div
+                        onClick={() => setSelectedProduct(product)}
+                        className="relative aspect-square overflow-hidden mb-4 cursor-pointer group-hover:scale-[1.02] transition-transform duration-500"
+                      >
+                        {product.imageUrl ? (
+                          <img src={product.imageUrl} alt={product.name} className="w-full h-full object-contain p-2 product-img" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-[#999999]">No Image</div>
+                        )}
+                        {/* Sold out badge */}
+                        {!product.inStock && (
+                          <div className="absolute top-3 left-3">
+                            <span className="bg-[#c2202f] text-white text-[10px] font-bold px-2 py-1 uppercase tracking-wider font-['Orbitron']">
+                              Sold out
+                            </span>
+                          </div>
+                        )}
+                        {/* Quick View overlay */}
+                        <div className="absolute inset-x-0 bottom-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                          <div className="w-full bg-[#c2202f] text-white py-3 font-['Orbitron'] text-sm tracking-wider uppercase text-center cursor-pointer">
+                            Quick view
+                          </div>
+                        </div>
                       </div>
-                    )}
-                    {/* Quick View overlay */}
-                    <div className="absolute inset-x-0 bottom-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <div className="w-full bg-[#c2202f] text-white py-3 font-['Orbitron'] text-sm tracking-wider uppercase text-center cursor-pointer">
-                        Quick view
-                      </div>
-                    </div>
-                  </div>
 
-                  {/* Brand */}
-                  <p className="text-[10px] text-[#c2202f] font-medium uppercase tracking-wider mb-1">
-                    {product.brand}
-                  </p>
+                      {/* Brand */}
+                      <p className="text-[10px] text-[#c2202f] font-medium uppercase tracking-wider mb-1">
+                        {product.brand}
+                      </p>
 
-                  {/* Product name — uppercase Orbitron */}
-                  <h3
-                    onClick={() => setSelectedProduct(product)}
-                    className="font-['Orbitron'] text-sm font-normal tracking-[0.15em] uppercase text-white mb-1 line-clamp-2 cursor-pointer hover:text-[#c2202f] transition-colors"
-                  >
-                    {product.name}
-                  </h3>
+                      {/* Product name — uppercase Orbitron */}
+                      <h3
+                        onClick={() => setSelectedProduct(product)}
+                        className="font-['Orbitron'] text-sm font-normal tracking-[0.15em] uppercase text-white mb-1 line-clamp-2 cursor-pointer hover:text-[#c2202f] transition-colors"
+                      >
+                        {product.name}
+                      </h3>
 
-                                    {/* Description snippet */}
-                  <p className="text-xs text-[#999999] leading-relaxed mb-2 line-clamp-2">
-                    {product.description}
-                  </p>
+                      {/* Description snippet */}
+                      <p className="text-xs text-[#999999] leading-relaxed mb-2 line-clamp-2">
+                        {product.description}
+                      </p>
 
-                  {/* Price + Buy */}
-                  <PriceAndBuy product={product} />
+                      {/* Price + Buy */}
+                      ```tsx
+                      <PriceAndBuy
+                        product={{
+                          ...product,
+                          productId: product.id,
+                        }}
+                      />
+                      ```
 
-                  {/* WhatsApp Enquiry Button */}
-                  <a
-                    href={`https://wa.me/918295158184?text=${msg}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 w-full py-2.5 border border-[#25D366]/30 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-white transition-all duration-300 text-xs font-medium tracking-wider font-['Orbitron'] uppercase"
-                  >
-                    <MessageCircle className="h-3.5 w-3.5" />
-                    Enquire on WhatsApp
-                  </a>
-                </motion.div>
-                );
-              })}
+                      {/* WhatsApp Enquiry Button */}
+                      <a
+                        href={`https://wa.me/918295158184?text=${msg}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center gap-2 w-full py-2.5 border border-[#25D366]/30 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-white transition-all duration-300 text-xs font-medium tracking-wider font-['Orbitron'] uppercase"
+                      >
+                        <MessageCircle className="h-3.5 w-3.5" />
+                        Enquire on WhatsApp
+                      </a>
+                    </motion.div>
+                  );
+                })}
               </div>
             </div>
           )}
