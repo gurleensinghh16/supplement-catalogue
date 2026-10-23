@@ -13,6 +13,7 @@ import { useNavigate } from "react-router";
 import { useRef, useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase"; // adjust path to wherever your client lives
 import ProductDetail from "@/components/ProductDetail";
+import PriceAndBuy from "@/components/PriceAndBuy.tsx";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
@@ -363,10 +364,13 @@ export default function Landing() {
                     {product.name}
                   </h3>
 
-                  {/* Description snippet */}
+                                    {/* Description snippet */}
                   <p className="text-xs text-[#999999] leading-relaxed mb-2 line-clamp-2">
                     {product.description}
                   </p>
+
+                  {/* Price + Buy */}
+                  <PriceAndBuy product={product} />
 
                   {/* WhatsApp Enquiry Button */}
                   <a
