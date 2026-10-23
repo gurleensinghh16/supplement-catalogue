@@ -19,6 +19,7 @@ import {
 import { useNavigate } from "react-router";
 import { cn } from "@/lib/utils";
 
+// Shape the admin UI works with (mapped from the "keep_products" table).
 type Product = {
   id: string;
   name: string;
@@ -35,9 +36,45 @@ type Product = {
   tags: string[] | null;
 };
 
+// Raw row shape of the Supabase "keep_products" table.
+type KeepProductRow = {
+  productID: string;
+  productName: string | null;
+  categoryName: string | null;
+  brandName: string | null;
+  shortDescription: string | null;
+  longDescription: string | null;
+  description: string | null;
+  all_images_url: string | null;
+  in_stock: boolean | null;
+  stock_quantity: number | null;
+  sku: string | null;
+  featured: boolean | null;
+  "100475-The Diet Store-Price": string | null;
+  "100475-The Diet Store-MRP": string | null;
+};
+
+function toProduct(row: KeepProductRow): Product {
+  return {
+    id: row.productID,
+    name: row.productName ?? "",
+    brand: row.brandName ?? "",
+    category: row.categoryName ?? "",
+    description: row.description ?? row.shortDescription ?? null,
+    sku: row.sku ?? null,
+    imageUrl: row.all_images_url?.match(/https?:\/\/[^\s,|;"'[\]]+/)?.[0] ?? null,
+    weight: null,
+    servings: null,
+    stockQuantity: row.stock_quantity ?? null,
+    inStock: row.in_stock ?? true,
+    featured: row.featured ?? false,
+    tags: null,
+  };
+}
+
 export default function Admin() {
   const BASE = import.meta.env.BASE_URL || "/";
-const navigate = useNavigate();
+  const navigate = useNavigate();
   const { isLoading: authLoading, isAuthenticated, signIn, signOut } = useAuth();
 
   const [email, setEmail] = useState("");
@@ -79,9 +116,9 @@ const navigate = useNavigate();
 
     const fetchProducts = async () => {
       const { data, error } = await supabase
-        .from("products")
+        .from("keep_products")
         .select("*")
-        .order("name", { ascending: true });
+        .order("productName", { ascending: true });
 
       if (!isMounted) return;
 
@@ -90,7 +127,7 @@ const navigate = useNavigate();
         setProducts([]);
         return;
       }
-      setProducts(data as Product[]);
+      setProducts((data ?? []).map(toProduct));
     };
 
     fetchProducts();
@@ -139,13 +176,14 @@ const navigate = useNavigate();
 
   const saveEdit = async (productId: string) => {
     const { error } = await supabase
-      .from("products")
+      .from("keep_products")
       .update({
-        imageUrl: editImage || null,
-        stockQuantity: editStock ? Number(editStock) : null,
+        all_images_url: editImage || null,
+        stock_quantity: editStock ? Number(editStock) : null,
+        in_stock: editStock ? Number(editStock) > 0 : false,
         featured: editFeatured,
       })
-      .eq("id", productId);
+      .eq("productID", productId);
 
     if (error) {
       console.error("Error updating product:", error);
@@ -204,18 +242,17 @@ const navigate = useNavigate();
       }
     }
 
-    const { error } = await supabase.from("products").insert({
-      name: newName,
-      brand: newBrand,
-      category: newCategory,
+    const { error } = await supabase.from("keep_products").insert({
+      productID: crypto.randomUUID(),
+      productName: newName,
+      brandName: newBrand,
+      categoryName: newCategory,
       description: newDescription || null,
       sku: newSku || null,
-      imageUrl: imageUrl,
-      weight: newWeight || null,
-      servings: newServings || null,
-      stockQuantity: Number(newStock),
+      all_images_url: imageUrl,
+      stock_quantity: Number(newStock),
+      in_stock: Number(newStock) > 0,
       featured: newFeatured,
-      tags: newTags ? newTags.split(",").map((t) => t.trim()).filter(Boolean) : [],
     });
 
     setIsUploading(false);
@@ -232,9 +269,9 @@ const navigate = useNavigate();
 
   const handleUnfeature = async (productId: string) => {
     const { error } = await supabase
-      .from("products")
+      .from("keep_products")
       .update({ featured: false })
-      .eq("id", productId);
+      .eq("productID", productId);
 
     if (error) {
       console.error("Error removing product from Hot Selling:", error);
@@ -248,7 +285,10 @@ const navigate = useNavigate();
   const handleDeleteProduct = async (productId: string) => {
     if (!confirm("Delete this product?")) return;
 
-    const { error } = await supabase.from("products").delete().eq("id", productId);
+    const { error } = await supabase
+      .from("keep_products")
+      .delete()
+      .eq("productID", productId);
 
     if (error) {
       console.error("Error deleting product:", error);
@@ -273,10 +313,10 @@ const navigate = useNavigate();
         <div className="w-full max-w-sm">
           <div className="text-center mb-8">
             <img
-  src={`${BASE}logoo.png`}
-  alt="TheDietStore"
-  className="h-14 w-auto mx-auto mb-4 object-contain"
-/>
+              src={`${BASE}logoo.png`}
+              alt="TheDietStore"
+              className="h-14 w-auto mx-auto mb-4 object-contain"
+            />
             <h1 className="font-['Orbitron'] text-2xl font-normal tracking-[0.15em] uppercase">
               Admin Panel
             </h1>
@@ -341,10 +381,10 @@ const navigate = useNavigate();
             className="flex items-center gap-3 cursor-pointer"
           >
             <img
-  src={`${BASE}logoo.png`}
-  alt="TheDietStore"
-  className="h-8 w-auto object-contain"
-/>
+              src={`${BASE}logoo.png`}
+              alt="TheDietStore"
+              className="h-8 w-auto object-contain"
+            />
             <span className="font-['Orbitron'] text-base font-normal tracking-[0.15em] uppercase">
               TheDietStore
             </span>
@@ -406,67 +446,67 @@ const navigate = useNavigate();
               <Input placeholder="Product Name *" value={newName} onChange={(e) => setNewName(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" required />
               <Input placeholder="Brand *" value={newBrand} onChange={(e) => setNewBrand(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" required />
               <select
-  value={newCategory}
-  onChange={(e) => setNewCategory(e.target.value)}
-  className="h-10 bg-[#111111] border border-[#2b2a27] text-white text-sm px-3 focus:outline-none focus:border-[#c2202f]/40 cursor-pointer"
-  required
->
-  <option value="" disabled>Select Category *</option>
-  <optgroup label="Protein">
-    <option value="Whey Protein">Whey Protein</option>
-    <option value="Isolate Protein">Isolate Protein</option>
-    <option value="Hydrolysed Protein">Hydrolysed Protein</option>
-    <option value="Casein">Casein</option>
-    <option value="Plant Protein">Plant Protein</option>
-  </optgroup>
-  <optgroup label="Pre & Post Workout">
-    <option value="Pre-Workout">Pre-Workout</option>
-    <option value="Post-Workout">Post-Workout</option>
-    <option value="Intra-Workout">Intra-Workout</option>
-  </optgroup>
-  <optgroup label="Aminos & Recovery">
-    <option value="BCAA">BCAA</option>
-    <option value="EAA">EAA</option>
-    <option value="Amino Acids">Amino Acids</option>
-    <option value="Glutamine">Glutamine</option>
-    <option value="Recovery">Recovery</option>
-  </optgroup>
-  <optgroup label="Muscle & Strength">
-    <option value="Creatine">Creatine</option>
-    <option value="Gainer">Gainer</option>
-    <option value="Mass Gainer">Mass Gainer</option>
-    <option value="Muscle Building">Muscle Building</option>
-  </optgroup>
-  <optgroup label="Weight Management">
-    <option value="Fat Burner">Fat Burner</option>
-    <option value="L-Carnitine">L-Carnitine</option>
-    <option value="L-Arginine">L-Arginine</option>
-  </optgroup>
-  <optgroup label="Health & Wellness">
-    <option value="Greens">Greens</option>
-    <option value="Collagen">Collagen</option>
-    <option value="Multivitamin">Multivitamin</option>
-    <option value="Omega 3">Omega 3</option>
-    <option value="Vitamin D3">Vitamin D3</option>
-    <option value="Immunity & Wellness">Immunity & Wellness</option>
-  </optgroup>
-  <optgroup label="Speciality">
-    <option value="Sleep">Sleep</option>
-    <option value="Test Booster">Test Booster</option>
-    <option value="Growth Hormone">Growth Hormone</option>
-    <option value="Nitric Oxide">Nitric Oxide</option>
-    <option value="Hydration">Hydration</option>
-    <option value="Digestion & Gut Health">Digestion & Gut Health</option>
-    <option value="Kidney">Kidney</option>
-    <option value="Liver Support">Liver Support</option>
-    <option value="Joint Support">Joint Support</option>
-    <option value="Skin Care">Skin Care</option>
-    <option value="Brain & Focus">Brain & Focus</option>
-    <option value="Heart">Heart</option>
-    <option value="Protein Bar">Protein Bar</option>
-    <option value="Samples">Samples</option>
-  </optgroup>
-</select>
+                value={newCategory}
+                onChange={(e) => setNewCategory(e.target.value)}
+                className="h-10 bg-[#111111] border border-[#2b2a27] text-white text-sm px-3 focus:outline-none focus:border-[#c2202f]/40 cursor-pointer"
+                required
+              >
+                <option value="" disabled>Select Category *</option>
+                <optgroup label="Protein">
+                  <option value="Whey Protein">Whey Protein</option>
+                  <option value="Isolate Protein">Isolate Protein</option>
+                  <option value="Hydrolysed Protein">Hydrolysed Protein</option>
+                  <option value="Casein">Casein</option>
+                  <option value="Plant Protein">Plant Protein</option>
+                </optgroup>
+                <optgroup label="Pre & Post Workout">
+                  <option value="Pre-Workout">Pre-Workout</option>
+                  <option value="Post-Workout">Post-Workout</option>
+                  <option value="Intra-Workout">Intra-Workout</option>
+                </optgroup>
+                <optgroup label="Aminos & Recovery">
+                  <option value="BCAA">BCAA</option>
+                  <option value="EAA">EAA</option>
+                  <option value="Amino Acids">Amino Acids</option>
+                  <option value="Glutamine">Glutamine</option>
+                  <option value="Recovery">Recovery</option>
+                </optgroup>
+                <optgroup label="Muscle & Strength">
+                  <option value="Creatine">Creatine</option>
+                  <option value="Gainer">Gainer</option>
+                  <option value="Mass Gainer">Mass Gainer</option>
+                  <option value="Muscle Building">Muscle Building</option>
+                </optgroup>
+                <optgroup label="Weight Management">
+                  <option value="Fat Burner">Fat Burner</option>
+                  <option value="L-Carnitine">L-Carnitine</option>
+                  <option value="L-Arginine">L-Arginine</option>
+                </optgroup>
+                <optgroup label="Health & Wellness">
+                  <option value="Greens">Greens</option>
+                  <option value="Collagen">Collagen</option>
+                  <option value="Multivitamin">Multivitamin</option>
+                  <option value="Omega 3">Omega 3</option>
+                  <option value="Vitamin D3">Vitamin D3</option>
+                  <option value="Immunity & Wellness">Immunity & Wellness</option>
+                </optgroup>
+                <optgroup label="Speciality">
+                  <option value="Sleep">Sleep</option>
+                  <option value="Test Booster">Test Booster</option>
+                  <option value="Growth Hormone">Growth Hormone</option>
+                  <option value="Nitric Oxide">Nitric Oxide</option>
+                  <option value="Hydration">Hydration</option>
+                  <option value="Digestion & Gut Health">Digestion & Gut Health</option>
+                  <option value="Kidney">Kidney</option>
+                  <option value="Liver Support">Liver Support</option>
+                  <option value="Joint Support">Joint Support</option>
+                  <option value="Skin Care">Skin Care</option>
+                  <option value="Brain & Focus">Brain & Focus</option>
+                  <option value="Heart">Heart</option>
+                  <option value="Protein Bar">Protein Bar</option>
+                  <option value="Samples">Samples</option>
+                </optgroup>
+              </select>
               <Input placeholder="SKU" value={newSku} onChange={(e) => setNewSku(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" />
               <div className="flex flex-col gap-2">
                 <Input

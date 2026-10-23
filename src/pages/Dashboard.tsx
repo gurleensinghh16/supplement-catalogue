@@ -10,10 +10,7 @@ import {
   ChevronRight,
   MessageCircle,
 } from "lucide-react";
-import { useNavigate } from "react-router";
 import ProductDetail from "@/components/ProductDetail";
-
-const BASE = import.meta.env.BASE_URL || "/";
 
 const sectionCategories = [
   "Whey Protein",
@@ -43,7 +40,7 @@ const sectionCategories = [
   "Nitric Oxide",
 ];
 
-// Matches actual Supabase "products" table columns (camelCase).
+// Shape the UI works with (mapped from the Supabase "keep_products" table).
 type Product = {
   id: string;
   name: string;
@@ -58,7 +55,48 @@ type Product = {
   weight?: string;
   featured?: boolean;
   stockQuantity?: number;
+  price?: string;
+  mrp?: string;
+  longDescription?: string;
 };
+
+// Raw row shape of the Supabase "keep_products" table.
+type KeepProductRow = {
+  productID: string;
+  productName: string | null;
+  categoryName: string | null;
+  brandName: string | null;
+  shortDescription: string | null;
+  longDescription: string | null;
+  description: string | null;
+  all_images_url: string | null;
+  in_stock: boolean | null;
+  stock_quantity: number | null;
+  sku: string | null;
+  featured: boolean | null;
+  "100475-The Diet Store-Price": string | null;
+  "100475-The Diet Store-MRP": string | null;
+};
+
+function toProduct(row: KeepProductRow): Product {
+  return {
+    id: row.productID,
+    name: row.productName ?? "",
+    brand: row.brandName ?? "",
+    category: row.categoryName ?? "",
+    description: row.description ?? row.shortDescription ?? "",
+    longDescription: row.longDescription ?? "",
+    sku: row.sku ?? "",
+    inStock: row.in_stock ?? true,
+    // all_images_url may hold several URLs, so take the first one
+    imageUrl: row.all_images_url?.match(/https?:\/\/[^\s,|;"'[\]]+/)?.[0],
+    tags: [],
+    stockQuantity: row.stock_quantity ?? 0,
+    featured: row.featured ?? false,
+    price: row["100475-The Diet Store-Price"] ?? undefined,
+    mrp: row["100475-The Diet Store-MRP"] ?? undefined,
+  };
+}
 
 function CategorySection({
   title,
@@ -116,76 +154,78 @@ function CategorySection({
         className="flex gap-4 overflow-x-auto scrollbar-hide pb-2"
         style={{ scrollSnapType: "x mandatory" }}
       >
-        {products.map((product) => {              const msg = encodeURIComponent(`Hi TheDietStore 👋\n\nI'm interested in:\n\n📦 *${product.name}*\n🏷️ Brand: ${product.brand}\n\n📋 SKU: ${product.sku}\n\nPlease share details about:\n• Availability & stock\n• Bulk/wholesale pricing\n• Delivery options\n\nThank you!`);
+        {products.map((product) => {
+          const msg = encodeURIComponent(`Hi TheDietStore 👋\n\nI'm interested in:\n\n📦 *${product.name}*\n🏷️ Brand: ${product.brand}\n\n📋 SKU: ${product.sku}\n\nPlease share details about:\n• Availability & stock\n• Bulk/wholesale pricing\n• Delivery options\n\nThank you!`);
           return (
-          <div
-            key={product.id}
-            className={`flex-shrink-0 w-[220px] sm:w-[240px] group ${!product.inStock ? 'opacity-60 grayscale' : ''}`}
-            style={{ scrollSnapAlign: "start" }}
-          >            {/* Product Image */}
             <div
-              onClick={() => onSelectProduct(product)}
-              className="relative aspect-square overflow-hidden mb-3 cursor-pointer group-hover:scale-[1.02] transition-transform duration-500"
+              key={product.id}
+              className={`flex-shrink-0 w-[220px] sm:w-[240px] group ${!product.inStock ? "opacity-60 grayscale" : ""}`}
+              style={{ scrollSnapAlign: "start" }}
             >
-              {product.imageUrl ? (
-                <img
-                  src={product.imageUrl}
-                  alt={product.name}
-                  className="w-full h-full object-contain p-2 product-img"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <Package className="h-14 w-14 text-[#333]" />
-                </div>
-              )}
+              {/* Product Image */}
+              <div
+                onClick={() => onSelectProduct(product)}
+                className="relative aspect-square overflow-hidden mb-3 cursor-pointer group-hover:scale-[1.02] transition-transform duration-500"
+              >
+                {product.imageUrl ? (
+                  <img
+                    src={product.imageUrl}
+                    alt={product.name}
+                    className="w-full h-full object-contain p-2 product-img"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <Package className="h-14 w-14 text-[#333]" />
+                  </div>
+                )}
 
-              {/* Sold out badge */}
-              {!product.inStock && (
-                <div className="absolute top-3 left-3">
-                  <span className="bg-[#c2202f] text-white text-[10px] font-bold px-2 py-1 uppercase tracking-wider font-['Orbitron']">
-                    Sold out
-                  </span>
-                </div>
-              )}
+                {/* Sold out badge */}
+                {!product.inStock && (
+                  <div className="absolute top-3 left-3">
+                    <span className="bg-[#c2202f] text-white text-[10px] font-bold px-2 py-1 uppercase tracking-wider font-['Orbitron']">
+                      Sold out
+                    </span>
+                  </div>
+                )}
 
-              {/* Quick View on hover */}
-              <div className="absolute inset-x-0 bottom-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <button onClick={() => onSelectProduct(product)} className="w-full bg-[#c2202f] text-white py-2.5 font-['Orbitron'] text-sm tracking-wider uppercase cursor-pointer hover:bg-[#de3746] transition-colors">
-                  Quick view
-                </button>
+                {/* Quick View on hover */}
+                <div className="absolute inset-x-0 bottom-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <button onClick={() => onSelectProduct(product)} className="w-full bg-[#c2202f] text-white py-2.5 font-['Orbitron'] text-sm tracking-wider uppercase cursor-pointer hover:bg-[#de3746] transition-colors">
+                    Quick view
+                  </button>
+                </div>
               </div>
+
+              {/* Brand */}
+              <p className="text-[10px] text-[#c2202f] font-medium uppercase tracking-wider mb-1">
+                {product.brand}
+              </p>
+
+              {/* Product Name — Orbitron uppercase */}
+              <h3
+                onClick={() => onSelectProduct(product)}
+                className="font-['Orbitron'] text-xs font-normal tracking-[0.15em] uppercase text-white mb-1 line-clamp-2 cursor-pointer hover:text-[#c2202f] transition-colors"
+              >
+                {product.name}
+              </h3>
+
+              {/* Description snippet */}
+              <p className="text-[11px] text-[#999999] leading-relaxed mb-2 line-clamp-2">
+                {product.description}
+              </p>
+
+              {/* WhatsApp Enquiry Button */}
+              <a
+                href={`https://wa.me/918295158184?text=${msg}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 w-full py-2 border border-[#25D366]/30 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-white transition-all duration-300 text-xs font-medium tracking-wider"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <MessageCircle className="h-3.5 w-3.5" />
+                Enquire on WhatsApp
+              </a>
             </div>
-
-            {/* Brand */}
-            <p className="text-[10px] text-[#c2202f] font-medium uppercase tracking-wider mb-1">
-              {product.brand}
-            </p>
-
-            {/* Product Name — Orbitron uppercase */}
-            <h3
-              onClick={() => onSelectProduct(product)}
-              className="font-['Orbitron'] text-xs font-normal tracking-[0.15em] uppercase text-white mb-1 line-clamp-2 cursor-pointer hover:text-[#c2202f] transition-colors"
-            >
-              {product.name}
-            </h3>
-
-            {/* Description snippet */}
-            <p className="text-[11px] text-[#999999] leading-relaxed mb-2 line-clamp-2">
-              {product.description}
-            </p>
-
-            {/* WhatsApp Enquiry Button */}
-            <a
-              href={`https://wa.me/918295158184?text=${msg}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 w-full py-2 border border-[#25D366]/30 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-white transition-all duration-300 text-xs font-medium tracking-wider"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <MessageCircle className="h-3.5 w-3.5" />
-              Enquire on WhatsApp
-            </a>
-          </div>
           );
         })}
       </div>
@@ -194,7 +234,6 @@ function CategorySection({
 }
 
 export default function Dashboard() {
-  const navigate = useNavigate();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [search, setSearch] = useState("");
 
@@ -204,12 +243,18 @@ export default function Dashboard() {
     let isMounted = true;
 
     async function fetchProducts() {
-      let query = supabase.from("products").select("*").order("name", { ascending: true });
+      let query = supabase
+        .from("keep_products")
+        .select("*")
+        .order("productName", { ascending: true });
 
-      if (search) {
+      // Strip characters that would break the PostgREST .or() filter string
+      const term = search.replace(/[,()%]/g, " ").trim();
+
+      if (term) {
         // Matches name, brand, or description containing the search term
         query = query.or(
-          `name.ilike.%${search}%,brand.ilike.%${search}%,description.ilike.%${search}%`
+          `productName.ilike.%${term}%,brandName.ilike.%${term}%,description.ilike.%${term}%,shortDescription.ilike.%${term}%`
         );
       }
 
@@ -219,7 +264,7 @@ export default function Dashboard() {
         console.error("Error fetching products:", error);
         return;
       }
-      if (isMounted) setProducts(data as Product[]);
+      if (isMounted) setProducts((data ?? []).map(toProduct));
     }
 
     fetchProducts();
@@ -354,63 +399,62 @@ export default function Dashboard() {
             {allProducts.map((product) => {
               const msg = encodeURIComponent(`Hi TheDietStore 👋\n\nI'm interested in:\n\n📦 *${product.name}*\n🏷️ Brand: ${product.brand}\n\n📋 SKU: ${product.sku}\n\nPlease share details about:\n• Availability & stock\n• Bulk/wholesale pricing\n• Delivery options\n\nThank you!`);
               return (
-              <div
-                key={product.id}
-                className={`group ${!product.inStock ? 'opacity-60 grayscale' : ''}`}
-              >
                 <div
-                  onClick={() => setSelectedProduct(product)}
-                  className="relative aspect-square overflow-hidden mb-3 cursor-pointer group-hover:scale-[1.02] transition-transform duration-500"
+                  key={product.id}
+                  className={`group ${!product.inStock ? "opacity-60 grayscale" : ""}`}
                 >
-                  {product.imageUrl ? (
-                    <img
-                      src={product.imageUrl}
-                      alt={product.name}
-                      className="w-full h-full object-contain p-2"
-
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <Package className="h-14 w-14 text-[#333]" />
+                  <div
+                    onClick={() => setSelectedProduct(product)}
+                    className="relative aspect-square overflow-hidden mb-3 cursor-pointer group-hover:scale-[1.02] transition-transform duration-500"
+                  >
+                    {product.imageUrl ? (
+                      <img
+                        src={product.imageUrl}
+                        alt={product.name}
+                        className="w-full h-full object-contain p-2"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Package className="h-14 w-14 text-[#333]" />
+                      </div>
+                    )}
+                    {!product.inStock && (
+                      <div className="absolute top-3 left-3">
+                        <span className="bg-[#c2202f] text-white text-[10px] font-bold px-2 py-1 uppercase tracking-wider font-['Orbitron']">
+                          Sold out
+                        </span>
+                      </div>
+                    )}
+                    <div className="absolute inset-x-0 bottom-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <button onClick={() => setSelectedProduct(product)} className="w-full bg-[#c2202f] text-white py-2.5 font-['Orbitron'] text-sm tracking-wider uppercase cursor-pointer hover:bg-[#de3746] transition-colors">
+                        Quick view
+                      </button>
                     </div>
-                  )}
-                  {!product.inStock && (
-                    <div className="absolute top-3 left-3">
-                      <span className="bg-[#c2202f] text-white text-[10px] font-bold px-2 py-1 uppercase tracking-wider font-['Orbitron']">
-                        Sold out
-                      </span>
-                    </div>
-                  )}
-                  <div className="absolute inset-x-0 bottom-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <button onClick={() => setSelectedProduct(product)} className="w-full bg-[#c2202f] text-white py-2.5 font-['Orbitron'] text-sm tracking-wider uppercase cursor-pointer hover:bg-[#de3746] transition-colors">
-                      Quick view
-                    </button>
                   </div>
+                  <p className="text-[10px] text-[#c2202f] font-medium uppercase tracking-wider mb-1">
+                    {product.brand}
+                  </p>
+                  <h3
+                    onClick={() => setSelectedProduct(product)}
+                    className="font-['Orbitron'] text-xs font-normal tracking-[0.15em] uppercase text-white mb-1 line-clamp-2 cursor-pointer hover:text-[#c2202f] transition-colors"
+                  >
+                    {product.name}
+                  </h3>
+                  <p className="text-[11px] text-[#999999] leading-relaxed mb-2 line-clamp-2">
+                    {product.description}
+                  </p>
+
+                  <a
+                    href={`https://wa.me/918295158184?text=${msg}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 w-full py-2 border border-[#25D366]/30 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-white transition-all duration-300 text-xs font-medium tracking-wider"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <MessageCircle className="h-3.5 w-3.5" />
+                    Enquire on WhatsApp
+                  </a>
                 </div>
-                <p className="text-[10px] text-[#c2202f] font-medium uppercase tracking-wider mb-1">
-                  {product.brand}
-                </p>
-                <h3
-                  onClick={() => setSelectedProduct(product)}
-                  className="font-['Orbitron'] text-xs font-normal tracking-[0.15em] uppercase text-white mb-1 line-clamp-2 cursor-pointer hover:text-[#c2202f] transition-colors"
-                >
-                  {product.name}
-                </h3>
-                <p className="text-[11px] text-[#999999] leading-relaxed mb-2 line-clamp-2">
-                  {product.description}
-                </p>
-                
-                <a
-                  href={`https://wa.me/918295158184?text=${msg}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 w-full py-2 border border-[#25D366]/30 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-white transition-all duration-300 text-xs font-medium tracking-wider"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <MessageCircle className="h-3.5 w-3.5" />
-                  Enquire on WhatsApp
-                </a>
-              </div>
               );
             })}
           </div>
