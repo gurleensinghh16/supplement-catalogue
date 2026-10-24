@@ -94,7 +94,7 @@ function toProduct(row: KeepProductRow): Product {
     tags: [],
     stockQuantity: row.stock_quantity ?? 0,
     featured: row.featured ?? false,
-    price: row["100475-The Diet Store-Price"] ?? undefined,
+        price: row["100475-The Diet Store-Price"] ?? undefined,
     mrp: row["100475-The Diet Store-MRP"] ?? undefined,
   };
 }
@@ -210,18 +210,13 @@ function CategorySection({
                 {product.name}
               </h3>
 
-              {/* Description snippet */}
+                          {/* Description snippet */}
               <p className="text-[11px] text-[#999999] leading-relaxed mb-2 line-clamp-2">
                 {product.description}
               </p>
 
               {/* Price + Buy */}
-              <PriceAndBuy
-                product={{
-                  ...product,
-                  productId: product.id,
-                }}
-              />
+              <PriceAndBuy product={product} />
 
               {/* WhatsApp Enquiry Button */}
               <a
