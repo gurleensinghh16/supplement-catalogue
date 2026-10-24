@@ -1,5 +1,5 @@
-
 import { useState } from "react";
+import CheckoutForm, { type CustomerDetails } from "@/components/checkoutform";
 
 declare global {
   interface Window {
@@ -49,18 +49,15 @@ const callFunction = async <T,>(
   functionName: string,
   body: unknown
 ): Promise<T> => {
-  const response = await fetch(
-    `${FUNCTIONS_URL}/${functionName}`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${ANON_KEY}`,
-        apikey: ANON_KEY,
-      },
-      body: JSON.stringify(body),
-    }
-  );
+  const response = await fetch(`${FUNCTIONS_URL}/${functionName}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${ANON_KEY}`,
+      apikey: ANON_KEY,
+    },
+    body: JSON.stringify(body),
+  });
 
   const data = await response.json().catch(() => ({}));
 
@@ -69,8 +66,8 @@ const callFunction = async <T,>(
 
     throw new Error(
       errorData.error ||
-      errorData.message ||
-      `Request failed (${response.status})`
+        errorData.message ||
+        `Request failed (${response.status})`
     );
   }
 
@@ -84,12 +81,9 @@ export const formatPrice = (value: number) =>
     maximumFractionDigits: 0,
   }).format(value);
 
-export default function PriceAndBuy({
-  product,
-}: {
-  product: PriceProduct;
-}) {
+export default function PriceAndBuy({ product }: { product: PriceProduct }) {
   const [loading, setLoading] = useState(false);
+  const [showForm, setShowForm] = useState(false);
 
   const price = Number(product.price);
   const mrp = Number(product.mrp);
@@ -98,9 +92,13 @@ export default function PriceAndBuy({
   const hasMrp = Number.isFinite(mrp) && mrp > price;
   const canBuy = hasPrice && product.inStock;
 
-  const handleBuy = async (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  // Prefer the real Supabase productID.
+  // An empty string must not prevent fallback to the SKU.
+  const productId =
+    String(product.productId ?? "").trim() || String(product.sku ?? "").trim();
+
+  // Step 1: Buy now checks the basics, then opens the delivery form.
+  const handleBuy = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
 
     if (loading) return;
@@ -117,19 +115,17 @@ export default function PriceAndBuy({
       return;
     }
 
-    // Prefer the real Supabase productID.
-    // An empty string must not prevent fallback to the SKU.
-    const productId =
-      String(product.productId ?? "").trim() ||
-      String(product.sku ?? "").trim();
-
     if (!productId) {
-      alert(
-        "This product has no product ID or SKU. Please contact the store."
-      );
+      alert("This product has no product ID or SKU. Please contact the store.");
       return;
     }
 
+    setShowForm(true);
+  };
+
+  // Step 2: the form was submitted, so create the order and open Razorpay.
+  const startPayment = async (customer: CustomerDetails) => {
+    setShowForm(false);
     setLoading(true);
 
     try {
@@ -139,6 +135,7 @@ export default function PriceAndBuy({
         {
           productId,
           quantity: 1,
+          customer,
         }
       );
 
@@ -148,9 +145,7 @@ export default function PriceAndBuy({
         !Number.isFinite(order.amount) ||
         order.amount <= 0
       ) {
-        throw new Error(
-          "The server returned an invalid payment order."
-        );
+        throw new Error("The server returned an invalid payment order.");
       }
 
       // Prevent checkout if the displayed price differs from
@@ -171,6 +166,11 @@ export default function PriceAndBuy({
         order_id: order.order_id,
         name: "TheDietStore",
         description: order.name || product.name,
+        prefill: {
+          name: customer.name,
+          email: customer.email,
+          contact: `+91${customer.phone}`,
+        },
         theme: {
           color: "#c2202f",
         },
@@ -178,13 +178,12 @@ export default function PriceAndBuy({
           ondismiss: () => setLoading(false),
         },
         // 3. Verify payment on the server.
-        handler: async (
-          payment: RazorpayPaymentResponse
-        ) => {
+        handler: async (payment: RazorpayPaymentResponse) => {
           try {
-            const result = await callFunction<{
-              verified: boolean;
-            }>("verify-razorpay-payment", payment);
+            const result = await callFunction<{ verified: boolean }>(
+              "verify-razorpay-payment",
+              payment
+            );
 
             if (result.verified) {
               alert(
@@ -200,7 +199,7 @@ export default function PriceAndBuy({
 
             alert(
               "Payment verification could not be confirmed. Do not pay again immediately. Contact the store with your payment ID: " +
-              payment.razorpay_payment_id
+                payment.razorpay_payment_id
             );
           } finally {
             setLoading(false);
@@ -210,9 +209,7 @@ export default function PriceAndBuy({
 
       razorpay.on("payment.failed", () => {
         setLoading(false);
-        alert(
-          "Payment failed. Please check the payment details or try again."
-        );
+        alert("Payment failed. Please check the payment details or try again.");
       });
 
       razorpay.open();
@@ -250,17 +247,15 @@ export default function PriceAndBuy({
           )}
         </div>
       ) : (
-        <p className="mb-2 text-xs text-[#999999]">
-          Price on request
-        </p>
+        <p className="mb-2 text-xs text-[#999999]">Price on request</p>
       )}
 
-            {canBuy ? (
+      {canBuy ? (
         <button
           type="button"
           onClick={handleBuy}
           disabled={loading}
-          className="mb-2 block w-full bg-[#c2202f] py-2.5 text-center font-['Orbitron'] text-xs uppercase tracking-wider text-white transition-colors hover:bg-[#de3746] disabled:cursor-wait disabled:opacity-60"
+          className="mb-2 block w-full cursor-pointer bg-[#c2202f] py-2.5 text-center font-['Orbitron'] text-xs uppercase tracking-wider text-white transition-colors hover:bg-[#de3746] disabled:cursor-wait disabled:opacity-60"
         >
           {loading ? "Please wait..." : "Buy now"}
         </button>
@@ -272,6 +267,15 @@ export default function PriceAndBuy({
         >
           {product.inStock ? "Unavailable" : "Sold out"}
         </button>
+      )}
+
+      {showForm && (
+        <CheckoutForm
+          productName={product.name}
+          amountLabel={formatPrice(price)}
+          onSubmit={startPayment}
+          onClose={() => setShowForm(false)}
+        />
       )}
     </div>
   );
