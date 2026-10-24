@@ -1,47 +1,88 @@
+
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
 
 export function useAuth() {
-  const [user, setUser] = useState<User | null | undefined>(undefined);
-  const [isLoading, setIsLoading] = useState(true);
+    const [user, setUser] = useState<User | null | undefined>(undefined);
+    const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    // Get the current session on mount
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      setIsLoading(false);
-    });
+    useEffect(() => {
+        let active = true;
 
-    // Listen for auth state changes (login, logout, token refresh)
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      setIsLoading(false);
-    });
+        // Load the existing Supabase session.
+        supabase.auth
+            .getSession()
+            .then(({ data: { session }, error }) => {
+                if (!active) return;
 
-    return () => subscription.unsubscribe();
-  }, []);
+                if (error) {
+                    console.error("Failed to load session:", error);
+                    setUser(null);
+                } else {
+                    setUser(session?.user ?? null);
+                }
 
-  const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    if (error) throw error;
-  };
+                setIsLoading(false);
+            })
+            .catch((error) => {
+                if (!active) return;
 
-  const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
-  };
+                console.error("Failed to load session:", error);
+                setUser(null);
+                setIsLoading(false);
+            });
 
-  return {
-    isLoading,
-    isAuthenticated: !!user,
-    user,
-    signIn,
-    signOut,
-  };
+        // Keep authentication state synchronized.
+        const {
+            data: { subscription },
+        } = supabase.auth.onAuthStateChange((_event, session) => {
+            if (!active) return;
+
+            setUser(session?.user ?? null);
+            setIsLoading(false);
+        });
+
+        return () => {
+            active = false;
+            subscription.unsubscribe();
+        };
+    }, []);
+
+    const signIn = async (
+        email: string,
+        password: string
+    ): Promise<User> => {
+        const { data, error } =
+            await supabase.auth.signInWithPassword({
+                email: email.trim(),
+                password,
+            });
+
+        if (error) {
+            throw error;
+        }
+
+        if (!data.user) {
+            throw new Error("Login succeeded but no user was returned.");
+        }
+
+        return data.user;
+    };
+
+    const signOut = async (): Promise<void> => {
+        const { error } = await supabase.auth.signOut();
+
+        if (error) {
+            throw error;
+        }
+    };
+
+    return {
+        isLoading,
+        isAuthenticated: !!user,
+        user,
+        signIn,
+        signOut,
+    };
 }

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import CheckoutForm, { type CustomerDetails } from "@/components/checkoutform";
+import CheckoutForm, { type CustomerDetails } from "@/components/CheckoutForm";
 import OrderSuccessModal from "@/components/OrderSuccessModal";
 
 declare global {
@@ -67,8 +67,8 @@ const callFunction = async <T,>(
 
     throw new Error(
       errorData.error ||
-        errorData.message ||
-        `Request failed (${response.status})`
+      errorData.message ||
+      `Request failed (${response.status})`
     );
   }
 
@@ -187,7 +187,7 @@ export default function PriceAndBuy({ product }: { product: PriceProduct }) {
               payment
             );
 
-                       if (result.verified) {
+            if (result.verified) {
               setSuccess({
                 paymentId: payment.razorpay_payment_id,
                 email: customer.email,
@@ -202,7 +202,7 @@ export default function PriceAndBuy({ product }: { product: PriceProduct }) {
 
             alert(
               "Payment verification could not be confirmed. Do not pay again immediately. Contact the store with your payment ID: " +
-                payment.razorpay_payment_id
+              payment.razorpay_payment_id
             );
           } finally {
             setLoading(false);
@@ -272,7 +272,7 @@ export default function PriceAndBuy({ product }: { product: PriceProduct }) {
         </button>
       )}
 
-            {showForm && (
+      {showForm && (
         <CheckoutForm
           productName={product.name}
           amountLabel={formatPrice(price)}

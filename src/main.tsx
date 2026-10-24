@@ -1,3 +1,4 @@
+
 import "./redirect.js";
 import { AppLayout } from "@/components/AppLayout";
 import '@vly-ai/integrations';
@@ -12,6 +13,7 @@ import "./index.css";
 const Landing = lazy(() => import("./pages/Landing.tsx"));
 const Catalogue = lazy(() => import("./pages/Catalogue.tsx"));
 const Admin = lazy(() => import("./pages/Admin.tsx"));
+const Orders = lazy(() => import("./pages/Orders.tsx"));
 const NotFound = lazy(() => import("./pages/NotFound.tsx"));
 
 function RouteLoading() {
@@ -21,11 +23,13 @@ function RouteLoading() {
     </div>
   );
 }
+
 class RootErrorBoundary extends React.Component<
   { children: React.ReactNode },
   { hasError: boolean; message: string; stack: string }
 > {
   state = { hasError: false, message: "", stack: "" };
+
   static getDerivedStateFromError(error: Error) {
     return {
       hasError: true,
@@ -33,9 +37,11 @@ class RootErrorBoundary extends React.Component<
       stack: error.stack || "",
     };
   }
+
   componentDidCatch(err: Error) {
     console.error("[WebContainer preview] Root crash:", err);
   }
+
   render() {
     if (this.state.hasError) {
       return (
@@ -54,12 +60,14 @@ class RootErrorBoundary extends React.Component<
         </div>
       );
     }
+
     return this.props.children;
   }
 }
 
 function RouteSyncer() {
   const location = useLocation();
+
   useEffect(() => {
     window.parent.postMessage(
       { type: "iframe-route-change", path: location.pathname },
@@ -74,6 +82,7 @@ function RouteSyncer() {
         if (event.data.direction === "forward") window.history.forward();
       }
     }
+
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);
   }, []);
@@ -93,6 +102,7 @@ createRoot(document.getElementById("root")!).render(
               <Route path="/" element={<Landing />} />
               <Route path="/catalogue" element={<Catalogue />} />
               <Route path="/admin" element={<Admin />} />
+              <Route path="/admin/orders" element={<Orders />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>

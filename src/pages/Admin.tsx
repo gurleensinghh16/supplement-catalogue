@@ -75,7 +75,13 @@ function toProduct(row: KeepProductRow): Product {
 export default function Admin() {
   const BASE = import.meta.env.BASE_URL || "/";
   const navigate = useNavigate();
-  const { isLoading: authLoading, isAuthenticated, signIn, signOut } = useAuth();
+  const {
+    isLoading: authLoading,
+    isAuthenticated,
+    user,
+    signIn,
+    signOut,
+  } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -84,6 +90,15 @@ export default function Admin() {
 
   const [products, setProducts] = useState<Product[] | undefined>(undefined);
   const [refreshKey, setRefreshKey] = useState(0);
+  // Redirect the Orders account to its own dashboard.
+  useEffect(() => {
+    if (
+      !authLoading &&
+      user?.id === "a5269010-7af7-48c9-8497-c3236cefc51a"
+    ) {
+      navigate("/admin/orders", { replace: true });
+    }
+  }, [authLoading, user, navigate]);
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editImage, setEditImage] = useState("");
@@ -149,12 +164,27 @@ export default function Admin() {
     );
   }, [products, searchQuery]);
 
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSigningIn(true);
     setLoginError("");
+
     try {
-      await signIn(email, password);
+      const user = await signIn(email, password);
+
+      if (user.id === "a5269010-7af7-48c9-8497-c3236cefc51a") {
+        navigate("/admin/orders", { replace: true });
+        return;
+      }
+
+      if (user.id === "0bee6907-a5e2-42ae-a35e-c5fac827d551") {
+        navigate("/admin", { replace: true });
+        return;
+      }
+
+      await signOut();
+      setLoginError("This account does not have admin dashboard access.");
     } catch (err) {
       console.error("Sign-in error:", err);
       setLoginError("Invalid email or password.");
@@ -162,6 +192,7 @@ export default function Admin() {
       setIsSigningIn(false);
     }
   };
+
 
   const handleLogout = async () => {
     await signOut();
@@ -368,6 +399,13 @@ export default function Admin() {
             ← Back to home
           </button>
         </div>
+      </div>
+    );
+  }
+  if (user?.id === "a5269010-7af7-48c9-8497-c3236cefc51a") {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <p className="text-sm text-[#999999]">Opening Orders...</p>
       </div>
     );
   }
