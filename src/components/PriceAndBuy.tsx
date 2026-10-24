@@ -1,5 +1,6 @@
 import { useState } from "react";
 import CheckoutForm, { type CustomerDetails } from "@/components/checkoutform";
+import OrderSuccessModal from "@/components/OrderSuccessModal";
 
 declare global {
   interface Window {
@@ -84,6 +85,7 @@ export const formatPrice = (value: number) =>
 export default function PriceAndBuy({ product }: { product: PriceProduct }) {
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [success, setSuccess] = useState<{ paymentId: string; email: string } | null>(null);
 
   const price = Number(product.price);
   const mrp = Number(product.mrp);
@@ -185,10 +187,11 @@ export default function PriceAndBuy({ product }: { product: PriceProduct }) {
               payment
             );
 
-            if (result.verified) {
-              alert(
-                `Payment successful!\nPayment ID: ${payment.razorpay_payment_id}`
-              );
+                       if (result.verified) {
+              setSuccess({
+                paymentId: payment.razorpay_payment_id,
+                email: customer.email,
+              });
             } else {
               alert(
                 "Payment verification was unsuccessful. Please contact the store before trying to pay again."
@@ -269,12 +272,22 @@ export default function PriceAndBuy({ product }: { product: PriceProduct }) {
         </button>
       )}
 
-      {showForm && (
+            {showForm && (
         <CheckoutForm
           productName={product.name}
           amountLabel={formatPrice(price)}
           onSubmit={startPayment}
           onClose={() => setShowForm(false)}
+        />
+      )}
+
+      {success && (
+        <OrderSuccessModal
+          paymentId={success.paymentId}
+          email={success.email}
+          productName={product.name}
+          amountLabel={formatPrice(price)}
+          onClose={() => setSuccess(null)}
         />
       )}
     </div>
