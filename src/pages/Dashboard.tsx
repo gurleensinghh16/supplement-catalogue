@@ -8,7 +8,6 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
-  MessageCircle,
 } from "lucide-react";
 import ProductDetail from "@/components/ProductDetail";
 import PriceAndBuy from "@/components/PriceAndBuy";
@@ -156,7 +155,6 @@ function CategorySection({
         style={{ scrollSnapType: "x mandatory" }}
       >
         {products.map((product) => {
-          const msg = encodeURIComponent(`Hi TheDietStore 👋\n\nI'm interested in:\n\n📦 *${product.name}*\n🏷️ Brand: ${product.brand}\n\n📋 SKU: ${product.sku}\n\nPlease share details about:\n• Availability & stock\n• Bulk/wholesale pricing\n• Delivery options\n\nThank you!`);
           return (
             <div
               key={product.id}
@@ -222,18 +220,6 @@ function CategorySection({
                   productId: product.id,
                 }}
               />
-
-              {/* WhatsApp Enquiry Button */}
-              <a
-                href={`https://wa.me/918295158184?text=${msg}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full py-2 border border-[#25D366]/30 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-white transition-all duration-300 text-xs font-medium tracking-wider"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <MessageCircle className="h-3.5 w-3.5" />
-                Enquire on WhatsApp
-              </a>
             </div>
           );
         })}
@@ -406,7 +392,6 @@ export default function Dashboard() {
           // Search results — flat grid
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
             {allProducts.map((product) => {
-              const msg = encodeURIComponent(`Hi TheDietStore 👋\n\nI'm interested in:\n\n📦 *${product.name}*\n🏷️ Brand: ${product.brand}\n\n📋 SKU: ${product.sku}\n\nPlease share details about:\n• Availability & stock\n• Bulk/wholesale pricing\n• Delivery options\n\nThank you!`);
               return (
                 <div
                   key={product.id}
@@ -460,17 +445,6 @@ export default function Dashboard() {
                       productId: product.id,
                     }}
                   />
-
-                  <a
-                    href={`https://wa.me/918295158184?text=${msg}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 w-full py-2 border border-[#25D366]/30 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-white transition-all duration-300 text-xs font-medium tracking-wider"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <MessageCircle className="h-3.5 w-3.5" />
-                    Enquire on WhatsApp
-                  </a>
                 </div>
               );
             })}

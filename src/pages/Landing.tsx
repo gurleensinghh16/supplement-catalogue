@@ -7,7 +7,6 @@ import {
   Shield,
   Award,
   Zap,
-  MessageCircle,
 } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useRef, useState, useEffect, useCallback } from "react";
@@ -319,8 +318,7 @@ export default function Landing() {
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
               >
-                {featuredFromDB.slice(0, 12).map((product, i) => {
-                  const msg = encodeURIComponent(`Hi TheDietStore 👋\n\nI'm interested in:\n\n📦 *${product.name}*\n🏷️ Brand: ${product.brand}\n📋 SKU: ${product.sku}\n\nPlease share details about:\n• Availability & stock\n• Bulk/wholesale pricing\n• Delivery options\n\nThank you!`);
+                               {featuredFromDB.slice(0, 12).map((product, i) => {
                   return (
                     <motion.div key={product.id} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
                       variants={scaleIn} custom={i} className={`group flex-shrink-0 w-[42vw] xs:w-[180px] sm:w-[260px] md:w-[280px] lg:w-[280px] ${!product.inStock ? 'opacity-60 grayscale' : ''}`}>
@@ -376,17 +374,6 @@ export default function Landing() {
                           productId: product.id,
                         }}
                       />
-
-                      {/* WhatsApp Enquiry Button */}
-                      <a
-                        href={`https://wa.me/918295158184?text=${msg}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-center gap-2 w-full py-2.5 border border-[#25D366]/30 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-white transition-all duration-300 text-xs font-medium tracking-wider font-['Orbitron'] uppercase"
-                      >
-                        <MessageCircle className="h-3.5 w-3.5" />
-                        Enquire on WhatsApp
-                      </a>
                     </motion.div>
                   );
                 })}

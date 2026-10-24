@@ -98,21 +98,6 @@ export default function PriceAndBuy({
   const hasMrp = Number.isFinite(mrp) && mrp > price;
   const canBuy = hasPrice && product.inStock;
 
-  const buyMsg = encodeURIComponent(
-    `Hi TheDietStore 👋
-
-I'd like to buy:
-
-📦 *${product.name}*
-🏷️ Brand: ${product.brand}
-💰 Price: ${hasPrice ? formatPrice(price) : "N/A"}
-📋 SKU: ${product.sku || "Not available"}
-
-Please confirm availability and share the payment details.
-
-Thank you!`
-  );
-
   const handleBuy = async (
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
@@ -270,27 +255,15 @@ Thank you!`
         </p>
       )}
 
-      {canBuy ? (
-        <>
-          <button
-            type="button"
-            onClick={handleBuy}
-            disabled={loading}
-            className="mb-2 block w-full bg-[#c2202f] py-2.5 text-center font-['Orbitron'] text-xs uppercase tracking-wider text-white transition-colors hover:bg-[#de3746] disabled:cursor-wait disabled:opacity-60"
-          >
-            {loading ? "Please wait..." : "Buy now"}
-          </button>
-
-          <a
-            href={`https://wa.me/918295158184?text=${buyMsg}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(event) => event.stopPropagation()}
-            className="mb-2 block w-full text-center text-[11px] text-[#999999] transition-colors hover:text-[#25D366]"
-          >
-            or order on WhatsApp
-          </a>
-        </>
+            {canBuy ? (
+        <button
+          type="button"
+          onClick={handleBuy}
+          disabled={loading}
+          className="mb-2 block w-full bg-[#c2202f] py-2.5 text-center font-['Orbitron'] text-xs uppercase tracking-wider text-white transition-colors hover:bg-[#de3746] disabled:cursor-wait disabled:opacity-60"
+        >
+          {loading ? "Please wait..." : "Buy now"}
+        </button>
       ) : (
         <button
           type="button"
