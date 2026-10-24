@@ -369,14 +369,13 @@ export default function Landing() {
                       </p>
 
                       {/* Price + Buy */}
-                      ```tsx
+                      
                       <PriceAndBuy
                         product={{
                           ...product,
                           productId: product.id,
                         }}
                       />
-                      ```
 
                       {/* WhatsApp Enquiry Button */}
                       <a

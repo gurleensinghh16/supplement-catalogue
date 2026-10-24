@@ -216,7 +216,12 @@ function CategorySection({
               </p>
 
               {/* Price + Buy */}
-              <PriceAndBuy product={product} />
+              <PriceAndBuy
+                product={{
+                  ...product,
+                  productId: product.id,
+                }}
+              />
 
               {/* WhatsApp Enquiry Button */}
               <a
@@ -448,14 +453,13 @@ export default function Dashboard() {
                     {product.description}
                   </p>
 
-                  ```tsx
+                  
                   <PriceAndBuy
                     product={{
                       ...product,
                       productId: product.id,
                     }}
                   />
-                  ```
 
                   <a
                     href={`https://wa.me/918295158184?text=${msg}`}
