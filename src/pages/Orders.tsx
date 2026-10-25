@@ -1,4 +1,3 @@
-
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import { supabase } from "@/lib/supabase";
@@ -12,7 +11,6 @@ import {
     RefreshCw,
     ShoppingBag,
     IndianRupee,
-    Clock3,
     CheckCircle2,
     MapPin,
     Phone,
@@ -23,7 +21,6 @@ import {
 } from "lucide-react";
 
 type OrderStatus = "created" | "paid" | "failed";
-type StatusFilter = "all" | OrderStatus;
 
 type Order = {
     id: string;
@@ -132,7 +129,6 @@ export default function Orders() {
     const [loadingOrders, setLoadingOrders] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
     const [searchQuery, setSearchQuery] = useState("");
-    const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
     const [errorMessage, setErrorMessage] = useState("");
     const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
 
@@ -237,7 +233,8 @@ export default function Orders() {
                         "pincode",
                     ].join(",")
                 )
-                .order("created_at", { ascending: false });
+                                .eq("status", "paid")
+                .order("paid_at", { ascending: false, nullsFirst: false });
 
             if (error) throw error;
 
@@ -261,14 +258,13 @@ export default function Orders() {
         }
     }, [isAdmin, refreshKey, fetchOrders]);
 
-    const filteredOrders = useMemo(() => {
+       const filteredOrders = useMemo(() => {
         const query = searchQuery.trim().toLowerCase();
 
-        return orders.filter((order) => {
-            const matchesStatus =
-                statusFilter === "all" || order.status === statusFilter;
+        if (!query) return orders;
 
-            const searchable = [
+        return orders.filter((order) =>
+            [
                 order.id,
                 order.product_id,
                 order.product_name ?? "",
@@ -280,34 +276,11 @@ export default function Orders() {
                 order.phone ?? "",
                 order.customer_phone ?? "",
                 order.pincode ?? "",
-            ];
+            ].some((value) => value.toLowerCase().includes(query))
+        );
+    }, [orders, searchQuery]);
 
-            const matchesSearch =
-                !query ||
-                searchable.some((value) =>
-                    value.toLowerCase().includes(query)
-                );
-
-            return matchesStatus && matchesSearch;
-        });
-    }, [orders, searchQuery, statusFilter]);
-
-    const paidOrders = useMemo(
-        () => orders.filter((order) => order.status === "paid"),
-        [orders]
-    );
-
-    const pendingOrders = useMemo(
-        () => orders.filter((order) => order.status === "created"),
-        [orders]
-    );
-
-    const failedOrders = useMemo(
-        () => orders.filter((order) => order.status === "failed"),
-        [orders]
-    );
-
-    const totalRevenue = paidOrders.reduce(
+        const totalRevenue = orders.reduce(
         (sum, order) => sum + (Number(order.amount_paise) || 0),
         0
     );
@@ -417,15 +390,7 @@ export default function Orders() {
                     </button>
 
                     <div className="flex items-center gap-2">
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => navigate("/admin")}
-                            className="text-[#999999] hover:text-white hover:bg-[#111111]"
-                        >
-                            <ArrowLeft className="h-4 w-4 mr-2" />
-                            <span className="hidden sm:inline">Products</span>
-                        </Button>
+                        
 
                         <Button
                             variant="ghost"
@@ -434,7 +399,9 @@ export default function Orders() {
                             className="text-[#999999] hover:text-white hover:bg-[#111111]"
                             title="Sign out"
                         >
+                            
                             <LogOut className="h-4 w-4" />
+                            <span className="hidden sm:inline">Logout</span>
                         </Button>
                     </div>
                 </div>
@@ -448,7 +415,7 @@ export default function Orders() {
                         </h1>
 
                         <p className="mt-2 text-sm text-[#999999]">
-                            Review customer orders, payment statuses, and delivery details.
+                                                        Verified paid orders, ready for dispatch.
                         </p>
                     </div>
 
@@ -476,23 +443,11 @@ export default function Orders() {
                     </div>
                 )}
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
-                    <StatCard
-                        title="Total Orders"
-                        value={orders.length}
-                        icon={ShoppingBag}
-                    />
-
+                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
                     <StatCard
                         title="Paid Orders"
-                        value={paidOrders.length}
+                        value={orders.length}
                         icon={CheckCircle2}
-                    />
-
-                    <StatCard
-                        title="Awaiting Payment"
-                        value={pendingOrders.length}
-                        icon={Clock3}
                     />
 
                     <StatCard
@@ -501,8 +456,7 @@ export default function Orders() {
                         icon={IndianRupee}
                     />
                 </div>
-
-                <div className="mb-5 flex flex-col lg:flex-row gap-4 lg:items-center justify-between">
+                <div className="mb-5">
                     <div className="relative w-full lg:max-w-md">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#999999]" />
 
@@ -513,33 +467,7 @@ export default function Orders() {
                             className="h-10 pl-9 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/60"
                         />
                     </div>
-
-                    <div className="flex flex-wrap gap-2">
-                        {(
-                            [
-                                ["all", "All Orders"],
-                                ["created", "Created"],
-                                ["paid", "Paid"],
-                                ["failed", "Failed"],
-                            ] as [StatusFilter, string][]
-                        ).map(([value, label]) => (
-                            <button
-                                key={value}
-                                onClick={() => setStatusFilter(value)}
-                                className={`px-3 py-2 text-xs uppercase tracking-wider border transition-colors ${statusFilter === value
-                                    ? "border-[#c2202f] bg-[#c2202f]/10 text-white"
-                                    : "border-[#2b2a27] bg-[#0a0a0a] text-[#999999] hover:text-white"
-                                    }`}
-                            >
-                                {label}
-                                {value === "all"
-                                    ? ` (${orders.length})`
-                                    : ` (${orders.filter((order) => order.status === value).length})`}
-                            </button>
-                        ))}
-                    </div>
                 </div>
-
                 {loadingOrders && orders.length === 0 ? (
                     <div className="border border-[#2b2a27] py-20 text-center text-sm text-[#999999]">
                         Loading orders...
@@ -553,9 +481,9 @@ export default function Orders() {
                         </h2>
 
                         <p className="mt-2 text-sm text-[#999999]">
-                            {orders.length === 0
-                                ? "Orders will appear here after they are recorded in Supabase."
-                                : "Try changing your search or status filter."}
+                                        {orders.length === 0
+                                ? "Paid orders will appear here once a payment is verified."
+                                : "No orders match your search."}
                         </p>
                     </div>
                 ) : (
@@ -735,13 +663,6 @@ export default function Orders() {
                     <span>
                         Showing {filteredOrders.length} of {orders.length} orders
                     </span>
-
-                    <button
-                        onClick={() => navigate("/admin")}
-                        className="hover:text-white transition-colors"
-                    >
-                        Back to Product Management →
-                    </button>
                 </div>
             </main>
         </div>
