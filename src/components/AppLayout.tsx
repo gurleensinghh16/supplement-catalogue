@@ -30,41 +30,41 @@ const navCategories = [
   "Travel Pack",
 ];
 
-type Product = {
-  _id: string;
+type SuggestionProduct = {
+  id: string;
   name: string;
   brand: string;
   category: string;
-  description: string;
-  sku: string;
-  inStock: boolean;
   imageUrl?: string;
-  tags: string[];
-  servings?: string;
-  weight?: string;
-  featured?: boolean;
-  stockQuantity?: number;
 };
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
   // Products (fetched from Supabase)
-  const [allProducts, setAllProducts] = useState<Product[] | undefined>(
+    const [allProducts, setAllProducts] = useState<SuggestionProduct[] | undefined>(
     undefined,
   );
 
   useEffect(() => {
     supabase
-      .from("products")
-      .select("*")
+      .from("keep_products")
+      .select("productID, productName, brandName, categoryName, all_images_url")
       .then(({ data, error }) => {
         if (error) {
           console.error("Failed to fetch products:", error.message);
           setAllProducts([]);
-        } else {
-          setAllProducts(data as Product[]);
+          return;
         }
+        setAllProducts(
+          (data ?? []).map((row) => ({
+            id: String(row.productID),
+            name: (row.productName ?? "").trim(),
+            brand: (row.brandName ?? "").trim(),
+            category: row.categoryName ?? "",
+            imageUrl: row.all_images_url?.match(/https?:\/\/[^\s,|;"'[\]]+/)?.[0],
+          })),
+        );
       });
   }, []);
 
@@ -115,7 +115,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const selectSuggestion = (product: Product) => {
+    const selectSuggestion = (product: SuggestionProduct) => {
     navigate(`/catalogue?search=${encodeURIComponent(product.name)}`);
     setSearchOpen(false);
     setSearchQuery("");
@@ -177,7 +177,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 <div className="w-full mt-2 bg-[#111111] border border-[#2b2a27] max-h-[300px] overflow-y-auto">
                   {searchSuggestions.map((product) => (
                     <button
-                      key={product._id}
+                        key={product.id}
                       type="button"
                       onClick={() => selectSuggestion(product)}
                       className="w-full flex items-center gap-3 px-5 py-3 hover:bg-white/5 transition-colors text-left cursor-pointer border-b border-[#2b2a27] last:border-0"

@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useMemo } from "react";
 import { supabase } from "@/lib/supabase"; // adjust path to wherever your client lives
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useSearchParams } from "react-router";
 import {
   Search,
   Package,
@@ -230,7 +231,14 @@ function CategorySection({
 
 export default function Dashboard() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [search, setSearch] = useState("");
+    const [searchParams] = useSearchParams();
+  const [search, setSearch] = useState(searchParams.get("search") ?? "");
+
+  // When the header searches while you're already on the catalogue,
+  // pick up the new term from the URL.
+  useEffect(() => {
+    setSearch(searchParams.get("search") ?? "");
+  }, [searchParams]);
 
   const [products, setProducts] = useState<Product[] | undefined>(undefined);
 
