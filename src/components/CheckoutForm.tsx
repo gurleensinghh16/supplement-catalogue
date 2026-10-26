@@ -79,16 +79,26 @@ function Field({
   );
 }
 
+const MAX_QTY = 10;
+
+const inr = (value: number) =>
+  new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0,
+  }).format(value);
+
 type Props = {
   productName: string;
-  amountLabel: string;
-  onSubmit: (details: CustomerDetails) => void;
+  unitPrice: number;
+  onSubmit: (details: CustomerDetails, quantity: number) => void;
   onClose: () => void;
 };
 
-export default function CheckoutForm({ productName, amountLabel, onSubmit, onClose }: Props) {
+export default function CheckoutForm({ productName, unitPrice, onSubmit, onClose }: Props) {
   const [values, setValues] = useState<CustomerDetails>(loadSaved);
   const [errors, setErrors] = useState<Errors>({});
+  const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -123,7 +133,7 @@ export default function CheckoutForm({ productName, amountLabel, onSubmit, onClo
     } catch {
       /* storage unavailable, ignore */
     }
-    onSubmit(clean);
+        onSubmit(clean, quantity);
   };
 
   const inputClass = (field: keyof CustomerDetails) =>
@@ -148,7 +158,7 @@ export default function CheckoutForm({ productName, amountLabel, onSubmit, onClo
               Delivery details
             </h2>
             <p className="mt-1 text-xs text-[#999999] line-clamp-2">
-              {productName} · <span className="text-white">{amountLabel}</span>
+                            {productName} · <span className="text-white">{inr(unitPrice)}</span> each
             </p>
           </div>
           <button
@@ -162,6 +172,38 @@ export default function CheckoutForm({ productName, amountLabel, onSubmit, onClo
         </div>
 
         <div className="space-y-4">
+                      <div>
+            <label className="block text-[11px] uppercase tracking-wider text-[#999999] mb-1">
+              Quantity
+            </label>
+            <div className="flex items-center justify-between border border-[#2b2a27] bg-black px-3 py-2">
+              <div className="flex items-center">
+                <button
+                  type="button"
+                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                  disabled={quantity <= 1}
+                  aria-label="Decrease quantity"
+                  className="h-8 w-8 cursor-pointer text-lg text-white hover:text-[#c2202f] disabled:cursor-not-allowed disabled:opacity-30"
+                >
+                  −
+                </button>
+                <span className="w-10 text-center text-sm text-white">{quantity}</span>
+                <button
+                  type="button"
+                  onClick={() => setQuantity((q) => Math.min(MAX_QTY, q + 1))}
+                  disabled={quantity >= MAX_QTY}
+                  aria-label="Increase quantity"
+                  className="h-8 w-8 cursor-pointer text-lg text-white hover:text-[#c2202f] disabled:cursor-not-allowed disabled:opacity-30"
+                >
+                  +
+                </button>
+              </div>
+              <p className="text-xs text-[#999999]">
+                Total{" "}
+                <span className="font-semibold text-white">{inr(unitPrice * quantity)}</span>
+              </p>
+            </div>
+          </div>
           <Field label="Full name" error={errors.name}>
             <input
               className={inputClass("name")}
@@ -262,7 +304,7 @@ export default function CheckoutForm({ productName, amountLabel, onSubmit, onClo
           type="submit"
           className="mt-6 block w-full bg-[#c2202f] py-3 text-center font-['Orbitron'] text-xs uppercase tracking-wider text-white transition-colors hover:bg-[#de3746] cursor-pointer"
         >
-          Continue to payment
+                    Continue to payment · {inr(unitPrice * quantity)}
         </button>
       </form>
     </div>,

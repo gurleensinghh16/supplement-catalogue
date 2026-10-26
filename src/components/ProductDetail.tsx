@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { X, Package, MessageCircle, Minus, Plus } from "lucide-react";
+import { X, Package } from "lucide-react";
 
 type Product = {
   id: string;
@@ -25,7 +25,6 @@ export default function ProductDetail({
   onClose: () => void;
 }) {
   const [visible, setVisible] = useState(false);
-  const [qty, setQty] = useState(1);
 
   // Animate out, then actually unmount via onClose
   const handleClose = () => {
@@ -54,10 +53,6 @@ export default function ProductDetail({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const msg = encodeURIComponent(
-  `Hi TheDietStore 👋\n\nI'm interested in:\n\n📦 *${product.name}*\n🏷️ Brand: ${product.brand}\n📋 SKU: ${product.sku}\n🔢 Quantity: ${qty}\n\nPlease share details about:\n• Availability & stock\n• Bulk/wholesale pricing\n• Delivery options\n\nThank you!`
-);
 
   return (
     <div
@@ -174,43 +169,6 @@ export default function ProductDetail({
                   ))}
                 </div>
               )}
-
-              <div className="mt-auto flex flex-col gap-3">
-                {/* Quantity selector */}
-                <div className="flex items-center gap-3">
-                  <span className="text-xs text-[#999999] uppercase tracking-wider">
-                    Qty
-                  </span>
-                  <div className="flex items-center border border-[#2b2a27]">
-                    <button
-                      onClick={() => setQty((q) => Math.max(1, q - 1))}
-                      className="w-8 h-8 flex items-center justify-center text-white hover:text-[#c2202f] transition-colors cursor-pointer"
-                    >
-                      <Minus className="h-3.5 w-3.5" />
-                    </button>
-                    <span className="w-8 text-center text-sm text-white">
-                      {qty}
-                    </span>
-                    <button
-                      onClick={() => setQty((q) => q + 1)}
-                      className="w-8 h-8 flex items-center justify-center text-white hover:text-[#c2202f] transition-colors cursor-pointer"
-                    >
-                      <Plus className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-                </div>
-
-                {/* WhatsApp CTA */}
-                <a
-                  href={`https://wa.me/918295158184?text=${msg}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 w-full py-3 border border-[#25D366]/30 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-white transition-all duration-300 text-sm font-medium tracking-wider"
-                >
-                  <MessageCircle className="h-4 w-4" />
-                  Enquire on WhatsApp
-                </a>
-              </div>
             </div>
           </div>
         </div>

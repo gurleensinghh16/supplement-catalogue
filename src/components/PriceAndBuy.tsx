@@ -85,7 +85,12 @@ export const formatPrice = (value: number) =>
 export default function PriceAndBuy({ product }: { product: PriceProduct }) {
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const [success, setSuccess] = useState<{ paymentId: string; email: string } | null>(null);
+    const [success, setSuccess] = useState<{
+    paymentId: string;
+    email: string;
+    quantity: number;
+    total: number;
+  } | null>(null);
 
   const price = Number(product.price);
   const mrp = Number(product.mrp);
@@ -126,7 +131,7 @@ export default function PriceAndBuy({ product }: { product: PriceProduct }) {
   };
 
   // Step 2: the form was submitted, so create the order and open Razorpay.
-  const startPayment = async (customer: CustomerDetails) => {
+    const startPayment = async (customer: CustomerDetails, quantity: number) => {
     setShowForm(false);
     setLoading(true);
 
@@ -136,7 +141,7 @@ export default function PriceAndBuy({ product }: { product: PriceProduct }) {
         "create-razorpay-order",
         {
           productId,
-          quantity: 1,
+          quantity,
           customer,
         }
       );
@@ -152,7 +157,7 @@ export default function PriceAndBuy({ product }: { product: PriceProduct }) {
 
       // Prevent checkout if the displayed price differs from
       // the amount returned by the backend.
-      if (order.amount !== Math.round(price * 100)) {
+            if (order.amount !== Math.round(price * 100) * quantity) {
         alert(
           "The product price has changed. Please refresh the catalogue and try again."
         );
@@ -188,9 +193,11 @@ export default function PriceAndBuy({ product }: { product: PriceProduct }) {
             );
 
             if (result.verified) {
-              setSuccess({
+                            setSuccess({
                 paymentId: payment.razorpay_payment_id,
                 email: customer.email,
+                quantity,
+                total: price * quantity,
               });
             } else {
               alert(
@@ -273,20 +280,22 @@ export default function PriceAndBuy({ product }: { product: PriceProduct }) {
       )}
 
       {showForm && (
-        <CheckoutForm
+          <CheckoutForm
           productName={product.name}
-          amountLabel={formatPrice(price)}
+          unitPrice={price}
           onSubmit={startPayment}
           onClose={() => setShowForm(false)}
         />
       )}
 
       {success && (
-        <OrderSuccessModal
+            <OrderSuccessModal
           paymentId={success.paymentId}
           email={success.email}
-          productName={product.name}
-          amountLabel={formatPrice(price)}
+          productName={
+            success.quantity > 1 ? `${product.name} × ${success.quantity}` : product.name
+          }
+          amountLabel={formatPrice(success.total)}
           onClose={() => setSuccess(null)}
         />
       )}
