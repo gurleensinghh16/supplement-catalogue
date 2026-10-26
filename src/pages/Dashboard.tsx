@@ -14,31 +14,29 @@ import ProductDetail from "@/components/ProductDetail";
 import PriceAndBuy from "@/components/PriceAndBuy";
 
 const sectionCategories = [
-  "Whey Protein",
-  "Protein",
-  "Isolate Protein",
-  "Hydrolysed Protein",
+  "Essential",
+  "Whey",
+  "Iso",
+  "Hydrolysed",
   "Casein",
+  "Mass Gainer",
   "Pre-Workout",
   "BCAA",
-  "BCAA / EAA",
   "EAA",
   "Amino",
-  "Post-Workout",
-  "Gainer",
+  "Creatine",
+  "Glutamine",
   "Fat Burner",
   "Greens",
   "Collagen",
-  "Creatine",
-  "Glutamine",
   "L-Carnitine",
   "L-Arginine",
   "Omega 3",
   "Multivitamin",
   "Protein Bar",
   "Test Booster",
-  "Growth Hormone",
-  "Nitric Oxide",
+  "Shaker",
+  "Other Products",
 ];
 
 // Shape the UI works with (mapped from the Supabase "keep_products" table).
@@ -79,12 +77,117 @@ type KeepProductRow = {
   "100475-The Diet Store-MRP": string | null;
 };
 
+
+function getDisplayCategory(row: KeepProductRow): string {
+  const nameAndDescription = [
+    row.productName,
+    row.shortDescription,
+    row.longDescription,
+    row.description,
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  const category = (row.categoryName ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, " ");
+
+  // Identify specific product types from their names first.
+  if (/\b(isolate|iso protein|whey isolate)\b/.test(nameAndDescription)) {
+    return "Iso";
+  }
+
+  if (/\bwhey\b/.test(nameAndDescription)) return "Whey";
+
+  if (/\bcreatine\b/.test(nameAndDescription)) return "Creatine";
+
+  if (/\b(mass gainer|weight gainer|lean mass gainer)\b/.test(nameAndDescription)) {
+    return "Mass Gainer";
+  }
+
+  if (/\b(pre[\s-]*workout)\b/.test(nameAndDescription)) {
+    return "Pre-Workout";
+  }
+
+  if (/\b(bcaa|eaa|bcaas|eaas)\b/.test(nameAndDescription)) {
+    return "BCAA / EAA";
+  }
+
+  if (/\b(fat burner|fatburner)\b/.test(nameAndDescription)) {
+    return "Fat Burner";
+  }
+
+  if (/\bcollagen\b/.test(nameAndDescription)) return "Collagen";
+  if (/\bgreens\b/.test(nameAndDescription)) return "Greens";
+  if (/\bomega[\s-]*3\b/.test(nameAndDescription)) return "Omega 3";
+  if (/\bmultivitamin\b/.test(nameAndDescription)) return "Multivitamin";
+  if (/\bglutamine\b/.test(nameAndDescription)) return "Glutamine";
+  if (/\bl[\s-]*carnitine\b/.test(nameAndDescription)) return "L-Carnitine";
+  if (/\bl[\s-]*arginine\b/.test(nameAndDescription)) return "L-Arginine";
+  if (/\bshaker\b/.test(nameAndDescription)) return "Shaker";
+  if (/\bprotein bar\b/.test(nameAndDescription)) return "Protein Bar";
+
+  if (
+    /\b(vitamin|magnesium|zinc|calcium|electrolytes?|iron|selenium)\b/.test(
+      nameAndDescription
+    )
+  ) {
+    return "Vitamins & Minerals";
+  }
+
+  // Map existing Supabase category names to the new display categories.
+  
+  // Map existing Supabase category names to display categories.
+  if (category === "whey protein" || category === "whey") return "Whey";
+
+  if (
+    category === "isolate protein" ||
+    category === "iso" ||
+    category === "isolate"
+  ) {
+    return "Iso";
+  }
+
+  if (category === "pre workout" || category === "pre-workout") {
+    return "Pre-Workout";
+  }
+
+  if (category === "mass gainer" || category === "gainer") {
+    return "Mass Gainer";
+  }
+
+  if (category === "creatine") return "Creatine";
+  if (category === "shaker") return "Shaker";
+
+  // Preserve other existing categories rather than sending everything
+  // that doesn't match a keyword to "Other Products".
+  if (category === "essential") return "Essential";
+
+  if (category === "bcaa" || category === "eaa" ||
+      category === "bcaa / eaa") return "BCAA / EAA";
+
+  if (category === "fat burner") return "Fat Burner";
+  if (category === "collagen") return "Collagen";
+  if (category === "greens") return "Greens";
+  if (category === "omega 3") return "Omega 3";
+  if (category === "multivitamin") return "Multivitamin";
+  if (category === "glutamine") return "Glutamine";
+  if (category === "l-carnitine") return "L-Carnitine";
+  if (category === "l-arginine") return "L-Arginine";
+  if (category === "protein bar") return "Protein Bar";
+
+  return "Other Products";
+  }
+
+
 function toProduct(row: KeepProductRow): Product {
   return {
     id: row.productID,
     name: row.productName ?? "",
     brand: row.brandName ?? "",
-    category: row.categoryName ?? "",
+    category: getDisplayCategory(row),
     description: row.description ?? row.shortDescription ?? "",
     longDescription: row.longDescription ?? "",
     sku: row.sku ?? "",
@@ -234,11 +337,7 @@ export default function Dashboard() {
     const [searchParams] = useSearchParams();
   const [search, setSearch] = useState(searchParams.get("search") ?? "");
 
-  // When the header searches while you're already on the catalogue,
-  // pick up the new term from the URL.
-  useEffect(() => {
-    setSearch(searchParams.get("search") ?? "");
-  }, [searchParams]);
+  const selectedCategory = searchParams.get("category") ?? "";
 
   const [products, setProducts] = useState<Product[] | undefined>(undefined);
 
@@ -268,6 +367,7 @@ export default function Dashboard() {
         return;
       }
       if (isMounted) setProducts((data ?? []).map(toProduct));
+
     }
 
     fetchProducts();
@@ -278,24 +378,71 @@ export default function Dashboard() {
 
   const allProducts = useMemo(() => products ?? [], [products]);
 
-  // Group products by category
-  const groupedProducts = sectionCategories.reduce(
-    (acc, cat) => {
-      acc[cat] = allProducts.filter(
-        (p) => p.category?.toLowerCase() === cat.toLowerCase()
-      );
-      return acc;
-    },
-    {} as Record<string, Product[]>
-  );
+  
+const normalizeCategory = (category: string | null | undefined) =>
+  (category ?? "").trim().toLowerCase().replace(/\s+/g, " ");
 
-  // Categories not in our predefined list
-  const uncategorized = allProducts.filter(
-    (p) =>
-      !sectionCategories.some(
-        (sc) => sc.toLowerCase() === p.category?.toLowerCase()
-      )
+const groupedProducts = sectionCategories.reduce(
+  (acc, cat) => {
+    acc[cat] = allProducts.filter(
+      (p) => normalizeCategory(p.category) === normalizeCategory(cat)
+    );
+    return acc;
+  },
+  {} as Record<string, Product[]>
+);
+
+
+const uncategorized = allProducts.filter(
+  (p) =>
+    !sectionCategories.some(
+      (cat) => normalizeCategory(cat) === normalizeCategory(p.category)
+    )
+);
+
+
+const menuCategoryMap: Record<string, string[]> = {
+  "Browse All": [],
+  Stacks: ["Stacks"],
+  Protein: ["Whey", "Iso", "Mass Gainer", "Protein Bar"],
+  "Pre-Workout": ["Pre-Workout"],
+  Creatine: ["Creatine"],
+  "Muscle Building": ["Whey", "Iso", "Creatine", "Mass Gainer"],
+  Hydration: ["Hydration"],
+  "Post-Workout": ["Post-Workout"],
+  "Immunity & Wellness": [
+    "Immunity & Wellness",
+    "Vitamins & Minerals",
+    "Multivitamin",
+    "Greens",
+  ],
+  "Weight Management": ["Fat Burner", "L-Carnitine"],
+  "Digestion & Gut Health": ["Digestion & Gut Health"],
+  Longevity: ["Longevity"],
+  Recovery: ["Recovery", "Glutamine"],
+  "Amino Acids": [
+    "BCAA / EAA",
+    "Amino",
+    "Glutamine",
+    "L-Arginine",
+    "L-Carnitine",
+  ],
+  "Travel Pack": ["Travel Pack"],
+};
+const selectedCategoryProducts = allProducts.filter((product) => {
+  if (!selectedCategory) return false;
+
+  const targetCategories = menuCategoryMap[selectedCategory] ?? [
+    selectedCategory,
+  ];
+
+  return targetCategories.some(
+    (category) =>
+      normalizeCategory(product.category) === normalizeCategory(category)
   );
+});
+
+
 
   // Count total results
   const totalResults = allProducts.length;
@@ -457,6 +604,18 @@ export default function Dashboard() {
               );
             })}
           </div>
+        ) : selectedCategory ? (
+          selectedCategoryProducts.length > 0 ? (
+            <CategorySection
+              title={selectedCategory}
+              products={selectedCategoryProducts}
+              onSelectProduct={setSelectedProduct}
+            />
+          ) : (
+            <div className="py-20 text-center text-[#999999]">
+              No products found in {selectedCategory}.
+            </div>
+          )
         ) : (
           // Browse mode — horizontal scroll sections
           <>
@@ -468,15 +627,6 @@ export default function Dashboard() {
                 onSelectProduct={setSelectedProduct}
               />
             ))}
-
-            {/* Uncategorized products */}
-            {uncategorized.length > 0 && (
-              <CategorySection
-                title="Other Products"
-                products={uncategorized}
-                onSelectProduct={setSelectedProduct}
-              />
-            )}
           </>
         )}
       </div>

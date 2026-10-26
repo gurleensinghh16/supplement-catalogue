@@ -31,6 +31,8 @@ type Product = {
   weight: string | null;
   servings: string | null;
   stockQuantity: number | null;
+  price: number | null;
+  mrp: number | null;
   inStock: boolean;
   featured: boolean;
   tags: string[] | null;
@@ -50,8 +52,8 @@ type KeepProductRow = {
   stock_quantity: number | null;
   sku: string | null;
   featured: boolean | null;
-  "100475-The Diet Store-Price": string | null;
-  "100475-The Diet Store-MRP": string | null;
+  "100475-The Diet Store-Price": string | number | null;
+  "100475-The Diet Store-MRP": string | number | null;
 };
 
 function toProduct(row: KeepProductRow): Product {
@@ -66,6 +68,8 @@ function toProduct(row: KeepProductRow): Product {
     weight: null,
     servings: null,
     stockQuantity: row.stock_quantity ?? null,
+    price: row["100475-The Diet Store-Price"] == null || row["100475-The Diet Store-Price"] === "" ? null : Number(row["100475-The Diet Store-Price"]),
+    mrp: row["100475-The Diet Store-MRP"] == null || row["100475-The Diet Store-MRP"] === "" ? null : Number(row["100475-The Diet Store-MRP"]),
     inStock: row.in_stock ?? true,
     featured: row.featured ?? false,
     tags: null,
@@ -103,6 +107,8 @@ export default function Admin() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editImage, setEditImage] = useState("");
   const [editStock, setEditStock] = useState("");
+  const [editMrp, setEditMrp] = useState("");
+  const [editPrice, setEditPrice] = useState("");
   const [editFeatured, setEditFeatured] = useState(false);
 
   // Add product form state
@@ -116,6 +122,8 @@ export default function Admin() {
   const [newWeight, setNewWeight] = useState("");
   const [newServings, setNewServings] = useState("");
   const [newStock, setNewStock] = useState("0");
+  const [newMrp, setNewMrp] = useState("");
+  const [newPrice, setNewPrice] = useState("");
   const [newFeatured, setNewFeatured] = useState(false);
   const [newTags, setNewTags] = useState("");
   const [newImageFile, setNewImageFile] = useState<File | null>(null);
@@ -202,6 +210,8 @@ export default function Admin() {
     setEditingId(product.id);
     setEditImage(product.imageUrl || "");
     setEditStock(String(product.stockQuantity ?? ""));
+    setEditMrp(product.mrp == null ? "" : String(product.mrp));
+    setEditPrice(product.price == null ? "" : String(product.price));
     setEditFeatured(product.featured);
   };
 
@@ -210,8 +220,10 @@ export default function Admin() {
       .from("keep_products")
       .update({
         all_images_url: editImage || null,
-        stock_quantity: editStock ? Number(editStock) : null,
-        in_stock: editStock ? Number(editStock) > 0 : false,
+        stock_quantity: editStock !== "" ? Number(editStock) : null,
+        in_stock: editStock !== "" ? Number(editStock) > 0 : false,
+        "100475-The Diet Store-MRP": editMrp !== "" ? Number(editMrp) : null,
+        "100475-The Diet Store-Price": editPrice !== "" ? Number(editPrice) : null,
         featured: editFeatured,
       })
       .eq("productID", productId);
@@ -230,7 +242,7 @@ export default function Admin() {
     setNewName(""); setNewBrand(""); setNewCategory(""); setNewDescription("");
     setNewSku("");
     setNewImageUrl(""); setNewWeight(""); setNewServings("");
-    setNewStock("0"); setNewFeatured(false); setNewTags("");
+    setNewStock("0"); setNewMrp(""); setNewPrice(""); setNewFeatured(false); setNewTags("");
     setNewImageFile(null);
     setIsUploading(false);
     setShowAddForm(false);
@@ -283,6 +295,8 @@ export default function Admin() {
       all_images_url: imageUrl,
       stock_quantity: Number(newStock),
       in_stock: Number(newStock) > 0,
+      "100475-The Diet Store-MRP": newMrp !== "" ? Number(newMrp) : null,
+      "100475-The Diet Store-Price": newPrice !== "" ? Number(newPrice) : null,
       featured: newFeatured,
     });
 
@@ -573,7 +587,9 @@ export default function Admin() {
               </div>
               <Input placeholder="Weight" value={newWeight} onChange={(e) => setNewWeight(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" />
               <Input placeholder="Servings" value={newServings} onChange={(e) => setNewServings(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" />
-              <Input placeholder="Stock Quantity" type="number" value={newStock} onChange={(e) => setNewStock(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" />
+              <Input placeholder="MRP" type="number" min="0" step="0.01" value={newMrp} onChange={(e) => setNewMrp(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" />
+              <Input placeholder="Selling Price" type="number" min="0" step="0.01" value={newPrice} onChange={(e) => setNewPrice(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" />
+              <Input placeholder="Stock Quantity" type="number" min="0" value={newStock} onChange={(e) => setNewStock(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" />
               <Input placeholder="Tags (comma-separated)" value={newTags} onChange={(e) => setNewTags(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50 sm:col-span-2 lg:col-span-1" />
               <textarea placeholder="Description" value={newDescription} onChange={(e) => setNewDescription(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50 px-3 py-2 text-sm resize-none sm:col-span-2 lg:col-span-3" rows={2} />
             </div>
@@ -701,11 +717,13 @@ export default function Admin() {
         ) : (
           <div className="border border-[#2b2a27] overflow-hidden">
             {/* Table Header */}
-            <div className="hidden md:grid grid-cols-[auto_1fr_90px_100px_70px_70px_70px_70px] gap-2 px-3 py-3 bg-[#111111] text-[10px] text-[#999999] uppercase tracking-wider font-medium border-b border-[#2b2a27]">
+            <div className="hidden md:grid grid-cols-[auto_minmax(140px,1fr)_90px_100px_78px_78px_60px_72px_65px_64px] gap-2 px-3 py-3 bg-[#111111] text-[10px] text-[#999999] uppercase tracking-wider font-medium border-b border-[#2b2a27]">
               <span></span>
               <span>Product</span>
               <span>Category</span>
               <span>Image URL</span>
+              <span className="text-right">MRP (₹)</span>
+              <span className="text-right">Price (₹)</span>
               <span className="text-right">Stock</span>
               <span className="text-center">In Stock</span>
               <span className="text-center">Featured</span>
@@ -718,7 +736,7 @@ export default function Admin() {
                 <div
                   key={product.id}
                   className={cn(
-                    "grid grid-cols-1 md:grid-cols-[auto_1fr_90px_100px_70px_70px_70px_70px] gap-2 px-3 py-3 border-t border-[#2b2a27] items-center transition-colors",
+                    "grid grid-cols-1 md:grid-cols-[auto_minmax(140px,1fr)_90px_100px_78px_78px_60px_72px_65px_64px] gap-2 px-3 py-3 border-t border-[#2b2a27] items-center transition-colors",
                     isEditing && "bg-[#c2202f]/[0.03]",
                   )}
                 >
@@ -758,6 +776,42 @@ export default function Admin() {
                     ) : (
                       <span className="text-xs text-[#999999]/40 truncate block max-w-[120px]">
                         {product.imageUrl || "—"}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="text-right">
+                    {isEditing ? (
+                      <Input
+                        value={editMrp}
+                        onChange={(e) => setEditMrp(e.target.value)}
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        className="h-8 text-xs bg-[#111111] border-[#2b2a27] text-white w-full text-right"
+                        placeholder="MRP"
+                      />
+                    ) : (
+                      <span className="text-xs text-[#999999]">
+                        {product.mrp == null ? "—" : `₹${product.mrp.toLocaleString("en-IN")}`}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="text-right">
+                    {isEditing ? (
+                      <Input
+                        value={editPrice}
+                        onChange={(e) => setEditPrice(e.target.value)}
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        className="h-8 text-xs bg-[#111111] border-[#2b2a27] text-white w-full text-right"
+                        placeholder="Price"
+                      />
+                    ) : (
+                      <span className="text-xs text-[#999999]">
+                        {product.price == null ? "—" : `₹${product.price.toLocaleString("en-IN")}`}
                       </span>
                     )}
                   </div>

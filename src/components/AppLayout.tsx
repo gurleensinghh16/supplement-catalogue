@@ -263,16 +263,24 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                       onMouseLeave={handleDropdownLeave}
                     >
                       <div className="px-6 pb-3 mb-2 border-b border-[#2b2a27]">
-                        <span className="font-['Orbitron'] text-xs tracking-[0.2em] uppercase text-[#c2202f]">
-                          Browse All
-                        </span>
-                      </div>
+  <button
+    onClick={() => {
+      navigate("/catalogue");
+      setMobileSuppsOpen(false);
+    }}
+    className="font-['Orbitron'] text-xs tracking-[0.2em] uppercase text-[#c2202f] hover:text-white transition-colors cursor-pointer"
+  >
+    Browse All
+  </button>
+</div>
                       {navCategories.map((cat) => (
                         <button
                           key={cat}
                           onClick={() => {
-                            setSupplementsOpen(false);
-                            navigate("/catalogue");
+                            setMobileSuppsOpen(false);
+                            navigate(
+                              `/catalogue?category=${encodeURIComponent(cat)}`
+                            );
                           }}
                           className="w-full text-left px-6 py-3 text-[15px] text-[#999999] hover:text-white hover:bg-white/5 transition-all duration-200 tracking-wide cursor-pointer flex items-center justify-between group/item"
                         >
