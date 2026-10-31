@@ -1,7 +1,8 @@
 
 import "./redirect.js";
 import { AppLayout } from "@/components/AppLayout";
-import '@vly-ai/integrations';
+import { CartProvider } from "@/context/CartContext";
+import "@vly-ai/integrations";
 import { Toaster } from "@/components/ui/sonner";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import React, { StrictMode, useEffect, lazy, Suspense } from "react";
@@ -14,6 +15,7 @@ const Landing = lazy(() => import("./pages/Landing.tsx"));
 const Catalogue = lazy(() => import("./pages/Catalogue.tsx"));
 const Admin = lazy(() => import("./pages/Admin.tsx"));
 const Orders = lazy(() => import("./pages/Orders.tsx"));
+const Cart = lazy(() => import("./pages/Cart.tsx"));
 const NotFound = lazy(() => import("./pages/NotFound.tsx"));
 
 function RouteLoading() {
@@ -95,18 +97,21 @@ createRoot(document.getElementById("root")!).render(
     <RootErrorBoundary>
       <LoadingScreen />
       <BrowserRouter>
-        <RouteSyncer />
-        <AppLayout>
-          <Suspense fallback={<RouteLoading />}>
-            <Routes>
-              <Route path="/" element={<Landing />} />
-              <Route path="/catalogue" element={<Catalogue />} />
-              <Route path="/admin" element={<Admin />} />
-              <Route path="/admin/orders" element={<Orders />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Suspense>
-        </AppLayout>
+        <CartProvider>
+          <RouteSyncer />
+          <AppLayout>
+            <Suspense fallback={<RouteLoading />}>
+              <Routes>
+                <Route path="/" element={<Landing />} />
+                <Route path="/catalogue" element={<Catalogue />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/admin" element={<Admin />} />
+                <Route path="/admin/orders" element={<Orders />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
+          </AppLayout>
+        </CartProvider>
       </BrowserRouter>
       <Toaster />
     </RootErrorBoundary>

@@ -1,3 +1,4 @@
+import CouponManager from "@/components/CouponManager";
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/use-auth";
@@ -485,6 +486,9 @@ export default function Admin() {
           </Button>
         </div>
 
+        {/* Coupon Management */}
+        <CouponManager />
+
         {/* Add Product Form */}
         {showAddForm && (
           <form onSubmit={handleAddProduct} className="mb-8 border border-[#2b2a27] bg-[#0a0a0a] p-6">
@@ -733,10 +737,57 @@ export default function Admin() {
             {(filteredProducts ?? products).map((product) => {
               const isEditing = editingId === product.id;
               return (
-                <div
-                  key={product.id}
+                <>
+                  {/* Mobile product card */}
+                  <div className={cn("md:hidden border-b border-[#2b2a27] p-4 space-y-4", isEditing && "bg-[#c2202f]/[0.04]")}>
+                    <div className="flex items-start gap-3">
+                      <div className="h-16 w-16 shrink-0 overflow-hidden rounded-md bg-[#111111] border border-[#2b2a27]">
+                        {(isEditing ? editImage : product.imageUrl) ? (
+                          <img src={isEditing ? editImage : product.imageUrl ?? ""} alt={product.name} className="h-full w-full object-cover" />
+                        ) : <div className="h-full w-full flex items-center justify-center"><Package className="h-6 w-6 text-[#999999]/40" /></div>}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-semibold text-white leading-snug">{product.name}</p>
+                        <p className="text-xs text-[#999999] mt-1">{product.brand} · {product.category}</p>
+                        <div className="flex flex-wrap items-center gap-2 mt-2">
+                          <span className={cn("text-[10px] font-semibold px-2 py-1 rounded", product.inStock ? "bg-[#57a256]/10 text-[#57a256]" : "bg-[#c2202f]/10 text-[#c2202f]")}>{product.inStock ? "In Stock" : "Out of Stock"}</span>
+                          {product.featured && <span className="text-[10px] font-semibold px-2 py-1 rounded bg-[#c2202f]/10 text-[#c2202f]">HOT</span>}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="rounded-md bg-[#111111] p-3 min-w-0">
+                        <p className="text-[10px] uppercase tracking-wider text-[#999999] mb-1">MRP</p>
+                        {isEditing ? <Input value={editMrp} onChange={(e) => setEditMrp(e.target.value)} type="number" min="0" step="0.01" className="h-9 bg-black border-[#2b2a27] text-white" placeholder="MRP" /> : <p className="text-sm font-semibold text-white">{product.mrp == null ? "—" : `₹${product.mrp.toLocaleString("en-IN")}`}</p>}
+                      </div>
+                      <div className="rounded-md bg-[#111111] p-3 min-w-0">
+                        <p className="text-[10px] uppercase tracking-wider text-[#999999] mb-1">Selling price</p>
+                        {isEditing ? <Input value={editPrice} onChange={(e) => setEditPrice(e.target.value)} type="number" min="0" step="0.01" className="h-9 bg-black border-[#2b2a27] text-white" placeholder="Price" /> : <p className="text-sm font-semibold text-white">{product.price == null ? "—" : `₹${product.price.toLocaleString("en-IN")}`}</p>}
+                      </div>
+                      <div className="rounded-md bg-[#111111] p-3 min-w-0">
+                        <p className="text-[10px] uppercase tracking-wider text-[#999999] mb-1">Stock quantity</p>
+                        {isEditing ? <Input value={editStock} onChange={(e) => setEditStock(e.target.value)} type="number" className="h-9 bg-black border-[#2b2a27] text-white" /> : <p className="text-sm font-semibold text-white">{product.stockQuantity ?? "—"}</p>}
+                      </div>
+                      <div className="rounded-md bg-[#111111] p-3 min-w-0">
+                        <p className="text-[10px] uppercase tracking-wider text-[#999999] mb-1">Featured</p>
+                        {isEditing ? <button type="button" onClick={() => setEditFeatured(!editFeatured)} className={cn("h-7 w-12 rounded-full relative", editFeatured ? "bg-[#c2202f]" : "bg-[#2b2a27")}><span className={cn("absolute top-0.5 h-6 w-6 rounded-full bg-white transition-transform", editFeatured ? "translate-x-[25px]" : "translate-x-0.5")} /></button> : <p className="text-sm font-semibold text-white">{product.featured ? "Yes" : "No"}</p>}
+                      </div>
+                    </div>
+                    {isEditing && <div className="space-y-2"><label className="text-[10px] uppercase tracking-wider text-[#999999]">Image URL</label><Input value={editImage} onChange={(e) => setEditImage(e.target.value)} className="h-9 bg-[#111111] border-[#2b2a27] text-white" placeholder="Image URL" /></div>}
+                    <div className="flex gap-2">
+                      {isEditing ? <>
+                        <Button onClick={() => saveEdit(product.id)} className="flex-1 h-10 bg-[#c2202f] text-white hover:bg-[#de3746]"><Save className="h-4 w-4 mr-2" />Save changes</Button>
+                        <Button variant="outline" onClick={() => setEditingId(null)} className="h-10 border-[#2b2a27] text-white"><X className="h-4 w-4 mr-1" />Cancel</Button>
+                      </> : <>
+                        <Button onClick={() => startEditing(product)} className="flex-1 h-10 bg-[#c2202f]/10 text-[#c2202f] border border-[#c2202f]/30 hover:bg-[#c2202f]/20"><Pencil className="h-4 w-4 mr-2" />Edit product</Button>
+                        <Button variant="outline" onClick={() => handleDeleteProduct(product.id)} className="h-10 border-[#2b2a27] text-[#c2202f] hover:bg-[#c2202f]/10"><Trash2 className="h-4 w-4" /></Button>
+                      </>}
+                    </div>
+                  </div>
+                  {/* Desktop table row */}
+                  <div
                   className={cn(
-                    "grid grid-cols-1 md:grid-cols-[auto_minmax(140px,1fr)_90px_100px_78px_78px_60px_72px_65px_64px] gap-2 px-3 py-3 border-t border-[#2b2a27] items-center transition-colors",
+                    "hidden md:grid md:grid-cols-[auto_minmax(140px,1fr)_90px_100px_78px_78px_60px_72px_65px_64px] gap-2 px-3 py-3 border-t border-[#2b2a27] items-center transition-colors",
                     isEditing && "bg-[#c2202f]/[0.03]",
                   )}
                 >
@@ -904,7 +955,8 @@ export default function Admin() {
                       </>
                     )}
                   </div>
-                </div>
+                  </div>
+                </>
               );
             })}
           </div>
