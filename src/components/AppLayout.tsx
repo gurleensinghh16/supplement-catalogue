@@ -380,7 +380,20 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 ADMIN
                 <span className="absolute bottom-6 left-0 h-[2px] w-full origin-left scale-x-0 bg-[#c2202f] transition-transform duration-300 group-hover/link:scale-x-100" />
               </button>
-
+                              {/* Cart icon — laptop only */}
+              <button
+                type="button"
+                onClick={() => navigate("/cart")}
+                aria-label={`Shopping cart, ${itemCount} items`}
+                className="relative hidden h-10 w-10 cursor-pointer items-center justify-center text-white transition-colors hover:text-[#c2202f] lg:flex"
+              >
+                <ShoppingCart className="h-5 w-5" />
+                {itemCount > 0 && (
+                  <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#c2202f] px-1 text-[10px] font-bold text-white">
+                    {itemCount > 99 ? "99+" : itemCount}
+                  </span>
+                )}
+              </button>
               <Button
                 className="hidden h-12 cursor-pointer bg-[#c2202f] px-8 font-['Orbitron'] text-[14px] font-medium uppercase tracking-wider text-white hover:bg-[#de3746] lg:inline-flex"
                 onClick={() => navigate("/catalogue")}
