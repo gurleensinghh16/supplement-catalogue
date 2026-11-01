@@ -156,29 +156,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     );
   };
 
-  // Cart navigation button
-  const CartButton = ({ mobile = false }: { mobile?: boolean }) => (
-    <button
-      type="button"
-      onClick={() => {
-        setMobileSuppsOpen(false);
-        navigate("/cart");
-      }}
-      aria-label={`Shopping cart, ${itemCount} items`}
-      className={`relative flex items-center justify-center text-white transition-colors hover:text-[#c2202f] ${
-        mobile ? "h-9 w-9" : "h-10 w-10"
-      }`}
-    >
-      <ShoppingCart className={mobile ? "h-5 w-5" : "h-5 w-5"} />
-
-      {itemCount > 0 && (
-        <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#c2202f] px-1 text-[10px] font-bold text-white">
-          {itemCount > 99 ? "99+" : itemCount}
-        </span>
-      )}
-    </button>
-  );
-
   return (
     <div className="w-full max-w-full overflow-x-hidden">
       {/* Search Overlay */}
@@ -402,21 +379,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               >
                 ADMIN
                 <span className="absolute bottom-6 left-0 h-[2px] w-full origin-left scale-x-0 bg-[#c2202f] transition-transform duration-300 group-hover/link:scale-x-100" />
-              </button>
-
-              {/* Cart icon */}
-              <button
-                type="button"
-                onClick={() => navigate("/cart")}
-                aria-label={`Shopping cart, ${itemCount} items`}
-                className="relative flex h-10 w-10 cursor-pointer items-center justify-center text-white transition-colors hover:text-[#c2202f]"
-              >
-                <ShoppingCart className="h-5 w-5" />
-                {itemCount > 0 && (
-                  <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#c2202f] px-1 text-[10px] font-bold text-white">
-                    {itemCount > 99 ? "99+" : itemCount}
-                  </span>
-                )}
               </button>
 
               <Button
