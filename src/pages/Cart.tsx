@@ -690,7 +690,7 @@ export default function Cart() {
           onClose={() => {
             setShowCheckout(false);
             setPaymentError("");
-        }}
+           }}
         />
       )}
     </div>

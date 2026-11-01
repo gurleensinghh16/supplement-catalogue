@@ -9,7 +9,7 @@ const COUPONS_TABLE = "coupons";
 
 const ID_COL = "productID";
 const NAME_COL = "productName";
-const PRICE_COL = "prices";
+const PRICE_COL = "100475-The Diet Store-Price";
 const STOCK_COL = "in_stock";
 const STOCK_QTY_COL = "stock_quantity";
 
