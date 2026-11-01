@@ -114,7 +114,7 @@ function StatCard({
     );
 }
 
-export default function Orders() {
+export default function Orders({ embedded = false }: { embedded?: boolean }) {
     const navigate = useNavigate();
     const {
         isLoading: authLoading,
@@ -294,9 +294,9 @@ export default function Orders() {
         }
     };
 
-    if (authLoading || checkingAdmin) {
+        if (authLoading || checkingAdmin) {
         return (
-            <div className="min-h-screen bg-black text-white flex items-center justify-center">
+            <div className={`${embedded ? "py-20" : "min-h-screen"} bg-black text-white flex items-center justify-center`}>
                 <p className="text-sm text-[#999999]">
                     Verifying access...
                 </p>
@@ -306,8 +306,8 @@ export default function Orders() {
 
     if (!isAuthenticated) {
         return (
-            <div className="min-h-screen bg-black text-white flex items-center justify-center px-6">
-                <div className="max-w-sm text-center">
+             <div className={`${embedded ? "py-20" : "min-h-screen"} bg-black text-white flex items-center justify-center px-6`}>
+                <div className="max-w-md text-center">
                     <ShieldAlert className="h-10 w-10 text-[#c2202f] mx-auto mb-4" />
 
                     <h1 className="font-['Orbitron'] text-xl uppercase tracking-wider">
@@ -371,8 +371,9 @@ export default function Orders() {
         );
     }
 
-    return (
-        <div className="min-h-screen bg-black text-white">
+        return (
+        <div className={embedded ? "bg-black text-white" : "min-h-screen bg-black text-white"}>
+            {!embedded && (
             <header className="sticky top-0 z-40 border-b border-[#2b2a27] bg-black/90 backdrop-blur-xl">
                 <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between gap-4">
                     <button
@@ -405,6 +406,7 @@ export default function Orders() {
                     </div>
                 </div>
             </header>
+                )}
 
             <main className="mx-auto max-w-7xl px-6 py-8">
                 <div className="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4">

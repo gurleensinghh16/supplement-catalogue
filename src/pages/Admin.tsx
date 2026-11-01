@@ -17,7 +17,8 @@ import {
   Upload,
   X,
 } from "lucide-react";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
+import Orders from "@/pages/Orders";
 import { cn } from "@/lib/utils";
 
 // Shape the admin UI works with (mapped from the "keep_products" table).
@@ -83,7 +84,6 @@ export default function Admin() {
   const {
     isLoading: authLoading,
     isAuthenticated,
-    user,
     signIn,
     signOut,
   } = useAuth();
@@ -96,14 +96,29 @@ export default function Admin() {
   const [products, setProducts] = useState<Product[] | undefined>(undefined);
   const [refreshKey, setRefreshKey] = useState(0);
   // Redirect the Orders account to its own dashboard.
+    const [searchParams, setSearchParams] = useSearchParams();
+  const [access, setAccess] = useState<{ products: boolean; orders: boolean } | null>(null);
+
   useEffect(() => {
-    if (
-      !authLoading &&
-      user?.id === "a5269010-7af7-48c9-8497-c3236cefc51a"
-    ) {
-      navigate("/admin/orders", { replace: true });
+    let active = true;
+
+    async function checkAccess() {
+      if (!isAuthenticated) {
+        setAccess(null);
+        return;
+      }
+      const [p, o] = await Promise.all([
+        supabase.rpc("is_admin"),
+        supabase.rpc("is_orders_admin"),
+      ]);
+      if (active) setAccess({ products: p.data === true, orders: o.data === true });
     }
-  }, [authLoading, user, navigate]);
+
+    void checkAccess();
+    return () => {
+      active = false;
+    };
+  }, [isAuthenticated]);
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editImage, setEditImage] = useState("");
@@ -180,20 +195,17 @@ export default function Admin() {
     setLoginError("");
 
     try {
-      const user = await signIn(email, password);
+           await signIn(email, password);
 
-      if (user.id === "a5269010-7af7-48c9-8497-c3236cefc51a") {
-        navigate("/admin/orders", { replace: true });
-        return;
+      const [p, o] = await Promise.all([
+        supabase.rpc("is_admin"),
+        supabase.rpc("is_orders_admin"),
+      ]);
+
+      if (p.data !== true && o.data !== true) {
+        await signOut();
+        setLoginError("This account does not have admin dashboard access.");
       }
-
-      if (user.id === "0bee6907-a5e2-42ae-a35e-c5fac827d551") {
-        navigate("/admin", { replace: true });
-        return;
-      }
-
-      await signOut();
-      setLoginError("This account does not have admin dashboard access.");
     } catch (err) {
       console.error("Sign-in error:", err);
       setLoginError("Invalid email or password.");
@@ -417,13 +429,31 @@ export default function Admin() {
       </div>
     );
   }
-  if (user?.id === "a5269010-7af7-48c9-8497-c3236cefc51a") {
+   if (access === null) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
-        <p className="text-sm text-[#999999]">Opening Orders...</p>
+        <p className="text-sm text-[#999999]">Verifying access...</p>
       </div>
     );
   }
+
+  const tabs: { id: "products" | "orders"; label: string }[] = [];
+  if (access.products) tabs.push({ id: "products", label: "Products" });
+  if (access.orders) tabs.push({ id: "orders", label: "Orders" });
+
+  if (tabs.length === 0) {
+    return (
+      <div className="min-h-screen bg-black flex flex-col items-center justify-center gap-4 px-6 text-center">
+        <p className="text-sm text-[#999999]">This account does not have admin access.</p>
+        <Button onClick={handleLogout} className="bg-[#c2202f] text-white hover:bg-[#de3746]">
+          Sign out
+        </Button>
+      </div>
+    );
+  }
+
+  const requestedTab = searchParams.get("tab");
+  const activeTab = tabs.some((t) => t.id === requestedTab) ? requestedTab : tabs[0].id;
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -465,7 +495,28 @@ export default function Admin() {
           </div>
         </div>
       </header>
+      <div className="border-b border-[#2b2a27] bg-black">
+        <div className="mx-auto flex max-w-7xl gap-1 px-6">
+          {tabs.map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setSearchParams({ tab: t.id })}
+              className={cn(
+                "cursor-pointer border-b-2 px-5 py-4 font-['Orbitron'] text-xs uppercase tracking-[0.15em] transition-colors",
+                activeTab === t.id
+                  ? "border-[#c2202f] text-white"
+                  : "border-transparent text-[#999999] hover:text-white",
+              )}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+      </div>
 
+      {activeTab === "orders" && <Orders embedded />}
+
+      {activeTab === "products" && (
       <div className="mx-auto max-w-7xl px-6 py-8">
         {/* Header + Add Product button */}
         <div className="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
@@ -962,6 +1013,7 @@ export default function Admin() {
           </div>
         )}
       </div>
+       )}
     </div>
   );
 }
