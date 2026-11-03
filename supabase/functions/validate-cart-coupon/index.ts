@@ -27,7 +27,49 @@ function parsePrice(value: unknown): number | null {
 
   return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
 }
+if (body.action === "list") {
+  const { data: coupons, error: listError } = await supabase
+    .from("coupons")
+    .select(`
+      id,
+      code,
+      discount_type,
+      discount_value,
+      min_order_value_paise,
+      min_item_count,
+      max_discount_paise,
+      starts_at,
+      expires_at,
+      homepage_message
+    `)
+    .eq("class", "public")
+    .eq("is_active", true)
+    .order("created_at", { ascending: false });
 
+  if (listError) {
+    console.error("Public coupon list error:", listError);
+    return response({ error: "Unable to fetch available coupons." }, 500);
+  }
+
+  const now = Date.now();
+
+  const validCoupons = (coupons ?? []).filter((coupon) => {
+    const notStarted =
+      coupon.starts_at &&
+      new Date(coupon.starts_at).getTime() > now;
+
+    const expired =
+      coupon.expires_at &&
+      new Date(coupon.expires_at).getTime() <= now;
+
+    return !notStarted && !expired;
+  });
+
+  return response({
+    success: true,
+    coupons: validCoupons,
+  });
+}
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -37,12 +79,17 @@ Deno.serve(async (req) => {
     return response({ error: "Method not allowed." }, 405);
   }
 
-  try {
-    const body = await req.json();
+try {
+  const body = await req.json();
 
-    const couponCode = String(body.couponCode || "")
-      .trim()
-      .toUpperCase();
+  // Fetch available public coupons
+  if (body.action === "list") {
+    // PASTE THE COMPLETE LIST CODE HERE
+  }
+
+  const couponCode = String(body.couponCode || "")
+    .trim()
+    .toUpperCase();
 
     const incomingItems = body.items;
 

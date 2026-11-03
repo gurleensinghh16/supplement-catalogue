@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import {
   ArrowLeft,
@@ -31,6 +31,18 @@ type CouponResult = {
   payable_paise: number;
   message?: string;
   description?: string | null;
+};
+type AvailableCoupon = {
+  id: string;
+  code: string;
+  discount_type: "percentage" | "fixed";
+  discount_value: number;
+  min_order_value_paise: number;
+  min_item_count: number;
+  max_discount_paise: number | null;
+  starts_at: string | null;
+  expires_at: string | null;
+  homepage_message: string | null;
 };
 
 type RazorpayPaymentResponse = {
@@ -83,6 +95,10 @@ export default function Cart() {
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [paymentError, setPaymentError] = useState("");
 
+  const [availableCoupons, setAvailableCoupons] = useState<AvailableCoupon[]>([]);
+const [couponsLoading, setCouponsLoading] = useState(false);
+const [couponsError, setCouponsError] = useState("");
+
   const [stockMessage, setStockMessage] = useState("");
 
   const [successDetails, setSuccessDetails] = useState<{
@@ -99,6 +115,7 @@ export default function Cart() {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     })}`;
+
 
   const callFunction = async (
     functionName: string,
@@ -125,10 +142,48 @@ export default function Cart() {
     return data;
   };
 
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchAvailableCoupons = async () => {
+      setCouponsLoading(true);
+      setCouponsError("");
+
+      try {
+        const result = await callFunction("validate-cart-coupon", {
+          action: "list",
+        });
+
+        if (isMounted) {
+          setAvailableCoupons(result.coupons ?? []);
+        }
+      } catch (error) {
+        if (isMounted) {
+          setCouponsError(
+            error instanceof Error
+              ? error.message
+              : "Unable to load available coupons."
+          );
+        }
+      } finally {
+        if (isMounted) {
+          setCouponsLoading(false);
+        }
+      }
+    };
+
+    void fetchAvailableCoupons();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const cartItemsForServer = items.map((item) => ({
     productId: item.id,
     quantity: item.quantity,
   }));
+
 
   const hasStockIssues = items.some((item) => {
     const maxQuantity = getMaxQuantity(item);
@@ -146,8 +201,8 @@ export default function Cart() {
     setCouponDescription("");
   };
 
-  const handleApplyCoupon = async () => {
-    const code = couponInput.trim().toUpperCase();
+ const handleApplyCoupon = async (selectedCode?: string) => {
+  const code = (selectedCode ?? couponInput).trim().toUpperCase();
 
     if (!code) {
       setCouponMessage("Please enter a coupon code.");
@@ -632,6 +687,124 @@ export default function Cart() {
                     {couponDescription}
                   </div>
                 )}
+
+{!appliedCoupon && (
+  <div className="mt-5 border-t border-white/10 pt-4">
+    <h3 className="mb-3 text-sm font-semibold text-white">
+      Available Offers
+    </h3>
+
+    {couponsLoading ? (
+      <p className="text-sm text-gray-400">
+        Loading available offers...
+      </p>
+    ) : couponsError ? (
+      <p className="text-sm text-red-400">
+        {couponsError}
+      </p>
+    ) : availableCoupons.length === 0 ? (
+      <p className="text-sm text-gray-500">
+        No available offers right now.
+      </p>
+    ) : (
+      <div className="space-y-3">
+        {availableCoupons.map((coupon) => {
+          const minimumSpend =
+            Number(coupon.min_order_value_paise || 0) / 100;
+
+          const remainingAmount = Math.max(
+            0,
+            minimumSpend - subtotal
+          );
+
+          const minimumItems = Number(
+            coupon.min_item_count || 0
+          );
+
+          const remainingItems = Math.max(
+            0,
+            minimumItems - itemCount
+          );
+
+          const eligible =
+            remainingAmount <= 0 && remainingItems <= 0;
+
+          const discountLabel =
+            coupon.discount_type === "percentage"
+              ? `${coupon.discount_value}% OFF`
+              : `₹${coupon.discount_value} OFF`;
+
+          return (
+            <div
+              key={coupon.id}
+              className="rounded-lg border border-white/10 bg-black p-3"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="font-bold text-[#e34b59]">
+                    {discountLabel}
+                  </p>
+
+                  <p className="mt-1 text-sm font-semibold text-white">
+                    {coupon.code}
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => handleApplyCoupon(coupon.code)}
+                  disabled={
+                    couponLoading ||
+                    hasStockIssues ||
+                    !eligible
+                  }
+                  className="rounded-md bg-[#c2202f] px-3 py-2 text-xs font-semibold text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  {couponLoading ? "Checking..." : "Apply"}
+                </button>
+              </div>
+
+              <div className="mt-2 text-xs text-gray-400">
+                {minimumSpend > 0 && (
+                  <p>
+                    Minimum order: {formatPrice(minimumSpend)}
+                  </p>
+                )}
+
+                {minimumItems > 0 && (
+                  <p>
+                    Minimum quantity: {minimumItems} units
+                  </p>
+                )}
+              </div>
+
+              <p
+                className={`mt-2 text-xs font-medium ${
+                  eligible
+                    ? "text-green-400"
+                    : "text-yellow-400"
+                }`}
+              >
+                {eligible
+                  ? "You're eligible for this offer!"
+                  : [
+                      remainingAmount > 0
+                        ? `Add ${formatPrice(remainingAmount)} more`
+                        : "",
+                      remainingItems > 0
+                        ? `Add ${remainingItems} more unit(s)`
+                        : "",
+                    ]
+                      .filter(Boolean)
+                      .join(" • ")}
+              </p>
+            </div>
+          );
+        })}
+      </div>
+    )}
+  </div>
+)}
+
               </div>
 
               <div className="space-y-3 border-t border-white/10 pt-4 text-sm">
