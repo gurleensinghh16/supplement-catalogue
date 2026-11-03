@@ -1,4 +1,3 @@
-
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowRight,
@@ -13,6 +12,7 @@ import { useNavigate, useLocation } from "react-router";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/context/CartContext";
+
 
 const BASE = import.meta.env.BASE_URL || "/";
 
@@ -545,20 +545,35 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
               <ul className="space-y-3">
                 {[
-                  { label: "Home", path: "/" },
-                  { label: "Catalogue", path: "/catalogue" },
-                  { label: "Cart", path: "/cart" },
-                  { label: "Admin", path: "/admin" },
-                ].map((link) => (
-                  <li key={link.label}>
-                    <button
-                      onClick={() => navigate(link.path)}
-                      className="cursor-pointer font-['Barlow'] text-[15px] text-[#999999] transition-colors hover:text-[#c2202f]"
-                    >
-                      {link.label}
-                    </button>
-                  </li>
-                ))}
+  { label: "Home", path: "/" },
+  { label: "Catalogue", path: "/catalogue" },
+  { label: "Cart", path: "/cart" },
+  {
+  label: "Policies & Terms",
+  path: "https://dkzwzmfdialcmurnagfs.supabase.co/storage/v1/object/public/product/Policy%20pdf/%20policies%20pdf.pdf",
+  file: true,
+},
+].map((link) => (
+  <li key={link.label}>
+    {link.file ? (
+      <a
+        href={link.path}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="cursor-pointer font-['Barlow'] text-[15px] text-[#999999] transition-colors hover:text-[#c2202f]"
+      >
+        {link.label}
+      </a>
+    ) : (
+      <button
+        onClick={() => navigate(link.path)}
+        className="cursor-pointer font-['Barlow'] text-[15px] text-[#999999] transition-colors hover:text-[#c2202f]"
+      >
+        {link.label}
+      </button>
+    )}
+  </li>
+))}
               </ul>
             </div>
 
