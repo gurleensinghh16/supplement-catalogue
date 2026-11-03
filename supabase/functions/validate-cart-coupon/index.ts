@@ -150,7 +150,7 @@ Deno.serve(async (req) => {
     const { data: coupon, error: couponError } = await supabase
       .from("coupons")
       .select(
-        "id, code, discount_type, discount_value, min_order_value_paise, min_item_count, max_discount_paise, starts_at, expires_at, is_active",
+               "id, code, discount_type, discount_value, min_order_value_paise, min_item_count, max_discount_paise, starts_at, expires_at, is_active, description",
       )
       .eq("code", couponCode)
       .maybeSingle();
@@ -236,7 +236,8 @@ Deno.serve(async (req) => {
       discount_paise: discountPaise,
       payable_paise: payablePaise,
       total_units: totalUnits,
-      message: "Coupon applied successfully.",
+            message: "Coupon applied successfully.",
+      description: coupon.description ?? null,
     });
   } catch (error) {
     console.error("Coupon validation error:", error);

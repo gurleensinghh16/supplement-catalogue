@@ -23,6 +23,8 @@ type Coupon = {
   starts_at: string | null;
   expires_at: string | null;
   is_active: boolean;
+  class: "public" | "specific";
+  description: string | null;
 };
 
 type CouponForm = {
@@ -35,18 +37,22 @@ type CouponForm = {
   starts_at: string;
   expires_at: string;
   is_active: boolean;
+  class: "public" | "specific";
+  description: string | null;
 };
 
 const INITIAL_FORM: CouponForm = {
   code: "",
   discount_type: "percentage",
   discount_value: "",
-  min_order_value: "20000",
-  min_item_count: "2",
+  min_order_value: "",
+  min_item_count: "",
   max_discount: "",
   starts_at: "",
   expires_at: "",
   is_active: true,
+   class: "public",
+  description: "string",
 };
 
 function formatRupees(paise: number | null): string {
@@ -136,6 +142,8 @@ export default function CouponManager() {
       starts_at: toLocalDateTime(coupon.starts_at),
       expires_at: toLocalDateTime(coupon.expires_at),
       is_active: coupon.is_active,
+       class: coupon.class ?? "public",
+      description: coupon.description ?? "",
     });
 
     setError("");
@@ -245,7 +253,9 @@ export default function CouponManager() {
       expires_at: expiresAtDate
         ? expiresAtDate.toISOString()
         : null,
-      is_active: form.is_active,
+       is_active: form.is_active,
+      class: form.class,
+      description: form.description.trim() || null,
       updated_at: new Date().toISOString(),
     };
 
@@ -540,8 +550,46 @@ export default function CouponManager() {
                 htmlFor="coupon-active"
                 className="text-sm text-white"
               >
-                Coupon Active
+                               Coupon Active
               </label>
+            </div>
+
+            {/* Coupon class */}
+            <div>
+              <label className="text-xs text-[#999999]">
+                Coupon Class *
+              </label>
+
+              <select
+                value={form.class}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    class: e.target.value as "public" | "specific",
+                  })
+                }
+                className="mt-1 w-full h-10 px-3 bg-[#111111] border border-[#2b2a27] text-white text-sm"
+              >
+                <option value="public">Public (for everyone)</option>
+                <option value="specific">Specific</option>
+              </select>
+            </div>
+
+            {/* Description */}
+            <div className="sm:col-span-2">
+              <label className="text-xs text-[#999999]">
+                Description (shown after the coupon is applied)
+              </label>
+
+              <Input
+                value={form.description}
+                onChange={(e) =>
+                  setForm({ ...form, description: e.target.value })
+                }
+                placeholder="ADDITIONAL OFFERS"
+                maxLength={150}
+                className="mt-1 bg-[#111111] border-[#2b2a27] text-white"
+              />
             </div>
           </div>
 
@@ -611,7 +659,11 @@ export default function CouponManager() {
                           : "text-[#c2202f] border-[#c2202f]/30 bg-[#c2202f]/10"
                       }`}
                     >
-                      {coupon.is_active ? "Active" : "Inactive"}
+                        {coupon.is_active ? "Active" : "Inactive"}
+                    </span>
+
+                    <span className="text-[10px] uppercase px-2 py-1 border text-[#999999] border-[#2b2a27]">
+                      {coupon.class === "specific" ? "Specific" : "Public"}
                     </span>
                   </div>
 

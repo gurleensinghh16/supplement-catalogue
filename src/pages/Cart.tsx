@@ -30,6 +30,7 @@ type CouponResult = {
   discount_paise: number;
   payable_paise: number;
   message?: string;
+  description?: string | null;
 };
 
 type RazorpayPaymentResponse = {
@@ -75,6 +76,7 @@ export default function Cart() {
   const [appliedCoupon, setAppliedCoupon] = useState("");
   const [discount, setDiscount] = useState(0);
   const [couponMessage, setCouponMessage] = useState("");
+  const [couponDescription, setCouponDescription] = useState("");
   const [couponLoading, setCouponLoading] = useState(false);
 
   const [showCheckout, setShowCheckout] = useState(false);
@@ -138,9 +140,9 @@ export default function Cart() {
   });
 
   const invalidateCoupon = () => {
-    setAppliedCoupon("");
-    setDiscount(0);
+   setDiscount(0);
     setCouponMessage("");
+    setCouponDescription("");
   };
 
   const handleApplyCoupon = async () => {
@@ -186,6 +188,7 @@ export default function Cart() {
       setCouponMessage(
         result.message || "Coupon applied successfully."
       );
+      setCouponDescription(result.description?.trim() || "");
     } catch (error) {
       invalidateCoupon();
 
@@ -619,8 +622,14 @@ export default function Cart() {
                         : "text-red-400"
                     }`}
                   >
-                    {couponMessage}
+                   {couponMessage}
                   </p>
+                )}
+
+                {appliedCoupon && couponDescription && (
+                  <div className="mt-3 rounded-lg border border-green-700/50 bg-green-950/30 px-3 py-2 text-sm text-green-300">
+                    {couponDescription}
+                  </div>
                 )}
               </div>
 
