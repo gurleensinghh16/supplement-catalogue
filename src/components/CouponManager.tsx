@@ -25,6 +25,8 @@ type Coupon = {
   is_active: boolean;
   class: "public" | "specific";
   description: string | null;
+  show_on_homepage: boolean;
+  homepage_message: string | null;
 };
 
 type CouponForm = {
@@ -39,6 +41,7 @@ type CouponForm = {
   is_active: boolean;
   class: "public" | "specific";
   description: string | null;
+  homepage_message: string;
 };
 
 const INITIAL_FORM: CouponForm = {
@@ -52,7 +55,8 @@ const INITIAL_FORM: CouponForm = {
   expires_at: "",
   is_active: true,
    class: "public",
-  description: "string",
+  description: "",
+  homepage_message: "",
 };
 
 function formatRupees(paise: number | null): string {
@@ -144,6 +148,7 @@ export default function CouponManager() {
       is_active: coupon.is_active,
        class: coupon.class ?? "public",
       description: coupon.description ?? "",
+      homepage_message: coupon.homepage_message ?? "",
     });
 
     setError("");
@@ -256,6 +261,7 @@ export default function CouponManager() {
        is_active: form.is_active,
       class: form.class,
       description: form.description.trim() || null,
+      homepage_message: form.homepage_message.trim() || null,
       updated_at: new Date().toISOString(),
     };
 
@@ -313,6 +319,27 @@ export default function CouponManager() {
 
     await fetchCoupons();
   };
+  const toggleHomepageVisibility = async (coupon: Coupon) => {
+  if (coupon.class !== "public") {
+    alert("Only public coupons can be displayed on the homepage.");
+    return;
+  }
+
+  const { error: updateError } = await supabase
+    .from("coupons")
+    .update({
+      show_on_homepage: !coupon.show_on_homepage,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", coupon.id);
+
+  if (updateError) {
+    alert(`Could not update homepage visibility: ${updateError.message}`);
+    return;
+  }
+
+  await fetchCoupons();
+};
 
   const deleteCoupon = async (coupon: Coupon) => {
     const confirmed = window.confirm(
@@ -553,7 +580,6 @@ export default function CouponManager() {
                                Coupon Active
               </label>
             </div>
-
             {/* Coupon class */}
             <div>
               <label className="text-xs text-[#999999]">
@@ -591,6 +617,23 @@ export default function CouponManager() {
                 className="mt-1 bg-[#111111] border-[#2b2a27] text-white"
               />
             </div>
+            {/* Homepage Message */}
+<div className="sm:col-span-2">
+  <label className="text-xs text-[#999999]">
+    Homepage Message (shown in Exclusive Offers)
+  </label>
+
+  <Input
+    value={form.homepage_message}
+    onChange={(e) =>
+      setForm({ ...form, homepage_message: e.target.value })
+    }
+    placeholder="Example: Get extra savings on your favourite supplements!"
+    maxLength={200}
+    className="mt-1 bg-[#111111] border-[#2b2a27] text-white"
+  />
+</div>
+            
           </div>
 
           {error && (
@@ -690,6 +733,20 @@ export default function CouponManager() {
                 </div>
 
                 <div className="flex flex-wrap gap-2 shrink-0">
+                  <Button
+  type="button"
+  size="sm"
+  variant="outline"
+  disabled={coupon.class !== "public"}
+  onClick={() => toggleHomepageVisibility(coupon)}
+  className={`border-[#2b2a27] ${
+    coupon.show_on_homepage
+      ? "text-green-400 border-green-700"
+      : "text-gray-400"
+  }`}
+>
+  {coupon.show_on_homepage ? "Homepage: ON" : "Homepage: OFF"}
+</Button>
                   <Button
                     type="button"
                     size="sm"

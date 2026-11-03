@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { motion, useScroll, AnimatePresence } from "framer-motion";
+import HomepageCoupons from "@/components/HomepageCoupans";
 import {
   ArrowRight,
   ChevronLeft,
@@ -275,7 +276,7 @@ export default function Landing() {
           </div>
         )}
       </section>
-
+<HomepageCoupons />
       {/* ── Featured Products — from database ── */}
       <section id="featured" className="pt-8 pb-16 sm:pt-12 sm:pb-24 px-4 sm:px-6">
         <div className="mx-auto max-w-[1440px]">

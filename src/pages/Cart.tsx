@@ -140,6 +140,7 @@ export default function Cart() {
   });
 
   const invalidateCoupon = () => {
+    setAppliedCoupon("");
    setDiscount(0);
     setCouponMessage("");
     setCouponDescription("");
