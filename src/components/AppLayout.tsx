@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowRight,
   ChevronDown,
+  Lock,
   MessageCircle,
   Package,
   Search,
@@ -369,7 +370,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 <span className="absolute bottom-6 left-0 h-[2px] w-full origin-left scale-x-0 bg-[#c2202f] transition-transform duration-300 group-hover/link:scale-x-100" />
               </a>
 
-              <button
+              {/* <button
                 onClick={() => navigate("/admin")}
                 className={`group/link relative hidden cursor-pointer py-8 font-['Orbitron'] text-[16px] font-normal uppercase tracking-[0.15em] transition-colors lg:block ${
                   location.pathname === "/admin"
@@ -379,7 +380,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               >
                 ADMIN
                 <span className="absolute bottom-6 left-0 h-[2px] w-full origin-left scale-x-0 bg-[#c2202f] transition-transform duration-300 group-hover/link:scale-x-100" />
-              </button>
+              </button> */}
                               {/* Cart icon — laptop only */}
               <button
                 type="button"
@@ -463,7 +464,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               {[
                 { label: "Home", path: "/" },
                 { label: "Catalogue", path: "/catalogue" },
-                { label: "Admin", path: "/admin" },
+                // { label: "Admin", path: "/admin" },
               ].map((link) => {
                 const isActive = location.pathname === link.path;
 
@@ -513,6 +514,16 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
       {/* Page content */}
       <div className="pt-24 lg:pt-28">{children}</div>
+      {/* Discreet Admin Access */}
+<button
+  type="button"
+  onClick={() => navigate("/admin")}
+  aria-label="Admin access"
+  title="Admin"
+  className="fixed bottom-3 right-3 z-[60] flex h-5 w-5 items-center justify-center rounded-full text-white/15 transition-all duration-200 hover:bg-white/10 hover:text-white/60"
+>
+  <Lock className="h-3 w-3" />
+</button>
 
       {/* Footer */}
       <footer className="border-t border-[#2b2a27] bg-black">
