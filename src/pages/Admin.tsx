@@ -54,6 +54,8 @@ type KeepProductRow = {
   stock_quantity: number | null;
   sku: string | null;
   featured: boolean | null;
+  weight: string | null;
+  servings: string | null;
   "100475-The Diet Store-Price": string | number | null;
   "100475-The Diet Store-MRP": string | number | null;
 };
@@ -67,8 +69,8 @@ function toProduct(row: KeepProductRow): Product {
     description: row.description ?? row.shortDescription ?? null,
     sku: row.sku ?? null,
     imageUrl: row.all_images_url?.match(/https?:\/\/[^\s,|;"'[\]]+/)?.[0] ?? null,
-    weight: null,
-    servings: null,
+    weight: row.weight ?? null,
+    servings: row.servings ?? null,
     stockQuantity: row.stock_quantity ?? null,
     price: row["100475-The Diet Store-Price"] == null || row["100475-The Diet Store-Price"] === "" ? null : Number(row["100475-The Diet Store-Price"]),
     mrp: row["100475-The Diet Store-MRP"] == null || row["100475-The Diet Store-MRP"] === "" ? null : Number(row["100475-The Diet Store-MRP"]),
@@ -121,7 +123,10 @@ export default function Admin() {
   }, [isAuthenticated]);
 
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [editName, setEditName] = useState("");
   const [editImage, setEditImage] = useState("");
+  const [editWeight, setEditWeight] = useState("");
+  const [editServings, setEditServings] = useState("");
   const [editStock, setEditStock] = useState("");
   const [editMrp, setEditMrp] = useState("");
   const [editPrice, setEditPrice] = useState("");
@@ -221,7 +226,10 @@ export default function Admin() {
 
   const startEditing = (product: Product) => {
     setEditingId(product.id);
+    setEditName(product.name);
     setEditImage(product.imageUrl || "");
+    setEditWeight(product.weight ?? "");
+    setEditServings(product.servings ?? "");
     setEditStock(String(product.stockQuantity ?? ""));
     setEditMrp(product.mrp == null ? "" : String(product.mrp));
     setEditPrice(product.price == null ? "" : String(product.price));
@@ -232,7 +240,10 @@ export default function Admin() {
     const { error } = await supabase
       .from("keep_products")
       .update({
+        productName: editName.trim(),
         all_images_url: editImage || null,
+        weight: editWeight.trim() || null,
+        servings: editServings.trim() || null,
         stock_quantity: editStock !== "" ? Number(editStock) : null,
         in_stock: editStock !== "" ? Number(editStock) > 0 : false,
         "100475-The Diet Store-MRP": editMrp !== "" ? Number(editMrp) : null,
@@ -306,6 +317,8 @@ export default function Admin() {
       description: newDescription || null,
       sku: newSku || null,
       all_images_url: imageUrl,
+      weight: newWeight.trim() || null,
+      servings: newServings.trim() || null,
       stock_quantity: Number(newStock),
       in_stock: Number(newStock) > 0,
       "100475-The Diet Store-MRP": newMrp !== "" ? Number(newMrp) : null,
@@ -772,11 +785,13 @@ export default function Admin() {
         ) : (
           <div className="border border-[#2b2a27] overflow-hidden">
             {/* Table Header */}
-            <div className="hidden md:grid grid-cols-[auto_minmax(140px,1fr)_90px_100px_78px_78px_60px_72px_65px_64px] gap-2 px-3 py-3 bg-[#111111] text-[10px] text-[#999999] uppercase tracking-wider font-medium border-b border-[#2b2a27]">
+<div className="hidden md:grid grid-cols-[auto_minmax(140px,1fr)_90px_100px_75px_75px_78px_78px_60px_72px_65px_64px] gap-2 px-3 py-3 bg-[#111111] text-[10px] text-[#999999] uppercase tracking-wider font-medium border-b border-[#2b2a27]">
               <span></span>
               <span>Product</span>
               <span>Category</span>
               <span>Image URL</span>
+              <span>Weight (lbs)</span>
+              <span>Servings</span>
               <span className="text-right">MRP (₹)</span>
               <span className="text-right">Price (₹)</span>
               <span className="text-right">Stock</span>
@@ -798,7 +813,11 @@ export default function Admin() {
                         ) : <div className="h-full w-full flex items-center justify-center"><Package className="h-6 w-6 text-[#999999]/40" /></div>}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm font-semibold text-white leading-snug">{product.name}</p>
+                        {isEditing ? (
+                          <Input value={editName} onChange={(e) => setEditName(e.target.value)} className="h-9 bg-black border-[#2b2a27] text-white" placeholder="Product name" />
+                        ) : (
+                          <p className="text-sm font-semibold text-white leading-snug">{product.name}</p>
+                        )}
                         <p className="text-xs text-[#999999] mt-1">{product.brand} · {product.category}</p>
                         <div className="flex flex-wrap items-center gap-2 mt-2">
                           <span className={cn("text-[10px] font-semibold px-2 py-1 rounded", product.inStock ? "bg-[#57a256]/10 text-[#57a256]" : "bg-[#c2202f]/10 text-[#c2202f]")}>{product.inStock ? "In Stock" : "Out of Stock"}</span>
@@ -807,6 +826,14 @@ export default function Admin() {
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
+                      <div className="rounded-md bg-[#111111] p-3 min-w-0">
+                        <p className="text-[10px] uppercase tracking-wider text-[#999999] mb-1">Weight (lbs)</p>
+                        {isEditing ? <Input value={editWeight} onChange={(e) => setEditWeight(e.target.value)} className="h-9 bg-black border-[#2b2a27] text-white" placeholder="Weight in lbs" /> : <p className="text-sm font-semibold text-white">{product.weight ? `${product.weight} lbs` : "—"}</p>}
+                      </div>
+                      <div className="rounded-md bg-[#111111] p-3 min-w-0">
+                        <p className="text-[10px] uppercase tracking-wider text-[#999999] mb-1">Servings</p>
+                        {isEditing ? <Input value={editServings} onChange={(e) => setEditServings(e.target.value)} className="h-9 bg-black border-[#2b2a27] text-white" placeholder="Servings" /> : <p className="text-sm font-semibold text-white">{product.servings || "—"}</p>}
+                      </div>
                       <div className="rounded-md bg-[#111111] p-3 min-w-0">
                         <p className="text-[10px] uppercase tracking-wider text-[#999999] mb-1">MRP</p>
                         {isEditing ? <Input value={editMrp} onChange={(e) => setEditMrp(e.target.value)} type="number" min="0" step="0.01" className="h-9 bg-black border-[#2b2a27] text-white" placeholder="MRP" /> : <p className="text-sm font-semibold text-white">{product.mrp == null ? "—" : `₹${product.mrp.toLocaleString("en-IN")}`}</p>}
@@ -838,7 +865,7 @@ export default function Admin() {
                   {/* Desktop table row */}
                   <div
                   className={cn(
-                    "hidden md:grid md:grid-cols-[auto_minmax(140px,1fr)_90px_100px_78px_78px_60px_72px_65px_64px] gap-2 px-3 py-3 border-t border-[#2b2a27] items-center transition-colors",
+                    "hidden md:grid md:grid-cols-[auto_minmax(140px,1fr)_90px_100px_75px_75px_78px_78px_60px_72px_65px_64px] gap-2 px-3 py-3 border-t border-[#2b2a27] items-center transition-colors",
                     isEditing && "bg-[#c2202f]/[0.03]",
                   )}
                 >
@@ -856,16 +883,21 @@ export default function Admin() {
                     )}
                   </div>
 
-                  <div>
-                    <p className="text-sm font-medium text-white line-clamp-1">
-                      {product.name}
-                    </p>
+                  <div className="min-w-0">
+                    {isEditing ? (
+                      <Input
+                        value={editName}
+                        onChange={(e) => setEditName(e.target.value)}
+                        className="h-8 text-xs bg-[#111111] border-[#2b2a27] text-white w-full"
+                        placeholder="Product name"
+                      />
+                    ) : (
+                      <p className="text-sm font-medium text-white line-clamp-1">{product.name}</p>
+                    )}
                     <p className="text-xs text-[#999999]/60">{product.brand}</p>
                   </div>
 
-                  <span className="text-xs text-[#999999] hidden md:block">
-                    {product.category}
-                  </span>
+                  <span className="text-xs text-[#999999] hidden md:block">{product.category}</span>
 
                   <div className="hidden md:block">
                     {isEditing ? (
@@ -879,6 +911,32 @@ export default function Admin() {
                       <span className="text-xs text-[#999999]/40 truncate block max-w-[120px]">
                         {product.imageUrl || "—"}
                       </span>
+                    )}
+                  </div>
+
+                  <div className="text-sm text-white min-w-0">
+                    {isEditing ? (
+                      <Input
+                        value={editWeight}
+                        onChange={(e) => setEditWeight(e.target.value)}
+                        className="h-8 text-xs bg-[#111111] border-[#2b2a27] text-white w-full"
+                        placeholder="lbs"
+                      />
+                    ) : (
+                      <span className="text-xs text-[#999999]">{product.weight ? `${product.weight} lbs` : "—"}</span>
+                    )}
+                  </div>
+
+                  <div className="text-sm text-white min-w-0">
+                    {isEditing ? (
+                      <Input
+                        value={editServings}
+                        onChange={(e) => setEditServings(e.target.value)}
+                        className="h-8 text-xs bg-[#111111] border-[#2b2a27] text-white w-full"
+                        placeholder="Servings"
+                      />
+                    ) : (
+                      <span className="text-xs text-[#999999]">{product.servings || "—"}</span>
                     )}
                   </div>
 
