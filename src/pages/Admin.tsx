@@ -624,7 +624,9 @@ export default function Admin() {
                   <option value="Brain & Focus">Brain & Focus</option>
                   <option value="Heart">Heart</option>
                   <option value="Protein Bar">Protein Bar</option>
-                  <option value="Samples">Samples</option>
+<option value="Protein Bars">Protein Bars</option>
+<option value="Protein Chips">Protein Chips</option>
+<option value="Samples">Samples</option>
                 </optgroup>
               </select>
               <Input placeholder="SKU" value={newSku} onChange={(e) => setNewSku(e.target.value)} className="h-10 bg-[#111111] border-[#2b2a27] text-white placeholder:text-[#999999]/50" />
