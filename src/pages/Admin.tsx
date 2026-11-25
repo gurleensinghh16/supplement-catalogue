@@ -623,7 +623,7 @@ export default function Admin() {
                   <option value="Skin Care">Skin Care</option>
                   <option value="Brain & Focus">Brain & Focus</option>
                   <option value="Heart">Heart</option>
-                  <option value="Protein Bar">Protein Bar</option>
+                  
 <option value="Protein Bars">Protein Bars</option>
 <option value="Protein Chips">Protein Chips</option>
 <option value="Samples">Samples</option>
